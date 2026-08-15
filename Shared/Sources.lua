@@ -22,6 +22,47 @@ ns.SOURCES = {
     bnet     = { key = "bnet",     name = "Blizzard",  homepage = "https://worldofwarcraft.blizzard.com", iconTex = "bnet", color = { 0.10, 0.58, 0.90 } },
 }
 
+-- Scrape date for a source, as an ISO date string, or nil.
+--
+-- The four sources are refreshed by different processes on different days, but
+-- the footer read one global `ClassCodex_LastScrape` for all of them — so every
+-- source showed upstream's own scrape date (Aug 6) however recently Wowhead or
+-- Archon had actually been regenerated.
+--
+-- EVERY generator already published this and nothing read it. Upstream's own
+-- files carry it too: db_icyveins is 2026-07-31 while db_ugg and db_blizzard are
+-- 2026-08-06, so the single global was wrong even for the sources that shipped
+-- with the addon. Key names differ by generator — scrape_wowhead.py writes
+-- `meta.generatedAt`, upstream writes `meta.generatedAt`, and scrape_archon.py
+-- writes `meta.generated` (when we scraped) plus `meta.lastUpdated` (archon's
+-- own data timestamp) — hence the three-way lookup.
+--
+-- The ClassCodex_LastScrape fallback is therefore rarely hit in practice; it
+-- covers a source whose file predates meta, and an unknown/nil key.
+--
+-- Only the leading YYYY-MM-DD is kept: archon's and upstream's are full
+-- timestamps, and the footer formatter parses a plain ISO date.
+-- Registry key -> ClassCodexSource data key, where they differ. The PvP source is
+-- registered as `bnet` (its icon and homepage are Battle.net) but its generated
+-- file registers `ClassCodexSource["blizzard"]`, so a direct lookup missed and
+-- the PvP tab silently showed the global fallback date instead of its own.
+local SOURCE_DATA_KEY = { bnet = "blizzard" }
+
+function ns.SourceDate(key)
+    key = key and (SOURCE_DATA_KEY[key] or key)
+    local src = key and ClassCodexSource and ClassCodexSource[key]
+    local meta = src and src.meta
+    local iso = meta and (meta.generatedAt or meta.generated or meta.lastUpdated)
+    if type(iso) == "string" then
+        local d = iso:match("^(%d%d%d%d%-%d%d%-%d%d)")
+        if d then return d end
+    end
+    if type(ClassCodex_LastScrape) == "string" and ClassCodex_LastScrape ~= "" then
+        return ClassCodex_LastScrape
+    end
+    return nil
+end
+
 -- Inline 12px brand icon (texture-escape string) for a source key.
 function ns.SourceIcon(key, size, yoff)
     local src = ns.SOURCES[key]
@@ -290,6 +331,16 @@ function ns.BisUrlForKey(key, class, spec, context)
     return uggGearUrl(class, spec)
 end
 
+-- Trinket page URL for a resolved trinket-source key. Icy Veins and Wowhead
+-- both list trinkets inside their BiS gear page rather than on one of their own,
+-- so those attribute to the gear page — the link that always resolves.
+function ns.TrinketUrlForKey(key, class, spec, context)
+    if key == "ugg" then return uggTrinketsUrl(class, spec) end
+    if key == "wowhead" then return wowheadGearUrl(class, spec) end
+    if key == "archongg" then return archonTrinketsUrl(class, spec, context) end
+    return icyVeinsGearUrl(class, spec)
+end
+
 -- Map a Gear/Enhancements dropdown string ("Icy Veins"/"u.gg"/"Wowhead"/"Archon"/"PvP")
 -- to a registry key + URL. PvP gear comes from u.gg; defaults to u.gg.
 local function fromDropdown(picked, dataType, class, spec)
@@ -311,11 +362,16 @@ function ns.ResolveAttribution(surface, class, specKey)
         return "icyveins", icyVeinsTalentsUrl(class, spec)
 
     elseif surface == "trinkets" then
-        -- Default Icy Veins (tier rankings); u.gg is a per-spec opt-in. IV lists
-        -- trinkets on its gear page, so that's the attribution link.
+        -- Default Icy Veins (tier rankings); the rest are per-spec opt-ins. This
+        -- only knew icyveins and ugg, so the panel — which has offered Archon
+        -- since it shipped — credited Icy Veins for Archon's rows and linked an
+        -- Icy Veins page. Route every key through the shared resolver.
+        -- Saved vars can hold a key from an older build; an unknown one would
+        -- return a key CreateSourceTag can't resolve, which silently hides the
+        -- whole attribution tag. Fall back rather than vanish.
         local picked = (ps and ps.trinketSource) or "icyveins"
-        if picked == "ugg" then return "ugg", uggTrinketsUrl(class, spec) end
-        return "icyveins", icyVeinsGearUrl(class, spec)
+        if not ns.SOURCES[picked] then picked = "icyveins" end
+        return picked, ns.TrinketUrlForKey(picked, class, spec)
 
     elseif surface == "talents" then
         -- PvP talents come from Blizzard's armory (bnet); the rest from u.gg /

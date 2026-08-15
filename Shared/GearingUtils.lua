@@ -14,15 +14,39 @@ local L = ns.L
 -- Constants
 -------------------------------------------------------------------------------
 
-local TIER_COLORS = {
+-- Tier letters, best first. Icy Veins and u.gg only ever publish S-D, but
+-- Wowhead's trinket tier lists also use E/F/G and "+" variants — measured across
+-- all 40 specs: F on 8 specs (43 rows), plus one S+ (resto druid), two A+
+-- (arcane mage) and two G (pres evoker). Those must be ranked and coloured, not
+-- just tolerated: an unknown label falls to `or 99` in the sort, which would
+-- have put resto druid's single BEST trinket at the BOTTOM of its list.
+local TIER_LETTERS = { "S", "A", "B", "C", "D", "E", "F", "G" }
+local TIER_BASE_COLOR = {
     S = { r = 1.00, g = 0.50, b = 0.00 },
     A = { r = 0.64, g = 0.21, b = 0.93 },
     B = { r = 0.00, g = 0.44, b = 0.87 },
     C = { r = 0.12, g = 1.00, b = 0.00 },
     D = { r = 0.62, g = 0.62, b = 0.62 },
+    E = { r = 0.62, g = 0.62, b = 0.62 },
+    F = { r = 0.55, g = 0.55, b = 0.55 },
+    G = { r = 0.50, g = 0.50, b = 0.50 },
 }
 
-local TIER_ORDER = { S = 1, A = 2, B = 3, C = 4, D = 5 }
+-- Built rather than written out so the two stay in step and a new letter is one
+-- edit. "X+" ranks immediately above "X"; a plus variant shares its base colour,
+-- since the letter already carries the meaning.
+local TIER_COLORS, TIER_ORDER = {}, {}
+do
+    local rank = 0
+    for _, letter in ipairs(TIER_LETTERS) do
+        rank = rank + 1
+        TIER_ORDER[letter .. "+"] = rank
+        TIER_COLORS[letter .. "+"] = TIER_BASE_COLOR[letter]
+        rank = rank + 1
+        TIER_ORDER[letter] = rank
+        TIER_COLORS[letter] = TIER_BASE_COLOR[letter]
+    end
+end
 
 local CONTEXT_LABELS = {
     raid = L["context.raid"],
@@ -45,7 +69,7 @@ local CONSUMABLE_LABELS = {
 -- Shoulders, Bracers, Chest, Belt, Legs, Boots, Ring). Cap at 12 to
 -- match Compendium.lua's MAX_ENCHANT_ROWS so neither surface drops rows.
 local MAX_ENCHANT_ROWS = 12
-local MAX_GEM_ROWS = 4
+local MAX_GEM_ROWS = 8
 local MAX_CONSUMABLE_ROWS = 6
 
 -------------------------------------------------------------------------------
@@ -120,25 +144,43 @@ itemEventFrame:SetScript("OnEvent", function(_, _, itemId, success)
     end
 end)
 
+-- Prefetch every item id in an enchants/gems/consumables record.
+--
+-- Wowhead and Archon publish these as item ids, and both are rendered from their
+-- own accessor result rather than from the gearData the panel prefetches — so
+-- without this their rows showed the literal "Item 243952" placeholder. The few
+-- that did resolve were the ones whose ids happen to coincide with the u.gg /
+-- Icy Veins picks already in the cache, which is why the section looked half
+-- broken rather than plainly broken.
+--
+-- `request` is passed in because the Compendium owns a separate item cache from
+-- the docked panel and each must warm its own.
+local function RequestEnhancementItems(enh, request)
+    if not enh then return end
+    request = request or RequestItemData
+    if enh.enchants then
+        for _, e in ipairs(enh.enchants) do
+            if e.best then request(e.best.itemId) end
+            if e.alternate then request(e.alternate.itemId) end
+        end
+    end
+    if enh.gems then
+        if enh.gems.primary then request(enh.gems.primary.itemId) end
+        if enh.gems.secondary then
+            for _, g in ipairs(enh.gems.secondary) do request(g.itemId) end
+        end
+    end
+    if enh.consumables then
+        for _, key in ipairs(CONSUMABLE_ORDER) do
+            local c = enh.consumables[key]
+            if c then request(c.itemId) end
+        end
+    end
+end
+
 local function RequestAllItems(gearData)
     if not gearData then return end
-    if gearData.enchants then
-        for _, e in ipairs(gearData.enchants) do
-            RequestItemData(e.best.itemId)
-            if e.alternate then RequestItemData(e.alternate.itemId) end
-        end
-    end
-    if gearData.gems then
-        if gearData.gems.primary then RequestItemData(gearData.gems.primary.itemId) end
-        if gearData.gems.secondary then
-            for _, g in ipairs(gearData.gems.secondary) do RequestItemData(g.itemId) end
-        end
-    end
-    if gearData.consumables then
-        for _, key in ipairs(CONSUMABLE_ORDER) do
-            if gearData.consumables[key] then RequestItemData(gearData.consumables[key].itemId) end
-        end
-    end
+    RequestEnhancementItems(gearData, RequestItemData)
     if gearData.trinkets then
         for _, t in ipairs(gearData.trinkets) do
             RequestItemData(t.itemId)
@@ -161,6 +203,13 @@ end
 -------------------------------------------------------------------------------
 -- Gear Data Lookup
 -------------------------------------------------------------------------------
+
+-- Every source that can supply trinkets, in the order the dropdowns offer them
+-- and the order the fallback walks. Single source of truth: Sections/Trinkets.lua
+-- builds both its dropdowns from this rather than keeping its own copies, which
+-- is how the panel came to offer Archon while the Compendium did not.
+ns.TRINKET_SOURCE_ORDER = { "icyveins", "ugg", "wowhead", "archongg" }
+local TRINKET_SOURCE_ORDER = ns.TRINKET_SOURCE_ORDER
 
 -- The trinket source is a per-spec preference (default Icy Veins, whose tier
 -- rankings are editorial rather than u.gg's popularity). Keyed by the current
@@ -230,13 +279,27 @@ local function GetSpecGearData(classToken, specKey, trinketSourceOverride)
     end
     local tsrc = trinketSourceOverride or GetTrinketSource()
     local tr = readTrinkets(tsrc)
-    if not tr then tr = readTrinkets(tsrc == "icyveins" and "ugg" or "icyveins") end
+    if not tr then
+        -- Ordered fallback rather than the old two-way icyveins<->ugg toggle: a
+        -- Wowhead or Archon pick that yields nothing for this spec used to land
+        -- on Icy Veins silently whichever way it fell.
+        for _, alt in ipairs(TRINKET_SOURCE_ORDER) do
+            if alt ~= tsrc then
+                tr = readTrinkets(alt)
+                if tr then break end
+            end
+        end
+    end
     if tr then
         local list = {}
         for _, t in ipairs(tr) do
             list[#list + 1] = {
                 itemId = t.itemId, tier = t.tier, popularity = t.popularity or t.pop,
                 partnerItemId = t.partnerItemId, contexts = t.contexts,
+                -- Wowhead publishes no tier and no adoption share; the drop
+                -- location is its only per-row signal, so it must survive the
+                -- projection or its rows render with an empty right column.
+                source = t.source,
             }
         end
         out.trinkets = list
@@ -713,6 +776,22 @@ end
 -- empty context rather than emitting an empty tab.
 local ARCHON_CONTEXT_TAB = { mplus = "Mythic+", raid = "Raid" }
 
+-- How many of a slot a character can wear. Archon publishes ~12 popularity-ranked
+-- alternatives per slot (168 rows for one Holy Paladin tab), laid out as the
+-- equipped set first and then the alternatives grouped by slot. The BiS section
+-- shows one row per slot for every other source, and Sections/Gear.lua caps at
+-- 20 rows — so the raw list rendered the 16 correct picks followed by an
+-- arbitrary four alternatives for whichever slot came next, then stopped. Taking
+-- the first occurrence of each slot (they arrive best-first) gives the equipped
+-- set: 15-16 rows on all 80 archon tabs, which is what "Best in Slot" means.
+--
+-- The alternatives are still in the data if a future surface wants to rank them.
+local function ArchonSlotAllowance(slot)
+    local s = slot:lower()
+    if s:find("ring") or s:find("finger") or s:find("trinket") then return 2 end
+    return 1
+end
+
 function ns:GetArchonGearSpecData(classToken, specKey)
     if not classToken or not specKey then return nil end
     local sd = ns.SourceSpec and ns.SourceSpec("archongg", classToken, specKey)
@@ -721,16 +800,20 @@ function ns:GetArchonGearSpecData(classToken, specKey)
     for _, ctx in ipairs({ "mplus", "raid" }) do
         local slots = ns.ResolveCategory(sd.gear, "all", ctx)
         if slots and #slots > 0 then
-            local out = {}
+            local out, taken = {}, {}
             for _, g in ipairs(slots) do
-                out[#out + 1] = {
-                    slot = g.slot,
-                    item = { itemId = g.itemId },
-                    source = g.source,
-                    popularity = g.popularity,
-                    maxKey = g.maxKey,
-                    dps = g.dps,
-                }
+                local n = taken[g.slot] or 0
+                if n < ArchonSlotAllowance(g.slot) then
+                    taken[g.slot] = n + 1
+                    out[#out + 1] = {
+                        slot = g.slot,
+                        item = { itemId = g.itemId },
+                        source = g.source,
+                        popularity = g.popularity,
+                        maxKey = g.maxKey,
+                        dps = g.dps,
+                    }
+                end
             end
             bisGear[#bisGear + 1] = { label = ARCHON_CONTEXT_TAB[ctx], slots = out, context = ctx }
         end
@@ -757,7 +840,11 @@ end
 -- matches "rider-of-the-apocalypse" once its hyphens are stripped.
 local heroDisplayBySlug = nil
 local function HeroDisplayName(slug)
-    if not slug or slug == "" then return "All" end
+    -- A page with no hero markers falls back to the hero key "all". Normalise it
+    -- to "All" here: nothing in the atlas strips to "all", so it would otherwise
+    -- pass through verbatim and FormatHeroHeaderText — which maps only the exact
+    -- string "All" to "General" — would print a group header reading "all".
+    if not slug or slug == "" or slug == "all" then return "All" end
     if not heroDisplayBySlug then
         heroDisplayBySlug = {}
         local atlas = ns.HERO_TALENT_ATLAS
@@ -799,6 +886,10 @@ function ns:GetWowheadTalentBuilds(classToken, specKey)
                         context      = WH_CONTEXT_DISPLAY[context] or b.label or context,
                         buildLabel   = b.label or WH_CONTEXT_DISPLAY[context] or context,
                         exportString = b.export,
+                        -- Wowhead's "Current Recommendations" marker, carried as
+                        -- the page's own tag text ("Best", "Best ST", "Best
+                        -- Cleave"). FormatBuildLabel prints it verbatim.
+                        recommended  = b.recommended,
                         _heroSlug    = hero,
                         _contextKey  = context,
                     }
@@ -1215,6 +1306,7 @@ ns.GetItemName = GetItemName
 ns.HandleItemClick = HandleItemClick
 ns.RequestItemData = RequestItemData
 ns.RequestAllItems = RequestAllItems
+ns.RequestEnhancementItems = RequestEnhancementItems
 ns.GetSpecGearData = GetSpecGearData
 ns.GetPlayerClassSpec = GetPlayerClassSpec
 ns.GearingPvP = PvP

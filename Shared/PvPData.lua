@@ -364,6 +364,7 @@ ns.ENH_SOURCE_LABELS = {
 ns.TRINKET_SOURCE_LABELS = {
     icyveins = ns.SourceLabelText("icyveins"),
     ugg      = ns.SourceLabelText("ugg"),
+    wowhead  = ns.SourceLabelText("wowhead"),
     archongg = ns.SourceLabelText("archongg"),
 }
 

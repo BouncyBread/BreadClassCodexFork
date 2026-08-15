@@ -11,7 +11,13 @@ local L = ns.L
 local Rotation = {}
 ns.Sections.Rotation = Rotation
 
-local MAX_STEPS = 20
+-- Icy Veins publishes up to 29 steps (monk/brewmaster); 11 of its 59 rotation
+-- lists exceed 20, so the old cap silently cut the tail off six specs.
+local MAX_STEPS = 32
+-- Height of one dropdown row. File-scope because BOTH surfaces offset their
+-- content by however many dropdowns they showed; it used to be a local inside
+-- RenderPanel, which is half of why RenderCompendium read a nil offset.
+local DROPDOWN_ROW = 30
 
 local function makeStepHelpers(opts)
     return {
@@ -96,7 +102,6 @@ function Rotation.IsPanelSrcDropdownShown() return panel.srcDropdown:IsShown() e
 -- }
 -- Returns content height for the layout pass.
 function Rotation.RenderPanel(args)
-    local DROPDOWN_ROW = 30
     local srcOptions = args.sourceOptions or {}
     local showSrc = #srcOptions > 1
     local rowsUsed = 0
@@ -248,6 +253,12 @@ function Rotation.RenderCompendium(args)
     else
         comp.ctxDropdown:Hide()
     end
+    -- The Compendium has only the context dropdown, so its offset is one row or
+    -- none. This was reading `dropdownOffset`, a local declared only inside
+    -- RenderPanel: the fork's patch rewrote upstream's `showCtx and -30 or 0` at
+    -- all four sites but declared the variable at only one of them, so every
+    -- Compendium rotation render threw "arithmetic on a nil value".
+    local dropdownOffset = -DROPDOWN_ROW * (showCtx and 1 or 0)
 
     for i = 1, MAX_STEPS do comp.rows[i]:Hide() end
     comp.fallback:Hide()

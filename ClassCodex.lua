@@ -1416,13 +1416,15 @@ allTalentFallback:SetTextColor(0.5, 0.5, 0.5)
 allTalentFallback:SetText(L["loadout_dock.no_talent_builds"])
 allTalentFallback:Hide()
 
--- Source dropdown (u.gg | u.gg). Persisted via the same per-spec
--- key as the talent pane and Compendium, so flipping one updates all.
--- Each option is prefixed with the source's brand icon via a |T...|t
--- texture escape — no extra widget plumbing needed.
+-- Source dropdown. Persisted via the same per-spec key as the talent pane and
+-- Compendium, so flipping one updates all. Each option is prefixed with the
+-- source's brand icon via a |T...|t texture escape — no extra widget plumbing
+-- needed.
 local SOURCE_ICON_UGG      = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\ugg:12:12:0:0|t  u.gg"
 local SOURCE_ICON_ICYVEINS = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\icyveins:12:12:0:0|t  Icy Veins"
 local SOURCE_ICON_PVP      = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\bnet:12:12:0:0|t  PvP"
+local SOURCE_ICON_WOWHEAD  = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\wowhead:12:12:0:0|t  Wowhead"
+local SOURCE_ICON_ARCHON   = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\archon:12:12:0:0|t  Archon"
 
 local allTalentSourceDropdown = CreateOptionDropdown("ClassCodexAllTalentSourceDropdown", allTalentContent, 140)
 allTalentSourceDropdown:Hide()
@@ -1852,6 +1854,104 @@ local function RenderAllTalentsIcyVeins(class, spec, yPos)
     return yPos
 end
 
+-- Wowhead and Archon both publish one build per (hero talent, context), so they
+-- group by hero rather than by context the way Icy Veins does. The Compendium
+-- has had the same pair of sources since they were added; this panel never did,
+-- which is the drift this fixes. Both hand back the canonical build shape
+-- (Shared/TalentBuildList.lua), so the two differ only in where the builds come
+-- from and what the empty state says — hence one renderer.
+local function RenderAllTalentsHeroGrouped(builds, emptyText, applyPrefix, yPos)
+    if not builds or #builds == 0 then
+        allTalentFallback:SetText(emptyText)
+        allTalentFallback:ClearAllPoints()
+        allTalentFallback:SetPoint("TOPLEFT", allTalentContent, "TOPLEFT", 0, -yPos)
+        allTalentFallback:Show()
+        return yPos + 20
+    end
+
+    local matchActive = ns.BuildMatchesActive
+    local heroOrder, heroBuilds = ns.GroupBuildsByHero(builds)
+    local hdrIdx, rowIdx = 0, 0
+
+    for _, hero in ipairs(heroOrder) do
+        -- A single-hero spec doesn't need a header to disambiguate one list.
+        if #heroOrder > 1 then
+            hdrIdx = hdrIdx + 1
+            local hdr = EnsureTalentHeader(hdrIdx)
+            hdr.label:SetText(ns.FormatHeroHeaderText(hero))
+            hdr.label:SetTextColor(1, 0.82, 0)
+            if hdr.arrow then hdr.arrow:Hide() end
+            hdr:SetScript("OnClick", nil)
+            hdr:ClearAllPoints()
+            hdr:SetPoint("TOPLEFT", allTalentContent, "TOPLEFT", 0, -yPos)
+            hdr:SetPoint("RIGHT", allTalentContent, "RIGHT", 0, 0)
+            hdr:Show()
+            yPos = yPos + TALENT_CONTEXT_HEADER_HEIGHT
+        end
+
+        for _, build in ipairs(heroBuilds[hero]) do
+            rowIdx = rowIdx + 1
+            local row = EnsureTalentRow(rowIdx)
+            -- The hero name is already in the group header; a per-row icon would
+            -- repeat it on every line.
+            if row.heroIcon then row.heroIcon:Hide() end
+
+            local isActive = matchActive and matchActive(build) or false
+            row.isActive = isActive
+            if isActive then
+                row:SetBackdropBorderColor(0.2, 0.8, 0.2, 1)
+                row.label:SetTextColor(0.3, 1, 0.3)
+            else
+                row:SetBackdropBorderColor(0.4, 0.4, 0.4, 0.8)
+                row.label:SetTextColor(0.8, 0.8, 0.8)
+            end
+
+            -- FormatBuildLabel appends the source's own "(Best)" tag when the
+            -- build carries one, which is how Wowhead's Current Recommendations
+            -- reach this pane. It embeds |cff...|r colour escapes to do it, so
+            -- it is DISPLAY ONLY: `plain` is what goes to the Apply and Save-as
+            -- bindings, because those end up in C_ClassTalents.RenameConfig and
+            -- in the save dialog's edit box, where an escape would be shown
+            -- literally in the player's own loadout name.
+            local text = ns.FormatBuildLabel(build)
+            local plain = build.buildLabel or build.context or "Build"
+            row.label:ClearAllPoints()
+            row.label:SetPoint("LEFT", row, "LEFT", 8, 0)
+            row.label:SetPoint("RIGHT", row.copyBtn, "LEFT", -4, 0)
+            row.label:SetText(text)
+
+            row:ClearAllPoints()
+            row:SetPoint("TOPLEFT", allTalentContent, "TOPLEFT",
+                #heroOrder > 1 and ALL_TALENT_INDENT or 0, -yPos)
+            row:SetPoint("RIGHT", allTalentContent, "RIGHT", 0, 0)
+
+            BindAllTalentCopy(row, build.exportString)
+            BindAllTalentApply(row, build.exportString, hero .. " " .. plain)
+            BindAllTalentSaveAsNew(row, build.exportString,
+                applyPrefix .. " - " .. hero .. " " .. plain)
+
+            row:Show()
+            yPos = yPos + TALENT_BTN_HEIGHT + TALENT_BTN_GAP
+        end
+        yPos = yPos + 4
+    end
+    return yPos
+end
+
+local function RenderAllTalentsWowhead(class, spec, yPos)
+    return RenderAllTalentsHeroGrouped(
+        ns.GetWowheadTalentBuilds and ns:GetWowheadTalentBuilds(class, spec) or nil,
+        L["loadout_dock.no_wowhead_builds"] or "No Wowhead talent builds available.",
+        "Wowhead", yPos)
+end
+
+local function RenderAllTalentsArchon(class, spec, yPos)
+    return RenderAllTalentsHeroGrouped(
+        ns.GetArchonTalentBuilds and ns:GetArchonTalentBuilds(class, spec) or nil,
+        L["loadout_dock.no_archon_builds"] or "No Archon talent builds available.",
+        "Archon", yPos)
+end
+
 function ns:UpdateAllTalents(specData, classToken, specKey)
     for _, h in ipairs(allTalentHeaders) do h:Hide() end
     for _, r in ipairs(allTalentRows) do r:Hide() end
@@ -1886,6 +1986,20 @@ function ns:UpdateAllTalents(specData, classToken, specKey)
         { label = SOURCE_ICON_UGG, value = "ugg" },
         { label = SOURCE_ICON_PVP, value = "pvp" },
     }
+    -- Wowhead and Archon cover only some specs, so they are offered per-spec
+    -- rather than unconditionally — otherwise picking one would render an empty
+    -- pane. Same gate the Compendium uses, deliberately: this list and the
+    -- Compendium's had drifted, and this pane was missing both sources entirely.
+    if ns.HasWowheadTalents and ns:HasWowheadTalents(classToken, specKey) then
+        sourceOpts[#sourceOpts + 1] = { label = SOURCE_ICON_WOWHEAD, value = "wowhead" }
+    elseif source == "wowhead" then
+        source = "icyveins"
+    end
+    if ns.HasArchonTalents and ns:HasArchonTalents(classToken, specKey) then
+        sourceOpts[#sourceOpts + 1] = { label = SOURCE_ICON_ARCHON, value = "archongg" }
+    elseif source == "archongg" then
+        source = "icyveins"
+    end
     allTalentSourceDropdown:SetOptions(sourceOpts, source, function(picked)
         allTalentSourceOverride = picked
         allTalentSourceOverrideSpec = specTag
@@ -1904,6 +2018,10 @@ function ns:UpdateAllTalents(specData, classToken, specKey)
         yPos = RenderAllTalentsIcyVeins(classToken, specKey, yPos)
     elseif source == "pvp" then
         yPos = RenderAllTalentsPvP(classToken, specKey, yPos)
+    elseif source == "wowhead" then
+        yPos = RenderAllTalentsWowhead(classToken, specKey, yPos)
+    elseif source == "archongg" then
+        yPos = RenderAllTalentsArchon(classToken, specKey, yPos)
     else
         yPos = RenderAllTalentsUgg(classToken, specKey, yPos)
     end
@@ -2015,8 +2133,15 @@ do
         return 0.4, 0.4, 0.4
     end
 
+    -- The date belongs to the source feeding the tab the player is looking at,
+    -- not to the addon as a whole: Wowhead and Archon are regenerated weekly by
+    -- our own scraper while u.gg and Icy Veins ship with upstream. Reading one
+    -- global for all four stamped every source with upstream's date. Set by
+    -- UpdateFooterSource, which already resolves the active source key.
+    local footerDateSource = nil
+
     local function RefreshFooterDate()
-        local iso = ClassCodex_LastScrape
+        local iso = ns.SourceDate and ns.SourceDate(footerDateSource) or ClassCodex_LastScrape
         if type(iso) ~= "string" or iso == "" then
             footerDate:SetText("")
             footerDateButton:Hide()
@@ -2028,11 +2153,23 @@ do
         footerDateButton:Show()
     end
 
+    -- Exposed so UpdateFooterSource can repoint the stamp when the tab or the
+    -- picked source changes; footerDate/footerDateButton are locals to this block.
+    function ns.SetFooterDateSource(key)
+        if footerDateSource == key then return end
+        footerDateSource = key
+        RefreshFooterDate()
+    end
+
     footerDateButton:SetScript("OnEnter", function(self)
-        local iso = ClassCodex_LastScrape
+        local iso = ns.SourceDate and ns.SourceDate(footerDateSource) or ClassCodex_LastScrape
         if type(iso) ~= "string" or iso == "" then return end
         GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+        local src = footerDateSource and ns.SOURCES[footerDateSource]
         GameTooltip:SetText(L["footer.last_refreshed"]:format(FormatAbsoluteDate(iso)), 1, 0.82, 0)
+        -- Name the source, or "Aug 6" on one tab and "today" on the next reads
+        -- like a bug rather than two sources refreshed on different days.
+        if src then GameTooltip:AddLine(src.name, 0.6, 0.6, 0.6) end
         GameTooltip:AddLine(L["footer.data_refresh_hint"], 1, 1, 1, true)
         GameTooltip:Show()
     end)
@@ -2053,6 +2190,9 @@ local function UpdateFooterSource()
     local _sd, classToken = GetSpecData()
     local key, url = ns.ResolveAttribution(activeTab, classToken, GetSpecKey())
     footerSourceTag:SetSource(key, url)
+    -- The date stamp to the left of the tag follows the same source, so the two
+    -- halves of the footer always describe the same thing.
+    if ns.SetFooterDateSource then ns.SetFooterDateSource(key) end
 end
 
 

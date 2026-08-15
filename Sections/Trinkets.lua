@@ -10,7 +10,10 @@ ns.Sections.Trinkets = Trinkets
 -- Shared constants + state helpers
 -------------------------------------------------------------------------------
 
-local MAX_ROWS = 20
+-- Upper bound only; rows are created on demand (EnsurePanelRow /
+-- EnsureCompendiumRow). Wowhead's tier list runs to 39 rows for one spec and
+-- the Icy Veins merge reaches 43, so the old cap of 20 dropped half the list.
+local MAX_ROWS = 48
 
 local function LoadCtx()
     local specKey = ns.GetSpecKey and ns.GetSpecKey()
@@ -66,6 +69,36 @@ local function SourceHasTrinkets(src, classToken, specKey)
         if rows and #rows > 0 then return true end
     end
     return false
+end
+
+-- Dropdown options for every source that has trinkets for this spec, in
+-- ns.TRINKET_SOURCE_ORDER. Both the panel and the Compendium call this instead
+-- of keeping their own hard-coded lists — the two had already drifted, with the
+-- panel offering Archon and the Compendium offering only Icy Veins and u.gg.
+local SOURCE_FALLBACK_LABEL = {
+    icyveins = "Icy Veins", ugg = "u.gg", wowhead = "Wowhead", archongg = "Archon",
+}
+
+local function SourceOptions(classToken, specKey)
+    local labels = ns.TRINKET_SOURCE_LABELS or {}
+    local opts = {}
+    for _, key in ipairs(ns.TRINKET_SOURCE_ORDER or {}) do
+        if SourceHasTrinkets(key, classToken, specKey) then
+            opts[#opts + 1] = {
+                label = labels[key] or SOURCE_FALLBACK_LABEL[key] or key,
+                value = key,
+            }
+        end
+    end
+    return opts
+end
+
+-- First source in the ordered list that actually has trinkets for the spec.
+local function FirstAvailableSource(classToken, specKey)
+    for _, key in ipairs(ns.TRINKET_SOURCE_ORDER or {}) do
+        if SourceHasTrinkets(key, classToken, specKey) then return key end
+    end
+    return "icyveins"
 end
 
 local function CollectContexts(trinkets)
@@ -148,34 +181,43 @@ function Trinkets.InitPanel(parent)
     panel.ctxDropdown:Hide()
 
     panel.rows = {}
-    for i = 1, MAX_ROWS do
-        local row = CreateFrame("Frame", nil, panel.content)
-        row:SetHeight(ns.ROW_HEIGHT)
-        local ownedBg = row:CreateTexture(nil, "BACKGROUND")
-        ownedBg:SetAllPoints(row)
-        ownedBg:SetColorTexture(0.2, 0.9, 0.2, 0.10)
-        ownedBg:Hide()
-        row.ownedBg = ownedBg
-        local tier = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        tier:SetPoint("LEFT", 2, 0); tier:SetWidth(16); tier:SetJustifyH("CENTER")
-        row.tierText = tier
-        ns.CreateRowIcon(row)
-        row.icon:ClearAllPoints()
-        row.icon:SetPoint("LEFT", tier, "RIGHT", 4, 0)
-        local src = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        src:SetPoint("RIGHT", -2, 0); src:SetWidth(90); src:SetJustifyH("RIGHT")
-        src:SetWordWrap(false); src:SetTextColor(0.5, 0.5, 0.5)
-        row.sourceLabel = src
-        local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        name:SetPoint("LEFT", row.icon, "RIGHT", 4, 0)
-        name:SetPoint("RIGHT", src, "LEFT", -4, 0)
-        name:SetJustifyH("LEFT"); name:SetWordWrap(false)
-        row.itemText = name
-        ns.SetupItemTooltip(row)
-        row:Hide()
-        panel.rows[i] = row
-    end
     return panel.section
+end
+
+-- Rows are created on demand rather than MAX_ROWS-up-front. Wowhead publishes a
+-- full S–D tier list (up to 39 trinkets for one spec, median 22) where Icy Veins
+-- and u.gg publish a handful, so the pool has to reach far higher than it used
+-- to — but eagerly building 40 frames here and 40 more in the Compendium, for a
+-- section many players never open, is waste. Same lazy-pool shape as
+-- EnsureTalentRow in ClassCodex.lua.
+local function EnsurePanelRow(i)
+    if panel.rows[i] then return panel.rows[i] end
+    local row = CreateFrame("Frame", nil, panel.content)
+    row:SetHeight(ns.ROW_HEIGHT)
+    local ownedBg = row:CreateTexture(nil, "BACKGROUND")
+    ownedBg:SetAllPoints(row)
+    ownedBg:SetColorTexture(0.2, 0.9, 0.2, 0.10)
+    ownedBg:Hide()
+    row.ownedBg = ownedBg
+    local tier = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    tier:SetPoint("LEFT", 2, 0); tier:SetWidth(16); tier:SetJustifyH("CENTER")
+    row.tierText = tier
+    ns.CreateRowIcon(row)
+    row.icon:ClearAllPoints()
+    row.icon:SetPoint("LEFT", tier, "RIGHT", 4, 0)
+    local src = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    src:SetPoint("RIGHT", -2, 0); src:SetWidth(90); src:SetJustifyH("RIGHT")
+    src:SetWordWrap(false); src:SetTextColor(0.5, 0.5, 0.5)
+    row.sourceLabel = src
+    local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    name:SetPoint("LEFT", row.icon, "RIGHT", 4, 0)
+    name:SetPoint("RIGHT", src, "LEFT", -4, 0)
+    name:SetJustifyH("LEFT"); name:SetWordWrap(false)
+    row.itemText = name
+    ns.SetupItemTooltip(row)
+    row:Hide()
+    panel.rows[i] = row
+    return row
 end
 
 function Trinkets.IsPanelCtxDropdownShown() return panel.ctxDropdown:IsShown() end
@@ -184,7 +226,7 @@ function Trinkets.IsPanelSourceDropdownShown() return panel.sourceDropdown:IsSho
 -- args = { trinkets, onChange }
 -- Returns the rendered row count (height in ROW_HEIGHT units).
 function Trinkets.RenderPanel(args)
-    for i = 1, MAX_ROWS do panel.rows[i]:Hide() end
+    for _, r in ipairs(panel.rows) do r:Hide() end
     if not args.trinkets or #args.trinkets == 0 then
         panel.sourceDropdown:Hide()
         panel.ctxDropdown:Hide()
@@ -193,26 +235,27 @@ function Trinkets.RenderPanel(args)
 
     local yOffset = 0
 
-    -- Source dropdown (top) — only when both sources carry trinkets for the spec.
+    -- Source dropdown (top) — every source with trinkets for this spec.
     local classToken, specKey = ns.GetClassAndSpec()
-    local labels = ns.TRINKET_SOURCE_LABELS or {}
-    local srcOpts = {}
-    for _, s in ipairs({
-        { key = "icyveins", fallback = "Icy Veins" },
-        { key = "ugg", fallback = "u.gg" },
-        { key = "archongg", fallback = "Archon" },
-    }) do
-        if SourceHasTrinkets(s.key, classToken, specKey) then
-            srcOpts[#srcOpts + 1] = { label = labels[s.key] or s.fallback, value = s.key }
-        end
+    local srcOpts = SourceOptions(classToken, specKey)
+    -- The saved pick may be a source with no trinkets for THIS spec (saved on a
+    -- different spec, or from an older build). GetSpecGearData already falls
+    -- back to the first source that has data, so leaving the pick unvalidated
+    -- makes the dropdown name one source while the rows below come from
+    -- another. Reconcile to what GetSpecGearData will actually read.
+    local srcKey = LoadSource()
+    local srcValid = false
+    for _, o in ipairs(srcOpts) do
+        if o.value == srcKey then srcValid = true; break end
     end
+    if not srcValid then srcKey = FirstAvailableSource(classToken, specKey) end
     -- A one-option dropdown is noise.
     if #srcOpts > 1 then
         panel.sourceDropdown:ClearAllPoints()
         panel.sourceDropdown:SetPoint("TOPLEFT", 0, yOffset)
         panel.sourceDropdown:SetPoint("TOPRIGHT", 0, yOffset)
         panel.sourceDropdown:Show()
-        panel.sourceDropdown:SetOptions(srcOpts, LoadSource(), function(picked)
+        panel.sourceDropdown:SetOptions(srcOpts, srcKey, function(picked)
             SaveSource(picked)
             if args.onChange then args.onChange() end
         end)
@@ -224,6 +267,19 @@ function Trinkets.RenderPanel(args)
     -- Context dropdown (below the source dropdown).
     local ctxKey = LoadCtx()
     local contexts = CollectContexts(args.trinkets)
+    -- Only Archon tags rows with contexts. Switching away from it leaves a saved
+    -- "mplus" that matches nothing, FilterAndSort returns zero rows, and
+    -- GearingSections hides the whole section on a zero count — taking the source
+    -- dropdown with it, so there is no way back in the UI. The Compendium already
+    -- guards this; the panel did not.
+    local ctxValid = ctxKey == "All"
+    for _, c in ipairs(contexts) do
+        if c == ctxKey then ctxValid = true; break end
+    end
+    if not ctxValid then
+        ctxKey = "All"
+        SaveCtx(ctxKey)
+    end
     local showDropdown = #contexts > 1
 
     if showDropdown then
@@ -249,7 +305,7 @@ function Trinkets.RenderPanel(args)
 
     for i = 1, count do
         local t = filtered[i]
-        local row = panel.rows[i]
+        local row = EnsurePanelRow(i)
         -- Archon ranks by adoption rather than by tier, so its rows put the
         -- share where a tier letter would go and name the paired trinket in the
         -- source column — it publishes combos, not standalone picks.
@@ -291,6 +347,10 @@ end
 -------------------------------------------------------------------------------
 
 local comp = {}
+-- Forward-declared: assigned inside InitCompendium (it closes over that
+-- call's rowFactory) but called from RenderCompendium. Without the local it
+-- would silently become a global.
+local EnsureCompendiumRow
 -- Session-scoped Compendium trinket source (registry key), independent of the
 -- panel's saved per-spec pref. Resets to Icy Veins when the browsed spec
 -- changes — mirrors the BiS Compendium source model in Sections/Gear.lua.
@@ -305,10 +365,10 @@ function Trinkets.GetCompendiumSourceKey(classToken, specKey)
         compSource = "icyveins"
         compLastSpecKey = specKey
     end
-    if compSource == "icyveins" and not SourceHasTrinkets("icyveins", classToken, specKey) then
-        compSource = "ugg"
-    elseif compSource == "ugg" and not SourceHasTrinkets("ugg", classToken, specKey) then
-        compSource = "icyveins"
+    -- Was a two-key icyveins<->ugg toggle, which silently mishandled any third
+    -- or fourth source. Validate against the full ordered list instead.
+    if not SourceHasTrinkets(compSource, classToken, specKey) then
+        compSource = FirstAvailableSource(classToken, specKey)
     end
     return compSource
 end
@@ -323,8 +383,13 @@ function Trinkets.InitCompendium(opts)
     comp.content:SetPoint("RIGHT", 0, 0)
 
     comp.rows = {}
-    for i = 1, MAX_ROWS do
-        local row = opts.rowFactory(comp.content)
+    -- Same lazy pool as the panel; see EnsurePanelRow. The row factory is
+    -- the Compendium's own (click-to-link + tooltip), so it is captured here
+    -- rather than passed to every call.
+    local rowFactory = opts.rowFactory
+    EnsureCompendiumRow = function(i)
+        if comp.rows[i] then return comp.rows[i] end
+        local row = rowFactory(comp.content)
         local tier = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
         tier:SetPoint("LEFT", 2, 0); tier:SetWidth(16); tier:SetJustifyH("CENTER")
         row.tier = tier
@@ -340,7 +405,9 @@ function Trinkets.InitCompendium(opts)
         name:SetPoint("RIGHT", src, "LEFT", -4, 0)
         name:SetJustifyH("LEFT"); name:SetWordWrap(false)
         row.name = name
+        row:Hide()
         comp.rows[i] = row
+        return row
     end
 
     comp.sourceDropdown = CreateFrame(
@@ -367,23 +434,24 @@ end
 -- args = { trinkets, class, specKey, refresh }
 function Trinkets.RenderCompendium(args)
     if not args or not args.trinkets then return end
-    for i = 1, MAX_ROWS do comp.rows[i]:Hide() end
+    for _, r in ipairs(comp.rows) do r:Hide() end
 
     local dropH = 0
 
-    -- Source dropdown (top) — only when both sources carry trinkets for the spec.
-    if SourceHasTrinkets("icyveins", args.class, args.specKey)
-        and SourceHasTrinkets("ugg", args.class, args.specKey) then
-        local labels = ns.TRINKET_SOURCE_LABELS or {}
+    -- Source dropdown (top) — every source with trinkets for this spec. The old
+    -- gate required Icy Veins AND u.gg specifically, which hid the dropdown
+    -- whenever either was absent and never offered Wowhead or Archon at all.
+    local srcOpts = SourceOptions(args.class, args.specKey)
+    if #srcOpts > 1 then
         comp.sourceDropdown:SetupMenu(function(_, rootDescription)
-            for _, src in ipairs({ "icyveins", "ugg" }) do
-                rootDescription:CreateRadio(labels[src] or src,
-                    function() return compSource == src end,
+            for _, opt in ipairs(srcOpts) do
+                rootDescription:CreateRadio(opt.label,
+                    function() return compSource == opt.value end,
                     function()
-                        compSource = src
+                        compSource = opt.value
                         if args.refresh then args.refresh() end
                     end,
-                    src)
+                    opt.value)
             end
         end)
         comp.sourceDropdown:ClearAllPoints()
@@ -438,13 +506,27 @@ function Trinkets.RenderCompendium(args)
     for _, t in ipairs(filtered) do
         idx = idx + 1
         if idx > MAX_ROWS then break end
-        local row = comp.rows[idx]
-        row.tier:SetText(t.tier or "?")
-        SetTierColor(row.tier, t.tier)
+        local row = EnsureCompendiumRow(idx)
+        -- Mirror the panel: only Icy Veins and u.gg publish a tier letter.
+        -- Archon ranks by adoption share and Wowhead publishes a flat pick, so
+        -- a literal "?" was about to appear on every row of two of the four
+        -- sources the moment they became selectable here.
+        if t.tier then
+            row.tier:SetText(t.tier)
+            SetTierColor(row.tier, t.tier)
+        else
+            row.tier:SetText(t.popularity or "")
+            row.tier:SetTextColor(0.8, 0.8, 0.8)
+        end
         row.name:SetText(ns.FormatItem({ itemId = t.itemId, name = t.name }))
         row.itemId = t.itemId
         row.bonusIDs = t.bonusIDs
-        row.source:SetText(t.source or "")
+        local sourceText = t.source
+        if not sourceText and t.partnerItemId then
+            local partner = ns.FormatItem({ itemId = t.partnerItemId, name = "" })
+            sourceText = (L["trinkets.paired_with"] or "with %s"):format(partner)
+        end
+        row.source:SetText(sourceText or "")
         ns.SetRowIcon(row, t.itemId)
         row:ClearAllPoints()
         row:SetPoint("TOPLEFT", comp.content, "TOPLEFT", 0, yOffset - (idx - 1) * ns.ROW_HEIGHT)
@@ -459,8 +541,8 @@ function Trinkets.GetCompendiumContentHeight()
     local h = 0
     if comp.sourceDropdown:IsShown() then h = h + 30 end
     if comp.ctxDropdown:IsShown() then h = h + 30 end
-    for i = 1, MAX_ROWS do
-        if comp.rows[i]:IsShown() then h = h + ns.ROW_HEIGHT end
+    for _, r in ipairs(comp.rows) do
+        if r:IsShown() then h = h + ns.ROW_HEIGHT end
     end
     return h
 end

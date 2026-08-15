@@ -47,6 +47,11 @@ end
 -- The context is only prepended when the build label doesn't already convey it,
 -- so we never get redundant labels like "Raid — Raid" or "Delves — Delves"
 -- (Icy Veins sometimes names a build the same as its context).
+--
+-- `build.recommended` may be `true` or the source's own tag text. Wowhead's tag
+-- varies per row — frost mage marks one Raid build "(Best ST)" and the other
+-- "(Best Cleave)" — so printing a flat "(Best)" on both would claim two
+-- different builds are the single best for Raid. Print what the source printed.
 function ns.FormatBuildLabel(build)
     local context = build.context
     local buildLabel = build.buildLabel
@@ -61,7 +66,8 @@ function ns.FormatBuildLabel(build)
         label = context or "Build"
     end
     if build.recommended then
-        label = label .. " |cff00cc00(Best)|r"
+        local tag = type(build.recommended) == "string" and build.recommended or "Best"
+        label = label .. " |cff00cc00(" .. tag .. ")|r"
     end
     return label
 end

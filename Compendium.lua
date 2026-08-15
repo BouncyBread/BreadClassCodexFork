@@ -40,15 +40,12 @@ local RANK_COLORS = {
     { r = 0.62, g = 0.62, b = 0.62 },
 }
 
-local TIER_COLORS = {
-    S = { r = 1.00, g = 0.50, b = 0.00 },
-    A = { r = 0.64, g = 0.21, b = 0.93 },
-    B = { r = 0.00, g = 0.44, b = 0.87 },
-    C = { r = 0.12, g = 1.00, b = 0.00 },
-    D = { r = 0.62, g = 0.62, b = 0.62 },
-}
+-- Shared with the docked panel: Wowhead's trinket tier lists use E/F/G and
+-- "+" variants beyond the S-D that Icy Veins and u.gg publish, and a local
+-- copy here would silently miss them (an unranked tier sorts to the bottom).
+local TIER_COLORS = ns.TIER_COLORS
 
-local TIER_ORDER = { S = 1, A = 2, B = 3, C = 4, D = 5 }
+local TIER_ORDER = ns.TIER_ORDER
 
 local CONTEXT_LABELS = {
     raid = L["context.raid"],
@@ -383,6 +380,20 @@ local function RequestAllGearItems(gearData)
             for _, tab in ipairs(archonData.bisGear) do
                 for _, g in ipairs(tab.slots) do RequestItemData(g.item.itemId) end
             end
+        end
+    end
+    -- Wowhead and Archon enchants/gems/consumables. UpdateCompendiumEnchants and
+    -- UpdateCompendiumConsumables render straight from these accessors rather
+    -- than from the gearData walked above, so without this their rows show the
+    -- "Item 243952" placeholder — the same gap the docked panel had.
+    if selectedClass and selectedSpec then
+        if ns.GetWowheadEnhancements then
+            ns.RequestEnhancementItems(
+                ns:GetWowheadEnhancements(selectedClass, selectedSpec), RequestItemData)
+        end
+        if ns.GetArchonEnhancements then
+            ns.RequestEnhancementItems(
+                ns:GetArchonEnhancements(selectedClass, selectedSpec), RequestItemData)
         end
     end
 end
@@ -1064,7 +1075,12 @@ local function UpdateCompendiumAttribution(class, spec)
         -- The guide's stat priority + talents are Icy Veins (matches the panel).
         key, url = "icyveins", U.icyVeinsTalents(class, spec)
     elseif activeTab == "trinkets" then
-        key, url = "ugg", U.uggOverview(class, spec) or ns.SOURCES.ugg.homepage
+        -- Was hardcoded u.gg and never read the section's own picker, so even
+        -- the shipped Icy Veins option was credited to u.gg. Follow the pick,
+        -- the way the bis and enhancements branches below already do.
+        key = ns.Sections.Trinkets.GetCompendiumSourceKey
+            and ns.Sections.Trinkets.GetCompendiumSourceKey(class, spec) or "icyveins"
+        url = ns.TrinketUrlForKey(key, class, spec)
     elseif activeTab == "talents" then
         local ts = UI.talentSource
         if ts == "icyveins" then key, url = "icyveins", U.icyVeinsTalents(class, spec)
@@ -1705,7 +1721,15 @@ function ns:UpdateCompendiumAllTalents(specData, classFile, specKey)
     UI.talentSourceDropdown:Show()
 
     local yPos = 32 -- leave room for the dropdown row (DROPDOWN_HEIGHT 26 + 6 gap)
-    if UI.talentSource == "icyveins" and icyVeinsAvailable then
+    -- `and icyVeinsAvailable` used to guard this branch. That name is never
+    -- assigned anywhere in the addon (upstream 0.40.14 carries the same line), so
+    -- it read as a nil global and the condition was ALWAYS false: picking Icy
+    -- Veins — this tab's DEFAULT — fell through to the u.gg renderer, showing
+    -- u.gg's builds under an "Icy Veins" dropdown label and footer. Dropped
+    -- rather than repaired, because RenderIcyVeinsTalentList already writes its
+    -- own "No Icy Veins talent builds available." fallback, exactly the way the
+    -- PvP branch below is routed through unconditionally for the same reason.
+    if UI.talentSource == "icyveins" then
         yPos = RenderIcyVeinsTalentList(classFile, specKey, yPos)
     elseif UI.talentSource == "wowhead" then
         yPos = RenderWowheadTalentList(classFile, specKey, yPos)

@@ -123,6 +123,15 @@ function ns:UpdateGearingSections()
         and ns:GetWowheadEnhancements(_whClass, _whSpec) or nil
     local _archonEnh = _whClass and _whSpec and ns.GetArchonEnhancements
         and ns:GetArchonEnhancements(_whClass, _whSpec) or nil
+    -- Both are rendered straight from their own accessor result, not from the
+    -- gearData ns.RequestAllItems already walked, so their item ids were never
+    -- requested and the rows rendered as the "Item 243952" placeholder. The few
+    -- that did resolve were the ones whose ids happen to coincide with the u.gg
+    -- / Icy Veins picks already in the cache — which is why the section looked
+    -- half broken rather than plainly broken. Prefetched regardless of which
+    -- source is picked, so switching sources doesn't repaint placeholders.
+    ns.RequestEnhancementItems(_whEnh)
+    ns.RequestEnhancementItems(_archonEnh)
     local enchHeight, gemCount, consumCount = ns.Sections.Enhancements.RenderPanel({
         -- u.gg enchants render name-only (no spell/item id to resolve an icon).
         uggEnchants = uggSpecData and uggSpecData.enchants,
