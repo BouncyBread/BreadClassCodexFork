@@ -1,0 +1,77 @@
+## Interface: 120007, 120100
+## Title: Bread Class CodexFork
+## Notes: |cff33ff99Fork.|r Stat priorities, talent builds, rotation guides, and gearing recommendations for your current spec.
+## Author: jfstn (fork maintained by BouncyBread)
+## Version: @project-version@
+## X-Fork-Of: Class Codex by jfstn (MIT) - https://addons.wago.io/addons/classcodex
+## SavedVariables: ClassCodexDB
+## SavedVariablesPerCharacter: ClassCodexCharDB
+## IconTexture: Interface\AddOns\BreadClassCodexFork\icon
+## AddonCompartmentFunc: ClassCodex_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: ClassCodex_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: ClassCodex_OnAddonCompartmentLeave
+
+Libs\embeds.xml
+
+Data\Generated.lua
+
+# Normalized per-source data (Class Codex Service). The UI accessors read these
+# directly through the SourceData seam; SourceReader builds only the two globals
+# that are read inline (ClassCodexData) or need in-game encoding (ClassCodexUggBuilds).
+Data\db_ugg.lua
+Data\db_icyveins.lua
+Data\db_wowhead.lua
+Data\db_archon.lua
+Data\db_blizzard.lua
+Data\db_reference.lua
+
+
+Locales.lua
+Locales\enUS.lua
+Locales\koKR.lua
+Locales\zhCN.lua
+Locales\deDE.lua
+Locales\frFR.lua
+Locales\ptBR.lua
+Locales\esES.lua
+Locales\itIT.lua
+Locales\ruRU.lua
+Locales\zhTW.lua
+Shared\SourceData.lua
+Shared\Sources.lua
+Shared\SelfTest.lua
+Shared\ItemLabel.lua
+Shared\ImportExport.lua
+Shared\TalentEncode.lua
+Shared\ReduceTaint.lua
+Shared\PvPData.lua
+Shared\StatTargets.lua
+Shared\TalentBuildList.lua
+Shared\UggContext.lua
+# SourceReader loads after the seam + talent-encode helpers it depends on.
+Data\SourceReader.lua
+Shared\GearingUtils.lua
+UI\SectionTitle.lua
+UI\HelpIcon.lua
+UI\SlotIcon.lua
+UI\TooltipScanner.lua
+UI\CollapsibleSection.lua
+Sections\init.lua
+Sections\Crafting.lua
+Sections\Trinkets.lua
+Sections\Gear.lua
+Sections\Supporters.lua
+Sections\About.lua
+Sections\Stats.lua
+Sections\Enhancements.lua
+Sections\StatTargets.lua
+Sections\Rotation.lua
+Sections\Omnium.lua
+Sections\Talents.lua
+ClassCodex.lua
+GearingSections.lua
+Compendium.lua
+TalentPaneDropdown.lua
+LoadoutDock.lua
+UnitMenuIntegration.lua
+Settings.lua

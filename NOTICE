@@ -1,0 +1,46 @@
+Bread Class CodexFork
+=====================
+
+This is a FORK of **Class Codex** by **jfstn**, used and redistributed under the
+MIT License. The upstream copyright notice and licence text are preserved
+verbatim in LICENSE and in BreadClassCodexFork/LICENSE.
+
+Upstream project:
+  Wago        https://addons.wago.io/addons/classcodex
+  CurseForge  project 1480030
+
+This fork is not affiliated with or endorsed by jfstn. Please do not report
+issues with this fork to the upstream author.
+
+
+What this fork changes
+----------------------
+
+1. Interface compatibility for WoW 12.1.0 ("Curse of Ula'tek"). Upstream's
+   `GetInspectSpecialization` call was removed by that patch; this fork routes
+   it through `C_SpecializationInfo.GetInspectSpecialization` behind a fallback.
+
+2. Two additional data sources alongside upstream's Icy Veins / u.gg:
+     - **Wowhead**  — editorial BiS, talent builds and written rotations
+     - **archon.gg** — log-derived popularity, split by Mythic+ and Raid,
+                       with adoption share, max key and DPS per item
+   Both appear in the existing source pickers; nothing upstream was removed.
+
+3. The item tooltip's "BiS for these specs" badge covers all four sources.
+
+
+Data attribution
+----------------
+
+`Data/db_wowhead.lua` and `Data/db_archon.lua` are generated from publicly
+published guide pages on wowhead.com and archon.gg respectively. All gear,
+talent and consumable recommendations in those files are the work of those
+sites and their contributors. This fork only restructures them for in-game
+display. Please visit the source pages — every section links to them.
+
+
+Third-party libraries
+---------------------
+
+`BreadClassCodexFork/Libs/` are bundled unmodified from upstream and remain
+under their own licences.

@@ -1,0 +1,57 @@
+name: Package and release
+
+# Tag-driven. The private data repo's refresh.sh pushes updated db_*.lua here and
+# creates a tag; that tag is what triggers a packaged release, so the weekly
+# scrape and the addon release stay in lockstep.
+on:
+  push:
+    tags:
+      - '**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The packager reads tag history to build the changelog.
+          fetch-depth: 0
+
+      - name: Sanity-check the addon before packaging
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq lua5.4
+          fail=0
+          for f in $(find . -name '*.lua' -not -path './Libs/*'); do
+            luac5.4 -p "$f" || { echo "SYNTAX FAIL: $f"; fail=1; }
+          done
+          # Every file the TOC lists must exist, or the addon half-loads in game.
+          python3 - <<'PY'
+          import os, sys
+          toc = "BreadClassCodexFork.toc"
+          missing = []
+          for raw in open(toc, encoding="utf8", errors="replace"):
+              line = raw.strip()
+              if not line or line.startswith("#"):
+                  continue
+              p = line.replace("\\", "/")
+              if not os.path.isfile(p):
+                  missing.append(p)
+          if missing:
+              print("TOC lists files that do not exist:")
+              for m in missing:
+                  print("  ", m)
+              sys.exit(1)
+          print("TOC file list OK")
+          PY
+          exit $fail
+
+      - name: Package and publish to GitHub releases
+        uses: BigWigsMods/packager@master
+        # No CF_API_KEY / WOWI_API_TOKEN / WAGO_API_TOKEN secrets are set, so the
+        # packager publishes to GitHub releases only. -d skips nothing else.
+        env:
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
