@@ -1,12 +1,12 @@
 ## Interface: 120007, 120100
-## Title: Bread Class CodexFork
+## Title: Bread Class Codex
 ## Notes: |cff33ff99Fork.|r Stat priorities, talent builds, rotation guides, and gearing recommendations for your current spec.
 ## Author: jfstn (fork maintained by BouncyBread)
 ## Version: @project-version@
 ## X-Fork-Of: Class Codex by jfstn (MIT) - https://addons.wago.io/addons/classcodex
 ## SavedVariables: ClassCodexDB
 ## SavedVariablesPerCharacter: ClassCodexCharDB
-## IconTexture: Interface\AddOns\BreadClassCodexFork\icon
+## IconTexture: Interface\AddOns\BreadClassCodex\icon
 ## AddonCompartmentFunc: ClassCodex_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: ClassCodex_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: ClassCodex_OnAddonCompartmentLeave

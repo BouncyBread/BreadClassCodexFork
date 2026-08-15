@@ -7,7 +7,7 @@ local _, ns = ...
 -- from this table instead of redefining texture-escape strings inline.
 -------------------------------------------------------------------------------
 
-local TEX = "Interface\\AddOns\\BreadClassCodexFork\\Textures\\"
+local TEX = "Interface\\AddOns\\BreadClassCodex\\Textures\\"
 
 -- `color` is the brand accent (r, g, b 0-1) used by the About-tab source cards.
 ns.SOURCES = {

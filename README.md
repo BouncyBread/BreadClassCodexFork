@@ -1,4 +1,4 @@
-# Bread Class CodexFork
+# Bread Class Codex
 
 A fork of **[Class Codex](https://addons.wago.io/addons/classcodex)** by jfstn (MIT) that
 adds **Wowhead** and **archon.gg** as data sources alongside the original's Icy Veins and
@@ -34,13 +34,13 @@ the same saved-variable names.
 In [WowUp](https://wowup.io) or CurseBreaker, add this repository as a GitHub source:
 
 ```
-https://github.com/BouncyBread/BreadClassCodexFork
+https://github.com/BouncyBread/BreadClassCodex
 ```
 
 ### Manually
 
-Download the `BreadClassCodexFork-*.zip` from
-[Releases](https://github.com/BouncyBread/BreadClassCodexFork/releases), extract it into
+Download the `BreadClassCodex-*.zip` from
+[Releases](https://github.com/BouncyBread/BreadClassCodex/releases), extract it into
 `World of Warcraft/_retail_/Interface/AddOns/`, and `/reload`.
 
 ## Credits

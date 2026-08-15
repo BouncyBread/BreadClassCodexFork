@@ -1,9 +1,9 @@
-Bread Class CodexFork
-=====================
+Bread Class Codex
+=================
 
 This is a FORK of **Class Codex** by **jfstn**, used and redistributed under the
 MIT License. The upstream copyright notice and licence text are preserved
-verbatim in LICENSE and in BreadClassCodexFork/LICENSE.
+verbatim in LICENSE and in BreadClassCodex/LICENSE.
 
 Upstream project:
   Wago        https://addons.wago.io/addons/classcodex
@@ -42,5 +42,5 @@ display. Please visit the source pages — every section links to them.
 Third-party libraries
 ---------------------
 
-`BreadClassCodexFork/Libs/` are bundled unmodified from upstream and remain
+`BreadClassCodex/Libs/` are bundled unmodified from upstream and remain
 under their own licences.

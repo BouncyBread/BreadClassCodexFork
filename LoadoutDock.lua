@@ -473,7 +473,7 @@ local function BuildLoadoutMenu(_, root)
         local ivSpecData = ns:GetIcyVeinsTalentSpecData(classToken, specSlug)
         if ivSpecData and ivSpecData.talents and #ivSpecData.talents > 0 then
             if hasBlizzard then root:CreateDivider() end
-            root:CreateTitle("|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\icyveins:14:14:0:0|t  " .. (L["settings.value.icyveins"] or "Icy Veins"))
+            root:CreateTitle("|TInterface\\AddOns\\BreadClassCodex\\Textures\\icyveins:14:14:0:0|t  " .. (L["settings.value.icyveins"] or "Icy Veins"))
             for _, build in ipairs(ivSpecData.talents) do
                 local capturedExport = build.exportString
                 local capturedLabel = build.buildLabel or build.context or "Build"
@@ -527,7 +527,7 @@ local function BuildLoadoutMenu(_, root)
         if hasBlizzard or hasIcyVeins then
             root:CreateDivider()
         end
-        root:CreateTitle("|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\ugg:14:14:0:0|t  " .. L["settings.value.ugg"])
+        root:CreateTitle("|TInterface\\AddOns\\BreadClassCodex\\Textures\\ugg:14:14:0:0|t  " .. L["settings.value.ugg"])
         root:CreateButton("|cff999999" .. uggReason .. "|r", function() end)
     end
     if uggSpecData and uggSpecData.contexts and ns.GroupUggContexts then
@@ -569,7 +569,7 @@ local function BuildLoadoutMenu(_, root)
             or #groups.mplusDungeons > 0 or #groups.raidMythicBosses > 0 or #groups.raidHeroicBosses > 0
         if hasAny then
             if hasBlizzard or hasIcyVeins then root:CreateDivider() end
-            root:CreateTitle("|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\ugg:14:14:0:0|t  " .. L["settings.value.ugg"])
+            root:CreateTitle("|TInterface\\AddOns\\BreadClassCodex\\Textures\\ugg:14:14:0:0|t  " .. L["settings.value.ugg"])
 
             -- M+ Dungeons submenu — overview ("All Dungeons") sits as the
             -- first entry inside the submenu rather than as a separate
@@ -740,7 +740,7 @@ local function BuildLoadoutMenu(_, root)
             local bgHas = groupHasAny(BG_GROUP)
 
             if hasBlizzard or hasUgg or hasIcyVeins then root:CreateDivider() end
-            root:CreateTitle("|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\bnet:14:14:0:0|t  " .. (L["pvp.label"] or "PvP"))
+            root:CreateTitle("|TInterface\\AddOns\\BreadClassCodex\\Textures\\bnet:14:14:0:0|t  " .. (L["pvp.label"] or "PvP"))
 
             if not arenaHas and not bgHas then
                 -- Defensive fallback: all brackets fall outside the
@@ -876,7 +876,7 @@ local function CreateDock()
         local specData = ns.GetSpecData and ns.GetSpecData()
         local codexMatch = MatchCodexBuild(specData)
         if codexMatch and ns.FormatBuildLabel then
-            GameTooltip:AddLine("|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\ugg:12:12:0:0|t  " ..
+            GameTooltip:AddLine("|TInterface\\AddOns\\BreadClassCodex\\Textures\\ugg:12:12:0:0|t  " ..
                 ns.FormatBuildLabel(codexMatch), 0.6, 0.85, 0.6)
         else
             local classToken, specSlug
@@ -884,7 +884,7 @@ local function CreateDock()
             local uggBuild, uggCtx = MatchUggBuild(classToken, specSlug)
             if uggBuild and uggCtx then
                 local uggLabel = (ns.GetUggEncounterLabel and ns.GetUggEncounterLabel(uggCtx)) or "u.gg"
-                GameTooltip:AddLine("|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\ugg:12:12:0:0|t  " ..
+                GameTooltip:AddLine("|TInterface\\AddOns\\BreadClassCodex\\Textures\\ugg:12:12:0:0|t  " ..
                     uggLabel, 0.6, 0.85, 0.6)
             end
         end

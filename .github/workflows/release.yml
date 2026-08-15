@@ -31,7 +31,7 @@ jobs:
           # Every file the TOC lists must exist, or the addon half-loads in game.
           python3 - <<'PY'
           import os, sys
-          toc = "BreadClassCodexFork.toc"
+          toc = "BreadClassCodex.toc"
           missing = []
           for raw in open(toc, encoding="utf8", errors="replace"):
               line = raw.strip()

@@ -1343,27 +1343,27 @@ end
 local SOURCE_INFO = {
     -- Internal value "ugg" — the u.gg-backed per-encounter source.
     ugg = {
-        label = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\ugg:14:14:0:0|t u.gg",
+        label = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\ugg:14:14:0:0|t u.gg",
         closed = "u.gg",
         placeholder = (ns.L and ns.L["talent_pane.placeholder.encounter"]) or "Pick an encounter",
     },
     icyveins = {
-        label = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\icyveins:14:14:0:0|t Icy Veins",
+        label = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\icyveins:14:14:0:0|t Icy Veins",
         closed = "Icy Veins",
         placeholder = (ns.L and ns.L["loadout_dock.pick_a_build"]) or "Pick a build",
     },
     wowhead = {
-        label = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\wowhead:14:14:0:0|t Wowhead",
+        label = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\wowhead:14:14:0:0|t Wowhead",
         closed = "Wowhead",
         placeholder = (ns.L and ns.L["loadout_dock.pick_a_build"]) or "Pick a build",
     },
     archongg = {
-        label = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\archon:14:14:0:0|t Archon",
+        label = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\archon:14:14:0:0|t Archon",
         closed = "Archon",
         placeholder = (ns.L and ns.L["loadout_dock.pick_a_build"]) or "Pick a build",
     },
     pvp = {
-        label = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\bnet:14:14:0:0|t PvP",
+        label = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\bnet:14:14:0:0|t PvP",
         closed = "PvP",
         placeholder = (ns.L and ns.L["talent_pane.placeholder.bracket"]) or "Pick a bracket",
     },
@@ -1507,7 +1507,7 @@ local function EnsureContainer()
 
     local icon = iconBtn:CreateTexture(nil, "ARTWORK")
     icon:SetAllPoints()
-    icon:SetTexture("Interface\\AddOns\\BreadClassCodexFork\\icon")
+    icon:SetTexture("Interface\\AddOns\\BreadClassCodex\\icon")
     if not icon:GetTexture() then
         icon:SetAtlas("mechagon-projects")
         icon:SetDesaturated(true)

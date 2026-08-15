@@ -373,9 +373,9 @@ end
 -- resolves it lexically (Lua locals are scoped from declaration
 -- onward; declaring this below MakeCard makes the OnEnter look it up
 -- as a global → nil → "attempt to concatenate" error).
-local BIS_INLINE_ICON            = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\ugg:12:12|t"
-local POPULAR_UGG_INLINE_ICON = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\ugg:12:12|t"
-local ICYVEINS_INLINE_ICON       = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\icyveins:12:12|t"
+local BIS_INLINE_ICON            = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\ugg:12:12|t"
+local POPULAR_UGG_INLINE_ICON = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\ugg:12:12|t"
+local ICYVEINS_INLINE_ICON       = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\icyveins:12:12|t"
 local function ownedInlineIcon()
     if C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo("common-icon-checkmark") then
         return "|A:common-icon-checkmark:14:14|a"
@@ -599,7 +599,7 @@ function Crafting.AttachOptionsButton(parent)
 
     local tex = btn:CreateTexture(nil, "ARTWORK")
     tex:SetAllPoints()
-    tex:SetTexture("Interface\\AddOns\\BreadClassCodexFork\\Textures\\gear")
+    tex:SetTexture("Interface\\AddOns\\BreadClassCodex\\Textures\\gear")
     tex:SetVertexColor(0.7, 0.7, 0.7, 0.9)  -- idle, matches HelpIcon
 
     btn:SetScript("OnEnter", function(self)

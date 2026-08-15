@@ -1,4 +1,4 @@
-package-as: BreadClassCodexFork
+package-as: BreadClassCodex
 
 # Libs/ is vendored from upstream and committed here as-is. Deliberately NOT
 # declared under `externals`: the packager would otherwise fetch each library

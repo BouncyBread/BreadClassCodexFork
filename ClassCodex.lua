@@ -649,7 +649,7 @@ titleBar:SetHeight(24)
 titleBar:SetPoint("TOPLEFT", panel, "TOPLEFT", 0, -6)
 titleBar:SetPoint("TOPRIGHT", panel, "TOPRIGHT", 0, -6)
 
-local ADDON_ICON_PATH = "Interface\\AddOns\\BreadClassCodexFork\\icon"
+local ADDON_ICON_PATH = "Interface\\AddOns\\BreadClassCodex\\icon"
 
 local specIcon = titleBar:CreateTexture(nil, "ARTWORK")
 specIcon:SetSize(18, 18)
@@ -704,8 +704,8 @@ compendiumBtn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 local pinBtn = CreateFrame("Button", nil, titleBar)
 pinBtn:SetSize(14, 14)
 pinBtn:SetPoint("RIGHT", compendiumBtn, "LEFT", -3, 0)
-pinBtn:SetNormalTexture("Interface\\AddOns\\BreadClassCodexFork\\Textures\\gear")
-pinBtn:SetHighlightTexture("Interface\\AddOns\\BreadClassCodexFork\\Textures\\gear")
+pinBtn:SetNormalTexture("Interface\\AddOns\\BreadClassCodex\\Textures\\gear")
+pinBtn:SetHighlightTexture("Interface\\AddOns\\BreadClassCodex\\Textures\\gear")
 pinBtn:GetHighlightTexture():SetAlpha(0.3)
 local pinBtnTex = pinBtn:GetNormalTexture()
 pinBtnTex:SetVertexColor(0.7, 0.7, 0.7, 0.9) -- idle, matches the Crafting tab cog
@@ -1420,9 +1420,9 @@ allTalentFallback:Hide()
 -- key as the talent pane and Compendium, so flipping one updates all.
 -- Each option is prefixed with the source's brand icon via a |T...|t
 -- texture escape — no extra widget plumbing needed.
-local SOURCE_ICON_UGG      = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\ugg:12:12:0:0|t  u.gg"
-local SOURCE_ICON_ICYVEINS = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\icyveins:12:12:0:0|t  Icy Veins"
-local SOURCE_ICON_PVP      = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\bnet:12:12:0:0|t  PvP"
+local SOURCE_ICON_UGG      = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\ugg:12:12:0:0|t  u.gg"
+local SOURCE_ICON_ICYVEINS = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\icyveins:12:12:0:0|t  Icy Veins"
+local SOURCE_ICON_PVP      = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\bnet:12:12:0:0|t  PvP"
 
 local allTalentSourceDropdown = CreateOptionDropdown("ClassCodexAllTalentSourceDropdown", allTalentContent, 140)
 allTalentSourceDropdown:Hide()
@@ -3326,7 +3326,7 @@ local BIS_TOOLTIP_SOURCES = {
 local function BisSourceChip(src, showIcon, showLabel)
     local s = ""
     if showIcon then
-        s = s .. "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\" .. src.tex .. ":12:12:0:0|t"
+        s = s .. "|TInterface\\AddOns\\BreadClassCodex\\Textures\\" .. src.tex .. ":12:12:0:0|t"
     end
     if showLabel then s = s .. (showIcon and " " or "") .. src.hex .. src.abbr .. "|r" end
     return s
@@ -3881,7 +3881,7 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
                 -- Dedicated minimap art: the Codex sword on a leather medallion.
                 -- 32px uncompressed TGA (Textures/minimap-crest.tga) — matches
                 -- LibDBIcon's ~17px frame closely so it stays crisp.
-                icon = "Interface\\AddOns\\BreadClassCodexFork\\Textures\\minimap-crest",
+                icon = "Interface\\AddOns\\BreadClassCodex\\Textures\\minimap-crest",
                 OnClick = function(_, button)
                     if button == "LeftButton" then
                         if ns.OpenCompendium then

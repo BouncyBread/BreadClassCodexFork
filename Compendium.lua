@@ -851,11 +851,11 @@ local function InitFrame()
     -- Source dropdown (Icy Veins | u.gg | PvP) — only shown by the
     -- Talents tab. Mirrors the docked panel and the addon's other
     -- dropdowns. Each option carries the brand icon via a |T...|t escape.
-    local SOURCE_ICON_UGG      = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\ugg:12:12:0:0|t  u.gg"
-    local SOURCE_ICON_ICYVEINS = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\icyveins:12:12:0:0|t  Icy Veins"
-    local SOURCE_ICON_PVP      = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\bnet:12:12:0:0|t  PvP"
-    local SOURCE_ICON_WOWHEAD  = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\wowhead:12:12:0:0|t  Wowhead"
-    local SOURCE_ICON_ARCHON   = "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\archon:12:12:0:0|t  Archon"
+    local SOURCE_ICON_UGG      = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\ugg:12:12:0:0|t  u.gg"
+    local SOURCE_ICON_ICYVEINS = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\icyveins:12:12:0:0|t  Icy Veins"
+    local SOURCE_ICON_PVP      = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\bnet:12:12:0:0|t  PvP"
+    local SOURCE_ICON_WOWHEAD  = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\wowhead:12:12:0:0|t  Wowhead"
+    local SOURCE_ICON_ARCHON   = "|TInterface\\AddOns\\BreadClassCodex\\Textures\\archon:12:12:0:0|t  Archon"
     local function SourceLabel(source)
         if source == "icyveins" then return SOURCE_ICON_ICYVEINS end
         if source == "pvp" then return SOURCE_ICON_PVP end
@@ -1225,7 +1225,7 @@ local function RenderStatPrioritySection(specData, heroTalent)
         showPvpFallback  = currentStatContext == "PvP" and not priority,
         labelForContext  = function(ctx)
             if ctx == "PvP" then
-                return "|TInterface\\AddOns\\BreadClassCodexFork\\Textures\\ugg:12:12:0:0|t  " .. L["pvp.label"]
+                return "|TInterface\\AddOns\\BreadClassCodex\\Textures\\ugg:12:12:0:0|t  " .. L["pvp.label"]
             end
             return L[ctx]
         end,

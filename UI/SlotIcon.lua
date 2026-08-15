@@ -77,7 +77,7 @@ ns.SlotIconMarkers = {
         -- corner without overlap.
         corner = "topleft",
         spec = {
-            texture = "Interface\\AddOns\\BreadClassCodexFork\\Textures\\ugg",
+            texture = "Interface\\AddOns\\BreadClassCodex\\Textures\\ugg",
             size = 13,
         },
     },
@@ -87,7 +87,7 @@ ns.SlotIconMarkers = {
         -- from u.gg's top-player gear page.
         corner = "topleft",
         spec = {
-            texture = "Interface\\AddOns\\BreadClassCodexFork\\Textures\\ugg",
+            texture = "Interface\\AddOns\\BreadClassCodex\\Textures\\ugg",
             size = 13,
         },
     },
@@ -97,7 +97,7 @@ ns.SlotIconMarkers = {
         -- embellishment picks). Shares the icyveins.tga brand asset.
         corner = "topleft",
         spec = {
-            texture = "Interface\\AddOns\\BreadClassCodexFork\\Textures\\icyveins",
+            texture = "Interface\\AddOns\\BreadClassCodex\\Textures\\icyveins",
             size = 13,
         },
     },

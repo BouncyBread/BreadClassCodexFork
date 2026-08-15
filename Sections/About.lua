@@ -212,12 +212,12 @@ function About.InitPanel(opts)
     panel.addonLabel = sectionLabel("Class Codex")
     panel.addonCards = {
         copyCard({
-            texture = "Interface\\AddOns\\BreadClassCodexFork\\Textures\\discord", color = { 0.34, 0.40, 0.95 },
+            texture = "Interface\\AddOns\\BreadClassCodex\\Textures\\discord", color = { 0.34, 0.40, 0.95 },
             title = "Discord", role = L["about.role.discord"],
             urlFn = function() return "https://discord.gg/WY7HQaVkRw" end,
         }),
         CreateCard({
-            texture = "Interface\\AddOns\\BreadClassCodexFork\\Textures\\gear", color = { 0.55, 0.55, 0.58 },
+            texture = "Interface\\AddOns\\BreadClassCodex\\Textures\\gear", color = { 0.55, 0.55, 0.58 },
             title = "Settings", role = L["about.role.settings"],
             hint = L["compendium.open_settings"],
             onClick = function()
@@ -227,7 +227,7 @@ function About.InitPanel(opts)
             end,
         }),
         copyCard({
-            texture = "Interface\\AddOns\\BreadClassCodexFork\\Textures\\patreon", color = { 0.98, 0.41, 0.33 },
+            texture = "Interface\\AddOns\\BreadClassCodex\\Textures\\patreon", color = { 0.98, 0.41, 0.33 },
             title = "Patreon", role = L["about.role.patreon"], emphasize = true,
             urlFn = function() return "https://www.patreon.com/classcodex" end,
         }),
