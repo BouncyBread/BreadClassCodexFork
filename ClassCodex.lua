@@ -1311,6 +1311,11 @@ local allTalentContent = CreateFrame("Frame", nil, contentFrame)
 allTalentContent:SetHeight(1)
 allTalentContent:Hide()
 
+-- Exact source used by the most recent Talents render. This must live outside
+-- the construction block below because the footer renderer is declared after
+-- that block and needs the session-local (unpinned) choice.
+local allTalentRenderedSource = nil
+
 do
 local TALENT_CONTEXT_HEADER_HEIGHT = 22
 local ALL_TALENT_INDENT = 8
@@ -1448,11 +1453,6 @@ allTalentSourceDropdown:Hide()
 -- ignores an unpinned pick — so changing the dropdown never changed the talents.
 local allTalentSourceOverride = nil
 local allTalentSourceOverrideSpec = nil
--- Exact source used by the most recent Talents render. Unlike the persisted
--- source, this includes an unpinned session-local dropdown choice and is what
--- the footer attribution/date must follow.
-local allTalentRenderedSource = nil
-
 local function BindAllTalentCopy(row, exportString)
     row.copyBtn:SetScript("OnClick", function()
         ShowCopyPopup(exportString, row)

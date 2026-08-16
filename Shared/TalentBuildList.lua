@@ -57,7 +57,17 @@ function ns.FormatBuildLabel(build)
     local buildLabel = build.buildLabel
     local label
     if buildLabel and buildLabel ~= "" then
-        if not context or context == "" or buildLabel:lower():find(context:lower(), 1, true) then
+        local lowerLabel = buildLabel:lower()
+        local lowerContext = context and context:lower() or ""
+        -- Wowhead sometimes spells the row name "M+ - Virtue" while the
+        -- normalized context is "Mythic+". They convey the same scope, so keep
+        -- the source-authored label verbatim instead of rendering the redundant
+        -- "Mythic+ — M+ - Virtue".
+        local conveysContext = lowerContext ~= "" and (
+            lowerLabel:find(lowerContext, 1, true)
+            or (lowerContext == "mythic+" and lowerLabel:match("^m%+[%s%-—]"))
+        )
+        if not context or context == "" or conveysContext then
             label = buildLabel
         else
             label = context .. " — " .. buildLabel
