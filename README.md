@@ -29,7 +29,7 @@ add-on to it — both loaded at once will collide on frame names and saved varia
 Uninstall Class Codex first. Your existing settings carry over, because this fork keeps
 the same saved-variable names.
 
-### Manually (reliable)
+### Manually
 
 Download `BreadClassCodex-*.zip` from
 [Releases](https://github.com/BouncyBread/BreadClassCodexFork/releases), extract it into
@@ -44,12 +44,16 @@ Add this repository as a GitHub source:
 https://github.com/BouncyBread/BreadClassCodexFork
 ```
 
-**WowUp 2.23.0 cannot install from a GitHub source** — not just this addon, any of them.
-It downloads releases from GitHub's API asset endpoint without sending
-`Accept: application/octet-stream`, so GitHub returns JSON metadata instead of the zip and
-the install fails with *"End of central directory record signature not found."* A GitHub
-token does not help; the header is the only thing that matters. Use the manual route above
-with WowUp, or a manager that downloads from the release's normal download URL.
+Installing this way works. **Updating in WowUp 2.23.0 does not**, and the fix is to
+remove the addon in WowUp and add it again — that reinstalls at the current version.
+
+The two paths use different URLs. A fresh install downloads from the release's normal
+download URL and succeeds. An update instead fetches
+`api.github.com/repos/.../releases/assets/{id}` without sending
+`Accept: application/octet-stream`, so GitHub returns JSON metadata rather than the zip
+and it fails with *"End of central directory record signature not found."* A GitHub token
+makes no difference — the header is the only thing that matters — so remove-and-re-add,
+or the manual route above, are the ways through.
 
 ## Credits
 
