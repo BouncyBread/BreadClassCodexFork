@@ -27,7 +27,7 @@ local BIT_WIDTH_RANKS_PURCHASED = 6
 -------------------------------------------------------------------------------
 
 local function Msg(text)
-    print("|cff00ccffClass Codex:|r " .. text)
+    print("|cff00ccffBread Codex:|r " .. text)
 end
 
 local function GetSpecID()
@@ -322,10 +322,11 @@ local function ResetAndPurchaseDeferred(configID, treeID, entryInfo, onComplete)
 end
 
 -------------------------------------------------------------------------------
--- Dedicated "Class Codex" loadout slot (configID stored in CharDB per spec)
+-- Dedicated "Bread Codex" loadout slot (configID stored in CharDB per spec)
 -------------------------------------------------------------------------------
 
-local CC_NAME = "Class Codex"
+local CC_NAME = "Bread Codex"
+local LEGACY_CC_NAME = "Class Codex"
 local pendingApply = nil
 local pendingApplySeq = 0
 
@@ -377,17 +378,20 @@ end
 -- the next Apply would overwrite their loadout.
 local function IsCCSlotName(name)
     if type(name) ~= "string" then return false end
-    if name == CC_NAME then return true end
-    return name:sub(1, #CC_NAME + 2) == CC_NAME .. ": "
+    for _, slotName in ipairs({ CC_NAME, LEGACY_CC_NAME }) do
+        if name == slotName then return true end
+        if name:sub(1, #slotName + 2) == slotName .. ": " then return true end
+    end
+    return false
 end
 -- Exposed for the native loadout-dropdown tint (TalentPaneDropdown.lua):
 -- it scans the live config names to find our slot without re-deriving the
 -- naming convention.
 ns.IsCCSlotName = IsCCSlotName
 
--- Brand colour for the Class Codex loadout wherever it shows in a loadout
--- list (native talent dropdown + the loadout dock). Class Codex brand blue
--- (the same cyan as the "Class Codex:" chat prefix), so our slot stands out
+-- Brand colour for the Bread Codex loadout wherever it shows in a loadout
+-- list (native talent dropdown + the loadout dock). Bread Codex brand blue
+-- (the same cyan as the "Bread Codex:" chat prefix), so our slot stands out
 -- from the player's white loadouts at a glance.
 ns.CC_LOADOUT_COLOR = CreateColor(0, 0.8, 1)
 function ns.WrapCCName(name)
@@ -443,7 +447,7 @@ end
 -- Look for an existing CC-named slot on the current spec without
 -- relying on ClassCodexCharDB. Lets us adopt an orphan slot left over
 -- from a previous character DB wipe or a manual SavedVariables edit
--- instead of creating a second "Class Codex" slot alongside it. Returns
+-- instead of creating a second "Bread Codex" slot alongside it. Returns
 -- the first matching configID we find, or nil.
 local function FindExistingCCSlot()
     local specID = GetSpecID()
@@ -465,7 +469,7 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
         if type(arg1) ~= "table" then return end
         if not pendingApply then return end
         if arg1.type ~= Enum.TraitConfigType.Combat then return end
-        -- Only adopt the Class Codex slot we asked for by name.
+        -- Only adopt the Bread Codex slot we asked for by name.
         if arg1.name ~= CC_NAME then return end
         self:UnregisterEvent("TRAIT_CONFIG_CREATED")
         StoreConfigID(arg1.ID)
@@ -513,7 +517,7 @@ end)
 -- post-commit rename if `finalName` is set.
 --
 -- `finalName` controls the rename after CommitConfig's cast finishes:
---   - Apply path passes "Class Codex: <buildLabel>" so the loadout
+--   - Apply path passes "Bread Codex: <buildLabel>" so the loadout
 --     label reflects the picked recommendation.
 --   - Save-as-new passes nil so the user's chosen name stays intact.
 -------------------------------------------------------------------------------
@@ -656,7 +660,7 @@ function ns.ApplyTalentExportString(exportString, buildLabel, _isContinuation)
     if not _isContinuation and C_Traits.ConfigHasStagedChanges
         and C_Traits.ConfigHasStagedChanges(activeConfigID)
     then
-        return Fail("You have unsaved talent changes. Open the talents pane and click Apply Changes (or right-click the loadout name to discard) before applying a Class Codex build.")
+        return Fail("You have unsaved talent changes. Open the talents pane and click Apply Changes (or right-click the loadout name to discard) before applying a Bread Codex build.")
     end
 
     -- We deliberately don't pre-flight C_ClassTalents.CanChangeTalents()
@@ -706,7 +710,7 @@ function ns.ApplyTalentExportString(exportString, buildLabel, _isContinuation)
 
     -- Ensure we have a dedicated loadout slot. Adopt an existing
     -- CC-named slot before creating a new one so the user always ends
-    -- up with a SINGLE Class Codex loadout per spec, even after a
+    -- up with a SINGLE Bread Codex loadout per spec, even after a
     -- character-DB wipe or manual SavedVariables edit cleared the
     -- stored mapping.
     local ccConfigID = GetStoredConfigID()
@@ -716,7 +720,7 @@ function ns.ApplyTalentExportString(exportString, buildLabel, _isContinuation)
     end
     if not ccConfigID then
         if C_ClassTalents.CanCreateNewConfig and not C_ClassTalents.CanCreateNewConfig() then
-            return Fail("No free loadout slots — delete one to use Class Codex builds")
+            return Fail("No free loadout slots — delete one to use Bread Codex builds")
         end
         C_ClassTalents.RequestNewConfig(CC_NAME)
         SetPendingApply({ exportString = exportString, buildLabel = buildLabel })
@@ -740,7 +744,7 @@ function ns.ApplyTalentExportString(exportString, buildLabel, _isContinuation)
             -- Clear the stored ID so a subsequent click runs the fresh path,
             -- then surface the error. Do NOT recurse.
             ClearStoredConfigID(specID)
-            return Fail("Could not load Class Codex loadout. Open the talents pane and click Apply Changes, then try again.")
+            return Fail("Could not load Bread Codex loadout. Open the talents pane and click Apply Changes, then try again.")
         end
     end
 
@@ -884,7 +888,7 @@ function ns.SaveTalentBuildAsNewLoadout(exportString, buildLabel, userName)
     -- Reject CC-looking names so the slot can't later be adopted/overwritten
     -- by the apply path's FindExistingCCSlot.
     if IsCCSlotName(userName) then
-        return nil, '"' .. CC_NAME .. '" is reserved for Class Codex — pick a different name.'
+        return nil, '"' .. CC_NAME .. '" is reserved for Bread Codex — pick a different name.'
     end
     if InCombatLockdown and InCombatLockdown() then return nil, "Cannot change talents in combat." end
     if not C_ClassTalents.ImportLoadout then

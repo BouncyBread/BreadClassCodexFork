@@ -1,5 +1,5 @@
 ## Interface: 120007, 120100
-## Title: Bread Class Codex
+## Title: Bread Codex
 ## Notes: |cff33ff99Fork.|r Stat priorities, talent builds, rotation guides, and gearing recommendations for your current spec.
 ## Author: jfstn (fork maintained by BouncyBread)
 ## Version: @project-version@
@@ -55,6 +55,7 @@ Shared\UggContext.lua
 # SourceReader loads after the seam + talent-encode helpers it depends on.
 Data\SourceReader.lua
 Shared\GearingUtils.lua
+Shared\ArchonContext.lua
 UI\SectionTitle.lua
 UI\HelpIcon.lua
 UI\SlotIcon.lua

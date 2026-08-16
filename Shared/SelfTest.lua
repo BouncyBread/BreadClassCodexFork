@@ -10,7 +10,7 @@ local _, ns = ...
 -- (not player-facing UI, so intentionally not localized).
 -------------------------------------------------------------------------------
 
-local PREFIX = "|cff00ccffClass Codex|r "
+local PREFIX = "|cff00ccffBread Codex|r "
 local function green(s) return "|cff40ff40" .. s .. "|r" end
 local function red(s) return "|cffff5555" .. s .. "|r" end
 

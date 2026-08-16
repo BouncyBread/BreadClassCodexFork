@@ -658,7 +658,7 @@ specIcon:SetPoint("LEFT", titleBar, "LEFT", PANEL_PADDING, 0)
 local titleText = titleBar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 titleText:SetPoint("LEFT", specIcon, "RIGHT", 6, 0)
 local addonVersion = C_AddOns.GetAddOnMetadata(addonName, "Version") or ""
-titleText:SetText("Class Codex")
+titleText:SetText("Bread Codex")
 titleText:SetTextColor(1, 0.82, 0)
 titleText:SetWordWrap(false)
 titleText:SetNonSpaceWrap(false)
@@ -680,7 +680,7 @@ closeBtn:SetScript("OnEnter", function(self)
 end)
 closeBtn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
--- Title-bar buttons, right to left: close, Compendium (Class Codex logo), gear,
+-- Title-bar buttons, right to left: close, Compendium (Bread Codex logo), gear,
 -- minimize (floating only). So the docked reading order is gear / Compendium /
 -- close, with even 6px gaps between the icons.
 local compendiumBtn = CreateFrame("Button", nil, titleBar)
@@ -1416,6 +1416,17 @@ allTalentFallback:SetTextColor(0.5, 0.5, 0.5)
 allTalentFallback:SetText(L["loadout_dock.no_talent_builds"])
 allTalentFallback:Hide()
 
+-- Temporary data-status copy for Archon's aggregate-only Season 1 dataset.
+-- It is a quiet, non-interactive line rather than another build row, and the
+-- render path hides it automatically as soon as encounter contexts exist.
+local allTalentArchonNotice = allTalentContent:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+allTalentArchonNotice:SetJustifyH("LEFT")
+allTalentArchonNotice:SetJustifyV("TOP")
+allTalentArchonNotice:SetWordWrap(true)
+allTalentArchonNotice:SetTextColor(0.78, 0.78, 0.78)
+allTalentArchonNotice:SetText(L["archon.season1_notice"])
+allTalentArchonNotice:Hide()
+
 -- Source dropdown. Persisted via the same per-spec key as the talent pane and
 -- Compendium, so flipping one updates all. Each option is prefixed with the
 -- source's brand icon via a |T...|t texture escape — no extra widget plumbing
@@ -1437,6 +1448,10 @@ allTalentSourceDropdown:Hide()
 -- ignores an unpinned pick — so changing the dropdown never changed the talents.
 local allTalentSourceOverride = nil
 local allTalentSourceOverrideSpec = nil
+-- Exact source used by the most recent Talents render. Unlike the persisted
+-- source, this includes an unpinned session-local dropdown choice and is what
+-- the footer attribution/date must follow.
+local allTalentRenderedSource = nil
 
 local function BindAllTalentCopy(row, exportString)
     row.copyBtn:SetScript("OnClick", function()
@@ -1457,7 +1472,7 @@ local function BindAllTalentApply(row, exportString, loadoutLabel)
         local ok, err = ns.ApplyTalentExportString(exportString, loadoutLabel)
         if not ok then
             self.icon:SetVertexColor(1, 0.2, 0.2)
-            print("|cff00ccffClass Codex:|r " .. (err or "Failed to apply talents"))
+            print("|cff00ccffBread Codex:|r " .. (err or "Failed to apply talents"))
         else
             self.icon:SetVertexColor(1, 0.8, 0)
         end
@@ -1647,6 +1662,130 @@ local function RenderAllTalentsUgg(class, spec, yPos)
                     (build.heroTalent or "Build") .. " " .. fullLabel)
                 BindAllTalentSaveAsNew(row, build.exportString,
                     "u.gg - " .. (build.heroTalent or "Build") .. " " .. fullLabel)
+
+                row:Show()
+                yPos = yPos + TALENT_BTN_HEIGHT + TALENT_BTN_GAP
+            end
+        end
+        yPos = yPos + 4
+    end
+
+    local mplus = {}
+    if groups.mplusOverview then mplus[#mplus + 1] = groups.mplusOverview end
+    for _, e in ipairs(groups.mplusDungeons) do mplus[#mplus + 1] = e end
+    emitSection("Mythic+", mplus)
+
+    local heroic = {}
+    if groups.raidOverviewHeroic then heroic[#heroic + 1] = groups.raidOverviewHeroic end
+    for _, e in ipairs(groups.raidHeroicBosses) do heroic[#heroic + 1] = e end
+    emitSection("Raid — Heroic", heroic)
+
+    local mythic = {}
+    if groups.raidOverviewMythic then mythic[#mythic + 1] = groups.raidOverviewMythic end
+    for _, e in ipairs(groups.raidMythicBosses) do mythic[#mythic + 1] = e end
+    emitSection("Raid — Mythic", mythic)
+
+    return yPos
+end
+
+-- Render the Archon source on the docked Talents side tab when the spec has
+-- per-encounter data: one row per dungeon/boss under the same M+/Heroic/Mythic
+-- section headers as the u.gg view (which is what makes the two sources feel
+-- like one family). Each row shows the encounter label and the context's top
+-- build; the flat hero-grouped fallback lives in RenderAllTalentsArchon.
+local function RenderAllTalentsArchonContexts(class, spec, yPos)
+    local groups = ns.GroupArchonContexts and ns.GroupArchonContexts(class, spec) or nil
+    if not groups or not (groups.mplusOverview or #groups.mplusDungeons > 0
+        or groups.raidOverviewHeroic or #groups.raidHeroicBosses > 0
+        or groups.raidOverviewMythic or #groups.raidMythicBosses > 0) then
+        allTalentFallback:SetText(L["loadout_dock.no_archon_builds"] or "No Archon talent builds available.")
+        allTalentFallback:ClearAllPoints()
+        allTalentFallback:SetPoint("TOPLEFT", allTalentContent, "TOPLEFT", 0, -yPos)
+        allTalentFallback:Show()
+        return yPos + 20
+    end
+
+    local matchActive = ns.BuildMatchesActive
+    local activeTalentBits = (not matchActive) and ns.GetActiveTalentSignature() or nil
+    local hdrIdx, rowIdx = 0, 0
+
+    local function emitSection(headerText, entries)
+        if not entries or #entries == 0 then return end
+        hdrIdx = hdrIdx + 1
+        local hdr = EnsureTalentHeader(hdrIdx)
+        local collapsed = GetUggSectionCollapsed(headerText)
+
+        hdr.label:SetText(headerText)
+        hdr.label:SetTextColor(1, 0.82, 0)
+        if hdr.arrow then
+            hdr.arrow:SetTexture(collapsed
+                and "Interface\\Buttons\\UI-PlusButton-Up"
+                or "Interface\\Buttons\\UI-MinusButton-Up")
+            hdr.arrow:Show()
+        end
+        hdr:SetScript("OnClick", function()
+            SetUggSectionCollapsed(headerText, not GetUggSectionCollapsed(headerText))
+            ns:UpdatePanel()
+        end)
+        hdr:ClearAllPoints()
+        hdr:SetPoint("TOPLEFT", allTalentContent, "TOPLEFT", 0, -yPos)
+        hdr:SetPoint("RIGHT", allTalentContent, "RIGHT", 0, 0)
+        hdr:Show()
+        yPos = yPos + TALENT_CONTEXT_HEADER_HEIGHT
+
+        if collapsed then
+            yPos = yPos + 4
+            return
+        end
+
+        for _, entry in ipairs(entries) do
+            local build = entry.builds and entry.builds[1]
+            if build then
+                rowIdx = rowIdx + 1
+                local row = EnsureTalentRow(rowIdx)
+
+                local heroAtlas = build.heroTalent and ns.HERO_TALENT_ATLAS
+                    and ns.HERO_TALENT_ATLAS[build.heroTalent]
+                if heroAtlas then
+                    row.heroIcon:SetAtlas(heroAtlas)
+                    row.heroIcon:Show()
+                else
+                    row.heroIcon:Hide()
+                end
+
+                local isActive
+                if matchActive then
+                    isActive = matchActive(build)
+                elseif activeTalentBits then
+                    isActive = ns.ExtractTalentBits(build.exportString) == activeTalentBits
+                else
+                    isActive = false
+                end
+                row.isActive = isActive
+                if isActive then
+                    row:SetBackdropBorderColor(0.2, 0.8, 0.2, 1)
+                    row.label:SetTextColor(0.3, 1, 0.3)
+                else
+                    row:SetBackdropBorderColor(0.4, 0.4, 0.4, 0.8)
+                    row.label:SetTextColor(0.8, 0.8, 0.8)
+                end
+
+                row.label:ClearAllPoints()
+                local labelLeftOffset = heroAtlas and 24 or 8
+                row.label:SetPoint("LEFT", row, "LEFT", labelLeftOffset, 0)
+                row.label:SetPoint("RIGHT", row.copyBtn, "LEFT", -4, 0)
+                local fullLabel = entry.label or entry.contextKey or "Build"
+                row.label:SetText(fullLabel)
+
+                row:ClearAllPoints()
+                row:SetPoint("TOPLEFT", allTalentContent, "TOPLEFT", ALL_TALENT_INDENT, -yPos)
+                row:SetPoint("RIGHT", allTalentContent, "RIGHT", 0, 0)
+
+                BindAllTalentCopy(row, build.exportString)
+                BindAllTalentApply(row, build.exportString,
+                    (build.heroTalent or "Build") .. " " .. fullLabel)
+                BindAllTalentSaveAsNew(row, build.exportString,
+                    "Archon - " .. (build.heroTalent or "Build") .. " " .. fullLabel)
 
                 row:Show()
                 yPos = yPos + TALENT_BTN_HEIGHT + TALENT_BTN_GAP
@@ -1946,6 +2085,22 @@ local function RenderAllTalentsWowhead(class, spec, yPos)
 end
 
 local function RenderAllTalentsArchon(class, spec, yPos)
+    -- Per-encounter data gets the context-sectioned u.gg-style view; the
+    -- aggregate-only shape falls back to the flat hero-grouped list.
+    if ns.HasArchonEncounterData and ns.HasArchonEncounterData(class, spec)
+        and ns.GroupArchonContexts then
+        local groups = ns.GroupArchonContexts(class, spec)
+        if #groups.mplusDungeons > 0 or #groups.raidHeroicBosses > 0
+            or #groups.raidMythicBosses > 0 then
+            return RenderAllTalentsArchonContexts(class, spec, yPos)
+        end
+    end
+    allTalentArchonNotice:ClearAllPoints()
+    allTalentArchonNotice:SetPoint("TOPLEFT", allTalentContent, "TOPLEFT", 4, -(yPos + 4))
+    allTalentArchonNotice:SetPoint("RIGHT", allTalentContent, "RIGHT", -4, 0)
+    allTalentArchonNotice:SetHeight(32)
+    allTalentArchonNotice:Show()
+    yPos = yPos + 40
     return RenderAllTalentsHeroGrouped(
         ns.GetArchonTalentBuilds and ns:GetArchonTalentBuilds(class, spec) or nil,
         L["loadout_dock.no_archon_builds"] or "No Archon talent builds available.",
@@ -1956,6 +2111,7 @@ function ns:UpdateAllTalents(specData, classToken, specKey)
     for _, h in ipairs(allTalentHeaders) do h:Hide() end
     for _, r in ipairs(allTalentRows) do r:Hide() end
     allTalentFallback:Hide()
+    allTalentArchonNotice:Hide()
 
     local uggAvailable = classToken and specKey
         and ns.GetUggSpecData and ns.GetUggSpecData(classToken, specKey) ~= nil
@@ -2000,6 +2156,7 @@ function ns:UpdateAllTalents(specData, classToken, specKey)
     elseif source == "archongg" then
         source = "icyveins"
     end
+    allTalentRenderedSource = source
     allTalentSourceDropdown:SetOptions(sourceOpts, source, function(picked)
         allTalentSourceOverride = picked
         allTalentSourceOverrideSpec = specTag
@@ -2188,7 +2345,8 @@ local function UpdateFooterSource()
     -- ("MAGE-frost"), so pass GetSpecKey() — GetSpecData's 3rd return is the
     -- bare slug ("frost") and would miss the bisSource / craftingContext lookup.
     local _sd, classToken = GetSpecData()
-    local key, url = ns.ResolveAttribution(activeTab, classToken, GetSpecKey())
+    local renderedSource = activeTab == "talents" and allTalentRenderedSource or nil
+    local key, url = ns.ResolveAttribution(activeTab, classToken, GetSpecKey(), renderedSource)
     footerSourceTag:SetSource(key, url)
     -- The date stamp to the left of the tag follows the same source, so the two
     -- halves of the footer always describe the same thing.
@@ -2424,7 +2582,7 @@ function ns:UpdatePanel()
             local ok, err = ns.ApplyTalentExportString(t.exportString, loadoutLabel)
             if not ok then
                 self.icon:SetVertexColor(1, 0.2, 0.2)
-                print("|cff00ccffClass Codex:|r " .. (err or "Failed to apply talents"))
+                print("|cff00ccffBread Codex:|r " .. (err or "Failed to apply talents"))
             else
                 self.icon:SetVertexColor(1, 0.8, 0)
             end
@@ -3002,7 +3160,7 @@ local WIDTH_PRESETS = {
 pinBtn:SetScript("OnClick", function(_, _)
     if not (MenuUtil and MenuUtil.CreateContextMenu) then return end
     MenuUtil.CreateContextMenu(pinBtn, function(_, root)
-        root:CreateTitle("Class Codex")
+        root:CreateTitle("Bread Codex")
 
         root:CreateButton(
             isFloating and L["title_bar.menu.dock"] or L["title_bar.menu.float"],
@@ -3141,7 +3299,7 @@ local function SetupWidgetButton()
         widgetIcon:SetDesaturated(false)
         widgetIcon:SetVertexColor(1, 1, 1)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:AddLine("Class Codex", 1, 1, 1)
+        GameTooltip:AddLine("Bread Codex", 1, 1, 1)
         GameTooltip:AddLine(L["character_pane.click_to_toggle"], 0.7, 0.7, 0.7)
         if IsLocked() then
             GameTooltip:AddLine(L["character_pane.position_locked"], 0.55, 0.55, 0.55)
@@ -3224,7 +3382,7 @@ local function SetupWidgetButton()
             end
         end)
         if not ok then
-            print("|cffff0000Class Codex:|r Panel error: " .. tostring(err))
+            print("|cffff0000Bread Codex:|r Panel error: " .. tostring(err))
         end
     end
 
@@ -3275,7 +3433,7 @@ end
 function ClassCodex_OnAddonCompartmentEnter(_, menuButtonFrame)
     local ver = C_AddOns.GetAddOnMetadata(addonName, "Version") or ""
     GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_RIGHT")
-    GameTooltip:AddLine("Class Codex v" .. ver, 1, 1, 1)
+    GameTooltip:AddLine("Bread Codex v" .. ver, 1, 1, 1)
     GameTooltip:AddLine("Click to open Compendium", 0.7, 0.7, 0.7)
     GameTooltip:Show()
 end
@@ -4048,7 +4206,7 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
                 end,
                 OnTooltipShow = function(tip)
                     local ver = C_AddOns.GetAddOnMetadata(addonName, "Version") or ""
-                    tip:AddLine("Class Codex v" .. ver, 1, 1, 1)
+                    tip:AddLine("Bread Codex v" .. ver, 1, 1, 1)
                     tip:AddLine("Left-click to open Compendium", 0.7, 0.7, 0.7)
                     tip:AddLine("Right-click to open Settings", 0.7, 0.7, 0.7)
                 end,
@@ -4104,10 +4262,10 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
         end
         if ClassCodexDB and ClassCodexDB.showLoginMessage then
             local ver = C_AddOns.GetAddOnMetadata(addonName, "Version") or ""
-            print("|cff00ccffClass Codex|r v" .. ver .. " " .. ns.FixSlash(L["chat.loaded"]))
+            print("|cff00ccffBread Codex|r v" .. ver .. " " .. ns.FixSlash(L["chat.loaded"]))
         end
         if ns.ccContested then
-            print("|cff00ccffClass Codex:|r " .. L["chat.slash_conflict"])
+            print("|cff00ccffBread Codex:|r " .. L["chat.slash_conflict"])
         end
         -- Restore floating panel if it was open before logout
         if isFloating and ClassCodexCharDB and ClassCodexCharDB.panelOpen then
@@ -4136,7 +4294,7 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
             perSpec.heroTalent = nil
             local newHero = GetActiveHeroTalentName()
             if oldHero and oldHero ~= newHero then
-                print("|cff00ccffClass Codex:|r " .. L["chat.switched_to"]:format(newHero or "auto-detect"))
+                print("|cff00ccffBread Codex:|r " .. L["chat.switched_to"]:format(newHero or "auto-detect"))
             end
         end
         currentHeroTalent = nil
@@ -4206,8 +4364,8 @@ SlashCmdList["CLASSCODEX"] = function(msg)
             ToggleCharacter("PaperDollFrame"); ClassCodexCharDB.panelOpen = true
         end
     elseif msg == "float" then
-        if isFloating then DockPanel(); print("|cff00ccffClass Codex:|r " .. L["chat.mode_docked"])
-        else FloatPanel(); print("|cff00ccffClass Codex:|r " .. L["chat.mode_floating"]) end
+        if isFloating then DockPanel(); print("|cff00ccffBread Codex:|r " .. L["chat.mode_docked"])
+        else FloatPanel(); print("|cff00ccffBread Codex:|r " .. L["chat.mode_floating"]) end
         if panel:IsShown() then ns:UpdatePanel() end
     elseif msg == "settings" then
         if ns.settingsCategory then Settings.OpenToCategory(ns.settingsCategory:GetID()) end
@@ -4219,11 +4377,11 @@ SlashCmdList["CLASSCODEX"] = function(msg)
         isFloating = false; isMinimized = false
         DockPanel()
         minimizeBtn:SetNormalTexture("Interface\\Buttons\\UI-Panel-CollapseButton-Up")
-        print("|cff00ccffClass Codex:|r " .. L["chat.mode_reset"])
+        print("|cff00ccffBread Codex:|r " .. L["chat.mode_reset"])
         if panel:IsShown() then ns:UpdatePanel() end
     elseif msg == "compendium" then
         if ns.OpenCompendium then ns:OpenCompendium()
-        else print("|cff00ccffClass Codex:|r " .. L["chat.compendium_not_available"]) end
+        else print("|cff00ccffBread Codex:|r " .. L["chat.compendium_not_available"]) end
     elseif msg == "dock" then
         if ClassCodexDB then
             ClassCodexDB.dockLoadoutEnabled = not ClassCodexDB.dockLoadoutEnabled
@@ -4236,37 +4394,37 @@ SlashCmdList["CLASSCODEX"] = function(msg)
                 db.hide = false
                 ClassCodexDB.showMinimapButton = true
                 ns.LDBIcon:Show("ClassCodex")
-                print("|cff00ccffClass Codex:|r " .. L["chat.minimap_shown"])
+                print("|cff00ccffBread Codex:|r " .. L["chat.minimap_shown"])
             else
                 db.hide = true
                 ClassCodexDB.showMinimapButton = false
                 ns.LDBIcon:Hide("ClassCodex")
-                print("|cff00ccffClass Codex:|r " .. L["chat.minimap_hidden"])
+                print("|cff00ccffBread Codex:|r " .. L["chat.minimap_hidden"])
             end
         else
-            print("|cff00ccffClass Codex:|r " .. L["chat.minimap_not_available"])
+            print("|cff00ccffBread Codex:|r " .. L["chat.minimap_not_available"])
         end
     elseif msg == "inspectdump" then
         if ns.DumpInspectState then
             ns.DumpInspectState()
         else
-            print("|cff00ccffClass Codex:|r inspect dump unavailable.")
+            print("|cff00ccffBread Codex:|r inspect dump unavailable.")
         end
     elseif msg == "dumptree" then
         if ns.DumpTalentTree then
             ns.DumpTalentTree()
         else
-            print("|cff00ccffClass Codex:|r tree dump unavailable.")
+            print("|cff00ccffBread Codex:|r tree dump unavailable.")
         end
     elseif msg == "selftest" then
         if ns.RunSelfTest then
             ns.RunSelfTest()
         else
-            print("|cff00ccffClass Codex:|r self-test unavailable.")
+            print("|cff00ccffBread Codex:|r self-test unavailable.")
         end
     elseif msg == "help" then
         local sc = ns.FixSlash("/cc")
-        print("|cff00ccffClass Codex|r commands:")
+        print("|cff00ccffBread Codex|r commands:")
         print("  " .. sc .. " - Toggle panel")
         print("  " .. sc .. " float - Toggle float/dock")
         print("  " .. sc .. " compendium - Open compendium")
@@ -4275,6 +4433,6 @@ SlashCmdList["CLASSCODEX"] = function(msg)
         print("  " .. sc .. " reset - Reset position")
         print("  " .. sc .. " inspectdump - Print inspect-mode diagnostics")
     else
-        print("|cff00ccffClass Codex:|r " .. ns.FixSlash(L["chat.unknown_command"]))
+        print("|cff00ccffBread Codex:|r " .. ns.FixSlash(L["chat.unknown_command"]))
     end
 end

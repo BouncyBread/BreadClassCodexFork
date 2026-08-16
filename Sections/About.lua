@@ -207,9 +207,9 @@ function About.InitPanel(opts)
         return fs
     end
 
-    -- Class Codex (addon actions + community): Discord + Settings on one row,
+    -- Bread Codex (addon actions + community): Discord + Settings on one row,
     -- Patreon alone on the next. The Compendium lives on the title bar now.
-    panel.addonLabel = sectionLabel("Class Codex")
+    panel.addonLabel = sectionLabel("Bread Codex")
     panel.addonCards = {
         copyCard({
             texture = "Interface\\AddOns\\BreadClassCodex\\Textures\\discord", color = { 0.34, 0.40, 0.95 },

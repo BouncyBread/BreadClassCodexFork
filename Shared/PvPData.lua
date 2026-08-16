@@ -473,7 +473,7 @@ function ns.ApplyPvpHonorTalents(talentIds)
         if ok then applied = applied + 1 end
     end
     if applied > 0 then
-        print(string.format("|cff00ccffClass Codex:|r Applied %d PvP talent%s.",
+        print(string.format("|cff00ccffBread Codex:|r Applied %d PvP talent%s.",
             applied, applied == 1 and "" or "s"))
     end
     return applied > 0

@@ -107,7 +107,7 @@ local function Callback(_, rootDescription, contextData)
     if not contextData or not CanShow(contextData.unit) then return end
     local unit = contextData.unit
     rootDescription:CreateDivider()
-    rootDescription:CreateTitle("Class Codex")
+    rootDescription:CreateTitle("Bread Codex")
     rootDescription:CreateButton(L["talent_pane.view_talents"], function()
         StartInspect(unit)
     end)

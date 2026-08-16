@@ -353,7 +353,7 @@ end
 -- surface: the active tab. class: class token ("MAGE"). specKey: the per-spec
 -- saved-var key ("MAGE-frost"); the data-lookup slug ("frost") is derived from
 -- it. Returns (key, url) or nil.
-function ns.ResolveAttribution(surface, class, specKey)
+function ns.ResolveAttribution(surface, class, specKey, renderedSource)
     local ps = perSpec(specKey)
     local spec = specKey and (specKey:match("-(.+)") or specKey) or nil
 
@@ -376,7 +376,12 @@ function ns.ResolveAttribution(surface, class, specKey)
     elseif surface == "talents" then
         -- PvP talents come from Blizzard's armory (bnet); the rest from u.gg /
         -- Icy Veins.
-        local ts = ns.GetEffectiveTalentSource and ns.GetEffectiveTalentSource() or "ugg"
+        -- The full Talents panel permits a session-local pick while source
+        -- pinning is off. Its renderer passes that actual source explicitly;
+        -- otherwise attribution would recompute the persisted/default source
+        -- and disagree with the content on screen.
+        local ts = renderedSource
+            or (ns.GetEffectiveTalentSource and ns.GetEffectiveTalentSource()) or "ugg"
         if ts == "icyveins" then return "icyveins", icyVeinsTalentsUrl(class, spec) end
         if ts == "wowhead" then return "wowhead", wowheadTalentsUrl(class, spec) end
         if ts == "archongg" then return "archongg", archonTalentsUrl(class, spec) end

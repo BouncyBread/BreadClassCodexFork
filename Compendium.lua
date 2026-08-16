@@ -4,7 +4,7 @@ local DATA = ClassCodexData
 if not DATA then
     -- Ensure OpenCompendium exists even if data failed to load
     function ns:OpenCompendium()
-        print("|cff00ccffClass Codex:|r " .. ns.L["chat.compendium_data_not_loaded"])
+        print("|cff00ccffBread Codex:|r " .. ns.L["chat.compendium_data_not_loaded"])
     end
     return
 end
@@ -542,7 +542,7 @@ local function InitFrame()
     else
         UI.frame:SetPoint("CENTER")
     end
-    UI.frame:SetTitle("Class Codex Compendium")
+    UI.frame:SetTitle("Bread Codex Compendium")
     UI.frame:SetPortraitToAsset("Interface\\Icons\\INV_Misc_Book_09")
     ButtonFrameTemplate_HideButtonBar(UI.frame)
     -- Blizzard's ButtonFrameTemplate anchors the NineSlice bottom corners
@@ -848,6 +848,13 @@ local function InitFrame()
     for i = 1, MAX_TALENT_BUTTONS do CreateTalentButton(i) end
     UI.talentFallback = UI.scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     UI.talentFallback:SetTextColor(0.5, 0.5, 0.5); UI.talentFallback:Hide()
+    UI.archonSeasonNotice = UI.talentContent:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    UI.archonSeasonNotice:SetJustifyH("LEFT")
+    UI.archonSeasonNotice:SetJustifyV("TOP")
+    UI.archonSeasonNotice:SetWordWrap(true)
+    UI.archonSeasonNotice:SetTextColor(0.78, 0.78, 0.78)
+    UI.archonSeasonNotice:SetText(L["archon.season1_notice"])
+    UI.archonSeasonNotice:Hide()
     UI.talentHeader:SetScript("OnClick", function()
         UI.talentCollapsed = not UI.talentCollapsed
         SetCollapsed(UI.talentContent, UI.talentHeader, UI.talentCollapsed)
@@ -1167,7 +1174,7 @@ function ns:UpdateCompendium()
     else UI.frame:SetPortraitToAsset("Interface\\Icons\\INV_Misc_Book_09") end
 
     -- Update title
-    UI.frame:SetTitle("Class Codex Compendium · " .. GetSpecDisplayName(selectedClass, selectedSpec) .. " " .. GetClassDisplayName(selectedClass))
+    UI.frame:SetTitle("Bread Codex Compendium · " .. GetSpecDisplayName(selectedClass, selectedSpec) .. " " .. GetClassDisplayName(selectedClass))
 
     -- Request item data for gearing tabs
     if activeTab ~= "guide" and activeTab ~= "talents" then
@@ -1744,17 +1751,104 @@ local function RenderWowheadTalentList(class, spec, yPos)
         yPos)
 end
 
+-- Archon view with per-encounter data: same context-sectioned rows as the
+-- u.gg view (M+, Raid Heroic, Raid Mythic), one row per dungeon/boss. Falls
+-- back to the hero-grouped list when the spec has only aggregate data.
 local function RenderArchonTalentList(class, spec, yPos)
-    return RenderHeroGroupedTalentList(
-        ns.GetArchonTalentBuilds and ns:GetArchonTalentBuilds(class, spec) or nil,
-        L["loadout_dock.no_archon_builds"] or "No Archon talent builds available.",
-        yPos)
+    local groups = ns.GroupArchonContexts and ns.GroupArchonContexts(class, spec) or nil
+    local hasEncounters = ns.HasArchonEncounterData and ns.HasArchonEncounterData(class, spec)
+        and groups and (
+        #groups.mplusDungeons > 0 or #groups.raidHeroicBosses > 0 or #groups.raidMythicBosses > 0)
+    if not hasEncounters then
+        UI.archonSeasonNotice:ClearAllPoints()
+        UI.archonSeasonNotice:SetPoint("TOPLEFT", UI.talentContent, "TOPLEFT", 4, -(yPos + 4))
+        UI.archonSeasonNotice:SetPoint("RIGHT", UI.talentContent, "RIGHT", -4, 0)
+        UI.archonSeasonNotice:SetHeight(32)
+        UI.archonSeasonNotice:Show()
+        yPos = yPos + 40
+        return RenderHeroGroupedTalentList(
+            ns.GetArchonTalentBuilds and ns:GetArchonTalentBuilds(class, spec) or nil,
+            L["loadout_dock.no_archon_builds"] or "No Archon talent builds available.",
+            yPos)
+    end
+
+    local hdrIdx, rowIdx = 0, 0
+    local function emitSection(headerText, entries)
+        if not entries or #entries == 0 then return end
+        hdrIdx = hdrIdx + 1
+        local hdr = UI._ensureTalentHeroHeader(hdrIdx)
+        hdr.label:SetText(headerText)
+        hdr.label:SetTextColor(1, 0.82, 0)
+        hdr:ClearAllPoints()
+        hdr:SetPoint("TOPLEFT", UI.talentContent, "TOPLEFT", 0, -yPos)
+        hdr:SetPoint("RIGHT", UI.talentContent, "RIGHT", 0, 0)
+        hdr:Show()
+        yPos = yPos + TALENT_HERO_HEADER_HEIGHT
+
+        for _, entry in ipairs(entries) do
+            local build = entry.builds and entry.builds[1]
+            if build then
+                rowIdx = rowIdx + 1
+                local btn = UI._ensureTalentButton(rowIdx)
+
+                local heroAtlas = build.heroTalent and ns.HERO_TALENT_ATLAS
+                    and ns.HERO_TALENT_ATLAS[build.heroTalent]
+                if btn.heroIcon then
+                    if heroAtlas then
+                        btn.heroIcon:SetAtlas(heroAtlas)
+                        btn.heroIcon:Show()
+                    else
+                        btn.heroIcon:Hide()
+                    end
+                end
+                btn.label:ClearAllPoints()
+                local labelLeftOffset = heroAtlas and 24 or 8
+                btn.label:SetPoint("LEFT", labelLeftOffset, 0)
+                btn.label:SetPoint("RIGHT", -8, 0)
+                btn.label:SetText(entry.label or entry.contextKey or "Build")
+                local isActive = ns.BuildMatchesActive and ns.BuildMatchesActive(build)
+                if isActive then
+                    btn:SetBackdropBorderColor(0.2, 0.8, 0.2, 1)
+                    btn.label:SetTextColor(0.3, 1, 0.3)
+                else
+                    btn:SetBackdropBorderColor(0.4, 0.4, 0.4, 0.8)
+                    btn.label:SetTextColor(0.8, 0.8, 0.8)
+                end
+
+                btn:ClearAllPoints()
+                btn:SetPoint("TOPLEFT", UI.talentContent, "TOPLEFT", 8, -yPos)
+                btn:SetPoint("RIGHT", UI.talentContent, "RIGHT", 0, 0)
+                BindCopyClick(btn, build.exportString)
+                btn:Show()
+                yPos = yPos + TALENT_BTN_HEIGHT + TALENT_BTN_GAP
+            end
+        end
+        yPos = yPos + 4
+    end
+
+    local mplus = {}
+    if groups.mplusOverview then mplus[#mplus + 1] = groups.mplusOverview end
+    for _, e in ipairs(groups.mplusDungeons) do mplus[#mplus + 1] = e end
+    emitSection("Mythic+", mplus)
+
+    local heroic = {}
+    if groups.raidOverviewHeroic then heroic[#heroic + 1] = groups.raidOverviewHeroic end
+    for _, e in ipairs(groups.raidHeroicBosses) do heroic[#heroic + 1] = e end
+    emitSection("Raid — Heroic", heroic)
+
+    local mythic = {}
+    if groups.raidOverviewMythic then mythic[#mythic + 1] = groups.raidOverviewMythic end
+    for _, e in ipairs(groups.raidMythicBosses) do mythic[#mythic + 1] = e end
+    emitSection("Raid — Mythic", mythic)
+
+    return yPos
 end
 
 function ns:UpdateCompendiumAllTalents(specData, classFile, specKey)
     for _, b in ipairs(UI.talentButtons) do b:Hide() end
     for _, h in ipairs(UI.talentHeroHeaders) do h:Hide() end
     UI.talentFallback:Hide()
+    UI.archonSeasonNotice:Hide()
 
     -- Reset source on spec change so users land on u.gg by default when
     -- browsing a new spec.
@@ -1945,6 +2039,7 @@ function ns:LayoutCompendium()
     elseif activeTab == "talents" then
         local talentH = 0
         if UI.talentSourceDropdown and UI.talentSourceDropdown:IsShown() then talentH = talentH + 32 end
+        if UI.archonSeasonNotice and UI.archonSeasonNotice:IsShown() then talentH = talentH + 40 end
         -- Iterate by actual pool length — the u.gg view grows the
         -- pool well past the initial MAX_* allocation.
         for i = 1, #UI.talentHeroHeaders do if UI.talentHeroHeaders[i]:IsShown() then talentH = talentH + TALENT_HERO_HEADER_HEIGHT + 4 end end

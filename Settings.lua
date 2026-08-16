@@ -24,7 +24,7 @@ local function fmtPixels(v) return v .. "px" end
 
 function ns.RegisterSettings()
     local ok, err = pcall(function()
-        local category, layout = Settings.RegisterVerticalLayoutCategory("Class Codex")
+        local category, layout = Settings.RegisterVerticalLayoutCategory("Bread Codex")
 
         -- Gate an initializer behind a predicate (hidden when it returns false).
         local function shownIf(init, pred)
@@ -240,6 +240,6 @@ function ns.RegisterSettings()
         end
     end
     if not ok then
-        print("|cffff0000Class Codex:|r " .. L["chat.settings_registration_failed"]:format(tostring(err)))
+        print("|cffff0000Bread Codex:|r " .. L["chat.settings_registration_failed"]:format(tostring(err)))
     end
 end

@@ -896,6 +896,7 @@ local function HeroDisplayName(slug)
     end
     return heroDisplayBySlug[slug:lower():gsub("[^%a]", "")] or slug
 end
+ns.HeroDisplayName = HeroDisplayName
 
 local WH_CONTEXT_DISPLAY = { raid = "Raid", mplus = "Mythic+", delves = "Delves" }
 
@@ -966,18 +967,25 @@ function ns:GetArchonTalentBuilds(classToken, specKey)
     local out = {}
     for hero, byContext in pairs(talents) do
         for context, builds in pairs(byContext) do
-            for i, b in ipairs(builds) do
-                if b.export and b.export ~= "" then
-                    out[#out + 1] = {
-                        heroTalent   = HeroDisplayName(hero),
-                        context      = ARCHON_CONTEXT_DISPLAY[context] or context,
-                        buildLabel   = b.label or ARCHON_CONTEXT_DISPLAY[context] or context,
-                        exportString = b.export,
-                        _heroSlug    = hero,
-                        _contextKey  = context,
-                        _popularity  = b.popularity,
-                        _order       = i,
-                    }
+            -- Per-encounter contexts (mplus:<dungeon>, raid:heroic:<boss>,
+            -- raid:mythic:<boss> — every one carries a colon) are surfaced
+            -- through Shared/ArchonContext.lua's contextual accessors. This
+            -- flat list is the aggregate view and keeps its historical shape:
+            -- exactly the mplus + raid contexts, displayed "Mythic+"/"Raid".
+            if not context:find(":", 1, true) then
+                for i, b in ipairs(builds) do
+                    if b.export and b.export ~= "" then
+                        out[#out + 1] = {
+                            heroTalent   = HeroDisplayName(hero),
+                            context      = ARCHON_CONTEXT_DISPLAY[context] or context,
+                            buildLabel   = b.label or ARCHON_CONTEXT_DISPLAY[context] or context,
+                            exportString = b.export,
+                            _heroSlug    = hero,
+                            _contextKey  = context,
+                            _popularity  = b.popularity,
+                            _order       = i,
+                        }
+                    end
                 end
             end
         end

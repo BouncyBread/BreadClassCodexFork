@@ -3,7 +3,7 @@ local _, ns = ...
 -------------------------------------------------------------------------------
 -- TalentPaneDropdown: a build picker on the talent frame.
 --
--- Visible affordance: a small Class Codex icon at the bottom-left of the
+-- Visible affordance: a small Bread Codex icon at the bottom-left of the
 -- Talents tab, above Blizzard's Apply/Undo/Reset action bar. Clicking
 -- the icon expands a row of controls to its right with a slide+fade
 -- animation: an inline build dropdown, a close (X) icon, an Export
@@ -745,7 +745,7 @@ local function OnApplyClicked()
     local build = previewedBuild
     local ok, err = ns.ApplyTalentExportString(build.exportString, BuildLoadoutLabel(build))
     if not ok then
-        print("|cff00ccffClass Codex:|r " .. (err or "Failed to apply talents"))
+        print("|cff00ccffBread Codex:|r " .. (err or "Failed to apply talents"))
         return
     end
     -- For PvP builds, also apply honor talents (3 PvP talent slots).
@@ -1241,7 +1241,13 @@ local function PopulateWowheadMenu(rootDescription)
             lastHero = build.heroTalent
             rootDescription:CreateTitle(ns.FormatHeroHeaderText and ns.FormatHeroHeaderText(lastHero) or lastHero)
         end
-        local label = build.buildLabel or build.context or "Build"
+        -- Keep Wowhead's source-authored recommendation tag visible here just
+        -- like it is in the dock, Compendium, and full talent list. The shared
+        -- formatter preserves specific tags such as "Best ST" / "Best Cleave"
+        -- and colours only the tag; the green dot below remains the distinct
+        -- "currently active" signal.
+        local label = ns.FormatBuildLabel and ns.FormatBuildLabel(build)
+            or build.buildLabel or build.context or "Build"
         local isActive = BuildMatchesActive({ exportString = build.exportString })
         if isActive then label = label .. "  |TInterface\\COMMON\\Indicator-Green:12:12:0:0|t" end
         local capturedRecord = WowheadBuildRecord(build)
@@ -1281,6 +1287,86 @@ end
 
 local function PopulateArchonMenu(rootDescription)
     local classFile, specName = CurrentClassSpec()
+    if not classFile or not specName then
+        rootDescription:CreateTitle((ns.L and ns.L["loadout_dock.no_archon_builds"]) or "No Archon talent builds available.")
+        return
+    end
+
+    -- With per-encounter data the menu is context-grouped (one title per
+    -- dungeon/boss, auto-detected context first) — the same shape the u.gg
+    -- source uses. Aggregate-only data falls back to the flat hero-grouped
+    -- list below, preserving the historical menu exactly.
+    local groups = ns.GroupArchonContexts and ns.GroupArchonContexts(classFile, specName) or nil
+    local hasEncounters = groups and (
+        #groups.mplusDungeons > 0 or #groups.raidHeroicBosses > 0 or #groups.raidMythicBosses > 0)
+    if hasEncounters then
+        local autoKey = ns.GetActiveArchonContext and ns.GetActiveArchonContext() or nil
+        local ordered = {}
+        local seen = {}
+        local function push(e)
+            if e and not seen[e.contextKey] then
+                seen[e.contextKey] = true
+                ordered[#ordered + 1] = e
+            end
+        end
+        local function findAuto()
+            if not autoKey then return nil end
+            for _, bucket in ipairs({ groups.mplusOverview, groups.raidOverviewHeroic,
+                                      groups.raidOverviewMythic }) do
+                if bucket and bucket.contextKey == autoKey then return bucket end
+            end
+            for _, bucket in ipairs({ groups.mplusDungeons, groups.raidHeroicBosses,
+                                      groups.raidMythicBosses }) do
+                for _, e in ipairs(bucket) do
+                    if e.contextKey == autoKey then return e end
+                end
+            end
+            return nil
+        end
+        push(findAuto())
+        push(groups.mplusOverview)
+        for _, e in ipairs(groups.mplusDungeons) do push(e) end
+        push(groups.raidOverviewHeroic)
+        for _, e in ipairs(groups.raidHeroicBosses) do push(e) end
+        push(groups.raidOverviewMythic)
+        for _, e in ipairs(groups.raidMythicBosses) do push(e) end
+
+        for _, entry in ipairs(ordered) do
+            rootDescription:CreateTitle(entry.label or entry.contextKey)
+            for _, build in ipairs(entry.builds) do
+                local label = build.buildLabel or "Build"
+                if build.heroTalent and build.heroTalent ~= "All" then
+                    label = build.heroTalent .. " — " .. label
+                end
+                -- Archon is the only source with a popularity share, so show it —
+                -- it's the whole reason to pick this source over the editorial ones.
+                if build._popularity then label = label .. "  |cff808080" .. build._popularity .. "|r" end
+                local isActive = BuildMatchesActive({ exportString = build.exportString })
+                if isActive then label = label .. "  |TInterface\\COMMON\\Indicator-Green:12:12:0:0|t" end
+                local capturedRecord = ArchonBuildRecord(build)
+                local capturedExport = build.exportString
+                local capturedActive = isActive
+                local item = rootDescription:CreateRadio(
+                    label,
+                    function()
+                        if previewedBuild and previewedBuild.exportString == capturedExport then return true end
+                        if previewedBuild == nil and capturedActive then return true end
+                        return false
+                    end,
+                    function()
+                        if previewedBuild and previewedBuild.exportString == capturedExport then
+                            SetPreview(nil)
+                        else
+                            SetPreview(capturedRecord)
+                        end
+                    end
+                )
+                HookItemBehavior(item, capturedRecord)
+            end
+        end
+        return
+    end
+
     local builds = (classFile and specName and ns.GetArchonTalentBuilds)
         and ns:GetArchonTalentBuilds(classFile, specName) or nil
     if not builds or #builds == 0 then
@@ -1521,11 +1607,11 @@ local function EnsureContainer()
 
     iconBtn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:AddLine("Class Codex", 1, 1, 1)
+        GameTooltip:AddLine("Bread Codex", 1, 1, 1)
         GameTooltip:AddLine((ns.L and ns.L["loadout_dock.pick_a_build"]) or "Pick a build", 0.7, 0.7, 0.7)
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine("|cffffd100Beta Feature|r", 1, 0.82, 0)
-        GameTooltip:AddLine("If any issues please report on the Class Codex Discord.", 0.85, 0.85, 0.85, true)
+        GameTooltip:AddLine("If any issues please report on the Bread Codex Discord.", 0.85, 0.85, 0.85, true)
         GameTooltip:Show()
     end)
     iconBtn:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -2022,7 +2108,7 @@ local function Setup()
         OnUggContext(ns.GetActiveUggContext and ns.GetActiveUggContext() or nil)
     end
 
-    -- Tint the Class Codex loadout in Blizzard's native loadout selector
+    -- Tint the Bread Codex loadout in Blizzard's native loadout selector
     -- so it stands out among the player's own saved loadouts.
     -- RefreshLoadoutOptions rebuilds talentsFrame.configIDToName from the
     -- plain config names; the menu reads that table live on each open

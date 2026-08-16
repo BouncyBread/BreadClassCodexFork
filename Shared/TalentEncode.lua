@@ -115,7 +115,7 @@ end
 function ns.DumpTalentTree()
     local configID = C_ClassTalents.GetActiveConfigID()
     if not configID then
-        print("|cff00ccffClass Codex:|r no active talent config — open the talents pane first.")
+        print("|cff00ccffBread Codex:|r no active talent config — open the talents pane first.")
         return
     end
     local info = C_Traits.GetConfigInfo(configID)
@@ -123,7 +123,7 @@ function ns.DumpTalentTree()
     local specIdx = GetSpecialization()
     local specID = specIdx and (GetSpecializationInfo(specIdx))
     if not treeID or not specID then
-        print("|cff00ccffClass Codex:|r could not resolve tree/spec.")
+        print("|cff00ccffBread Codex:|r could not resolve tree/spec.")
         return
     end
 
@@ -152,5 +152,5 @@ function ns.DumpTalentTree()
         subTreeSelectionType = Enum.TraitNodeType.SubTreeSelection,
         nodes = nodes,
     }
-    print(string.format("|cff00ccffClass Codex:|r dumped tree for specID %d (%d nodes). /reload to save, then repeat on other specs.", specID, #nodes))
+    print(string.format("|cff00ccffBread Codex:|r dumped tree for specID %d (%d nodes). /reload to save, then repeat on other specs.", specID, #nodes))
 end

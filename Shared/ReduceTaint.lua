@@ -3,7 +3,7 @@ local addonName, ns = ...
 -------------------------------------------------------------------------------
 -- ReduceTaint: Prevent INTERFACE_ACTION_BLOCKED after programmatic loadout
 --
--- When Class Codex applies a talent build via C_Traits, it can taint
+-- When Bread Codex applies a talent build via C_Traits, it can taint
 -- variables that Blizzard's talent frame later reads. This module cleans
 -- up the most common taint vectors so the Blizzard UI keeps working.
 --

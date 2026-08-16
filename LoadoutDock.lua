@@ -3,10 +3,10 @@ local _, ns = ...
 -------------------------------------------------------------------------------
 -- LoadoutDock: tiny floating widget that shows the player's currently active
 -- talent loadout name and, on click, pops a menu of every other build they
--- could switch to — Blizzard saved loadouts plus Class Codex recommendations.
+-- could switch to — Blizzard saved loadouts plus Bread Codex recommendations.
 --
 -- Lives independently from the character-frame docked panel and the
--- Compendium. Hidden by default; opt-in via Settings > Class Codex >
+-- Compendium. Hidden by default; opt-in via Settings > Bread Codex >
 -- "Show Loadout Dock". Position persists per-character. Drag the label to
 -- move it (when unlocked); right-click for lock / hide / settings.
 -------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ local function GetActiveLoadoutName()
     return configName(active)
 end
 
--- Find the u.gg-sourced Class Codex build whose talent bits match the
+-- Find the u.gg-sourced Bread Codex build whose talent bits match the
 -- player's current in-game talents.
 -- Talent bits for the build the player is currently running. Prefer the
 -- actually-selected saved loadout's committed talents: those resolve
@@ -406,7 +406,7 @@ local function BuildLoadoutMenu(_, root)
             for _, configID in ipairs(configs) do
                 local info = C_Traits and C_Traits.GetConfigInfo and C_Traits.GetConfigInfo(configID)
                 local name = info and info.name or ("Loadout " .. configID)
-                -- Brand-tint the Class Codex slot blue so it reads the same
+                -- Brand-tint the Bread Codex slot blue so it reads the same
                 -- here as in the native talent dropdown and stands out from
                 -- the player's own (white) loadouts.
                 if ns.IsCCSlotName and ns.IsCCSlotName(name) and ns.WrapCCName then
@@ -463,7 +463,7 @@ local function BuildLoadoutMenu(_, root)
     local classToken, specSlug
     if ns.GetClassAndSpec then classToken, specSlug = ns.GetClassAndSpec() end
 
-    -- Section 2: Class Codex - Icy Veins talent builds. Ordered first to match
+    -- Section 2: Bread Codex - Icy Veins talent builds. Ordered first to match
     -- the docked panel's source order (Icy Veins, u.gg, PvP). IV builds are
     -- context-labeled (not hero-grouped), and there are only a handful per
     -- spec, so they render as a flat list under the source title rather than
@@ -496,7 +496,7 @@ local function BuildLoadoutMenu(_, root)
         end
     end
 
-    -- Section 3: Class Codex - u.gg (per-encounter recommendations).
+    -- Section 3: Bread Codex - u.gg (per-encounter recommendations).
     -- Falls back to direct _G.ClassCodexUggBuilds lookup if the namespace
     -- helper is missing.
     local uggSpecData
@@ -596,7 +596,7 @@ local function BuildLoadoutMenu(_, root)
         end
     end
 
-    -- Sections 3b/3c: Class Codex - Wowhead and Archon.
+    -- Sections 3b/3c: Bread Codex - Wowhead and Archon.
     --
     -- Both publish one build per (hero talent, context), so unlike Icy Veins'
     -- flat context list they group by hero: a submenu per hero when the spec has
@@ -653,14 +653,64 @@ local function BuildLoadoutMenu(_, root)
 
     local hasArchon = false
     if db.dockLoadoutShowArchon ~= false and classToken and specSlug
-        and ns.GetArchonTalentBuilds then
-        hasArchon = emitHeroGrouped(
-            ns:GetArchonTalentBuilds(classToken, specSlug),
-            L["settings.value.archongg"] or "Archon", "archon",
-            hasBlizzard or hasIcyVeins or hasUgg or hasWowhead)
+        and ns.GetArchonTalentBuilds and ns.GroupArchonContexts then
+        local archonGroups = ns.GroupArchonContexts(classToken, specSlug)
+        local archonHasEncounters = #archonGroups.mplusDungeons > 0
+            or #archonGroups.raidHeroicBosses > 0 or #archonGroups.raidMythicBosses > 0
+        if archonHasEncounters then
+            -- Per-encounter data: the same M+ Dungeons / Raid Heroic / Raid
+            -- Mythic submenus the u.gg section uses, with the aggregate
+            -- overview as the first entry inside each.
+            if hasBlizzard or hasIcyVeins or hasUgg or hasWowhead then root:CreateDivider() end
+            root:CreateTitle("|TInterface\\AddOns\\BreadClassCodex\\Textures\\archon:14:14:0:0|t  "
+                .. (L["settings.value.archongg"] or "Archon"))
+            local function archonApply(parent, entry)
+                local build = entry.builds and entry.builds[1]
+                if not build then return end
+                local label = entry.label or entry.contextKey or "Build"
+                if build.heroTalent and ns.HERO_TALENT_ATLAS then
+                    local atlas = ns.HERO_TALENT_ATLAS[build.heroTalent]
+                    if atlas then label = "|A:" .. atlas .. ":12:12|a " .. label end
+                end
+                if activeMatches(build.exportString) then label = label .. MARKER_MATCH end
+                parent:CreateButton(label, function()
+                    if InCombatLockdown() then
+                        UIErrorsFrame:AddMessage(L["loadout_dock.cannot_switch_combat"], 1, 0.3, 0.3)
+                        return
+                    end
+                    local clean = label:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+                        :gsub("|A:[^|]+|a", ""):gsub("^%s+", "")
+                    rememberApplied(build.exportString)
+                    if ns.ApplyTalentExportString then
+                        ns.ApplyTalentExportString(build.exportString, clean)
+                    end
+                end)
+            end
+            if archonGroups.mplusOverview or #archonGroups.mplusDungeons > 0 then
+                local sub = root:CreateButton(L["context.mplus_dungeons"])
+                if archonGroups.mplusOverview then archonApply(sub, archonGroups.mplusOverview) end
+                for _, e in ipairs(archonGroups.mplusDungeons) do archonApply(sub, e) end
+            end
+            if archonGroups.raidOverviewHeroic or #archonGroups.raidHeroicBosses > 0 then
+                local sub = root:CreateButton(L["context.raid_heroic"])
+                if archonGroups.raidOverviewHeroic then archonApply(sub, archonGroups.raidOverviewHeroic) end
+                for _, e in ipairs(archonGroups.raidHeroicBosses) do archonApply(sub, e) end
+            end
+            if archonGroups.raidOverviewMythic or #archonGroups.raidMythicBosses > 0 then
+                local sub = root:CreateButton(L["context.raid_mythic"])
+                if archonGroups.raidOverviewMythic then archonApply(sub, archonGroups.raidOverviewMythic) end
+                for _, e in ipairs(archonGroups.raidMythicBosses) do archonApply(sub, e) end
+            end
+            hasArchon = true
+        else
+            hasArchon = emitHeroGrouped(
+                ns:GetArchonTalentBuilds(classToken, specSlug),
+                L["settings.value.archongg"] or "Archon", "archon",
+                hasBlizzard or hasIcyVeins or hasUgg or hasWowhead)
+        end
     end
 
-    -- Section 4: Class Codex - PvP (per-bracket recommendations from
+    -- Section 4: Bread Codex - PvP (per-bracket recommendations from
     -- Bnet talent_loadout_code + u.gg). Mirrors u.gg's submenu
     -- pattern (M+ Dungeons / Raid Heroic / Raid Mythic above): an
     -- "Arena" submenu groups Solo Shuffle / 2v2 / 3v3, and a
@@ -927,12 +977,12 @@ local function CreateDock()
         if fullName and fullName ~= "" then
             GameTooltip:AddLine(fullName, 1, 0.82, 0)
         else
-            GameTooltip:AddLine("Class Codex", 1, 0.82, 0)
+            GameTooltip:AddLine("Bread Codex", 1, 0.82, 0)
         end
 
         -- On a NON-Class-Codex loadout, surface which Codex recommendation the
         -- player's talents match (if any), so they see "your custom loadout is
-        -- the recommended Mythic+ build". Skipped for a Class Codex loadout —
+        -- the recommended Mythic+ build". Skipped for a Bread Codex loadout —
         -- its name already states the build, and several recommendations can
         -- share the same talents, so a second line would just pick an arbitrary
         -- (often contradictory) context.
