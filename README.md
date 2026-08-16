@@ -29,19 +29,27 @@ add-on to it — both loaded at once will collide on frame names and saved varia
 Uninstall Class Codex first. Your existing settings carry over, because this fork keeps
 the same saved-variable names.
 
-### With an addon manager (recommended — you get auto-updates)
+### Manually (reliable)
 
-In [WowUp](https://wowup.io) or CurseBreaker, add this repository as a GitHub source:
+Download `BreadClassCodex-*.zip` from
+[Releases](https://github.com/BouncyBread/BreadClassCodexFork/releases), extract it into
+`World of Warcraft/_retail_/Interface/AddOns/`, and `/reload`. The zip already contains a
+single `BreadClassCodex/` folder, so extract it as-is.
+
+### With an addon manager
+
+Add this repository as a GitHub source:
 
 ```
-https://github.com/BouncyBread/BreadClassCodex
+https://github.com/BouncyBread/BreadClassCodexFork
 ```
 
-### Manually
-
-Download the `BreadClassCodex-*.zip` from
-[Releases](https://github.com/BouncyBread/BreadClassCodex/releases), extract it into
-`World of Warcraft/_retail_/Interface/AddOns/`, and `/reload`.
+**WowUp 2.23.0 cannot install from a GitHub source** — not just this addon, any of them.
+It downloads releases from GitHub's API asset endpoint without sending
+`Accept: application/octet-stream`, so GitHub returns JSON metadata instead of the zip and
+the install fails with *"End of central directory record signature not found."* A GitHub
+token does not help; the header is the only thing that matters. Use the manual route above
+with WowUp, or a manager that downloads from the release's normal download URL.
 
 ## Credits
 
