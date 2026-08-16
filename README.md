@@ -44,16 +44,16 @@ Add this repository as a GitHub source:
 https://github.com/BouncyBread/BreadClassCodexFork
 ```
 
-Installing this way works. **Updating in WowUp 2.23.0 does not**, and the fix is to
-remove the addon in WowUp and add it again — that reinstalls at the current version.
+Installing this way works. **Updating in WowUp 2.23.0 does not** — remove the addon and
+add it again to move to a newer version, or use the manual route above.
 
 The two paths use different URLs. A fresh install downloads from the release's normal
 download URL and succeeds. An update instead fetches
 `api.github.com/repos/.../releases/assets/{id}` without sending
 `Accept: application/octet-stream`, so GitHub returns JSON metadata rather than the zip
 and it fails with *"End of central directory record signature not found."* A GitHub token
-makes no difference — the header is the only thing that matters — so remove-and-re-add,
-or the manual route above, are the ways through.
+makes no difference — the header is the only thing that matters. This affects WowUp's
+GitHub provider generally, not just this addon; 2.23.0 is the current release.
 
 ## Credits
 

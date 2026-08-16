@@ -49,9 +49,25 @@ jobs:
           PY
           exit $fail
 
-      - name: Package and publish to GitHub releases
+      - name: Package and publish
         uses: BigWigsMods/packager@master
-        # No CF_API_KEY / WOWI_API_TOKEN / WAGO_API_TOKEN secrets are set, so the
-        # packager publishes to GitHub releases only. -d skips nothing else.
+        # GitHub releases always. Wago too, but ONLY once both halves exist:
+        #   1. a WAGO_API_TOKEN repo secret (Settings > Secrets > Actions), and
+        #   2. a `## X-Wago-ID: <id>` line in BreadClassCodex.toc, taken from
+        #      https://addons.wago.io/developers beneath the addon's name.
+        # With either missing the packager simply skips Wago, so this is inert
+        # until both are in place.
+        #
+        # Wago matters because WowUp's GitHub provider cannot UPDATE an addon:
+        # its update path fetches api.github.com/.../releases/assets/{id} without
+        # Accept: application/octet-stream, gets JSON instead of the zip, and
+        # fails on unzip. Its Wago provider works. See README.
+        #
+        # CRITICAL: the X-Wago-ID must be this FORK's own project id. Upstream
+        # Class Codex is rNkynwKa — using that would make every addon manager
+        # treat this as upstream and overwrite it with jfstn's builds, which is
+        # exactly why the inherited X-Wago-ID / X-Curse-Project-ID lines were
+        # stripped from the TOC in the first place.
         env:
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+          WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
