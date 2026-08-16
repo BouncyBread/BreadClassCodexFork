@@ -101,6 +101,8 @@ local selectedHero = nil
 local activeTab = "guide"
 local currentStatContext = nil
 local currentRotContext = nil
+-- Session-scoped Compendium rotation source (see the rotation block below).
+local compRotSource, compRotLastSpec = nil, nil
 local lastTalentSpecKey = nil
 local initialized = false
 local SaveCompendiumState -- forward declaration
@@ -338,6 +340,18 @@ local function RequestAllGearItems(gearData)
         for _, t in ipairs(gearData.trinkets) do
             RequestItemData(t.itemId)
             if t.partnerItemId then RequestItemData(t.partnerItemId) end
+        end
+    end
+    -- gearData.trinkets only carries the source it was built with; the trinket
+    -- tab can switch dropdown sources without re-running this, so prefetch
+    -- every source or a switch leaves rows stuck on the "Item N" placeholder.
+    for _, srcKey in ipairs(ns.TRINKET_SOURCE_ORDER or {}) do
+        local srcData = ns.GetSpecGearData(selectedClass, selectedSpec, srcKey)
+        if srcData and srcData.trinkets then
+            for _, t in ipairs(srcData.trinkets) do
+                RequestItemData(t.itemId)
+                if t.partnerItemId then RequestItemData(t.partnerItemId) end
+            end
         end
     end
     ns.Sections.Crafting.RequestItems(selectedClass, selectedSpec, RequestItemData)
@@ -1157,7 +1171,11 @@ function ns:UpdateCompendium()
 
     -- Request item data for gearing tabs
     if activeTab ~= "guide" and activeTab ~= "talents" then
-        local gearData = ns.GetSpecGearData(selectedClass, selectedSpec)
+        -- The trinket tab renders from its own per-spec dropdown source; skip
+        -- the override here and we prefetch the saved pref's source instead.
+        local src = ns.Sections.Trinkets.GetCompendiumSourceKey
+            and ns.Sections.Trinkets.GetCompendiumSourceKey(selectedClass, selectedSpec)
+        local gearData = ns.GetSpecGearData(selectedClass, selectedSpec, src)
         RequestAllGearItems(gearData)
     end
 
@@ -1301,8 +1319,46 @@ function ns:UpdateCompendiumGuide(specData, heroTalent)
         end
     end
     if #rotCtxOptions > 1 then currentRotContext = rotContext end
-    local rotation = FindRotationByContext(specData.rotation, heroTalent, rotContext)
+    -- Rotation source, mirroring the docked panel: Icy Veins (the legacy
+    -- ClassCodexData path) or Wowhead, offered only where both actually have
+    -- steps for this spec. Session-scoped like every other Compendium pick —
+    -- the panel persists its choice per spec, the Compendium must not write
+    -- the player's saved variables while browsing someone else's spec.
+    local whRotation = ns.GetWowheadRotation
+        and ns:GetWowheadRotation(selectedClass, selectedSpec) or nil
+    local rotSourceOptions = {}
+    if specData.rotation and #specData.rotation > 0 then
+        rotSourceOptions[#rotSourceOptions + 1] = "Icy Veins"
+    end
+    if whRotation then rotSourceOptions[#rotSourceOptions + 1] = "Wowhead" end
+
+    local rotSpecKey = (selectedClass or "") .. "-" .. (selectedSpec or "")
+    if rotSpecKey ~= compRotLastSpec then
+        compRotSource = nil
+        compRotLastSpec = rotSpecKey
+    end
+    local rotSource = compRotSource or rotSourceOptions[1]
+    local rotSrcValid = false
+    for _, s in ipairs(rotSourceOptions) do
+        if s == rotSource then rotSrcValid = true; break end
+    end
+    if not rotSrcValid then rotSource = rotSourceOptions[1] end
+
+    local rotation
+    if rotSource == "Wowhead" then
+        rotation = whRotation
+        -- Wowhead's list isn't split by context, so the context picker is moot.
+        rotCtxOptions = {}
+    else
+        rotation = FindRotationByContext(specData.rotation, heroTalent, rotContext)
+    end
     ns.Sections.Rotation.RenderCompendium({
+        sourceOptions   = rotSourceOptions,
+        currentSource   = rotSource,
+        onSourceChange  = function(picked)
+            compRotSource = picked
+            ns:UpdateCompendium()
+        end,
         contextOptions  = rotCtxOptions,
         currentContext  = currentRotContext or rotContext,
         rotation        = rotation,

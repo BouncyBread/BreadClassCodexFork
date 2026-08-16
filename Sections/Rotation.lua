@@ -210,6 +210,16 @@ function Rotation.InitCompendium(opts)
     comp.content:SetPoint("TOPLEFT", comp.header, "BOTTOMLEFT", 0, -2)
     comp.content:SetPoint("RIGHT", 0, 0)
 
+    -- Source picker, matching the docked panel's. Wowhead publishes a rotation
+    -- for 34 of 40 specs and the Compendium had no way to reach it.
+    comp.srcDropdown = CreateFrame(
+        "DropdownButton", "ClassCodexCompRotSrcDD",
+        comp.content, "WowStyle1DropdownTemplate"
+    )
+    comp.srcDropdown:SetPoint("TOPLEFT", 0, 0)
+    comp.srcDropdown:SetPoint("TOPRIGHT", 0, 0)
+    comp.srcDropdown:SetHeight(24); comp.srcDropdown:Hide()
+
     comp.ctxDropdown = CreateFrame(
         "DropdownButton", "ClassCodexCompRotCtxDD",
         comp.content, "WowStyle1DropdownTemplate"
@@ -235,9 +245,34 @@ end
 
 
 function Rotation.RenderCompendium(args)
+    local rowsUsed = 0
+    local srcOptions = args.sourceOptions or {}
+    if #srcOptions > 1 then
+        comp.srcDropdown:ClearAllPoints()
+        comp.srcDropdown:SetPoint("TOPLEFT", 0, -DROPDOWN_ROW * rowsUsed)
+        comp.srcDropdown:SetPoint("TOPRIGHT", 0, -DROPDOWN_ROW * rowsUsed)
+        comp.srcDropdown:SetupMenu(function(_, rootDescription)
+            for _, src in ipairs(srcOptions) do
+                rootDescription:CreateRadio(src,
+                    function() return args.currentSource == src end,
+                    function()
+                        if args.onSourceChange then args.onSourceChange(src) end
+                    end,
+                    src)
+            end
+        end)
+        comp.srcDropdown:Show()
+        rowsUsed = rowsUsed + 1
+    else
+        comp.srcDropdown:Hide()
+    end
+
     local options = args.contextOptions or {}
     local showCtx = #options > 1
     if showCtx then
+        comp.ctxDropdown:ClearAllPoints()
+        comp.ctxDropdown:SetPoint("TOPLEFT", 0, -DROPDOWN_ROW * rowsUsed)
+        comp.ctxDropdown:SetPoint("TOPRIGHT", 0, -DROPDOWN_ROW * rowsUsed)
         comp.ctxDropdown:SetupMenu(function(_, rootDescription)
             for _, ctx in ipairs(options) do
                 rootDescription:CreateRadio(
@@ -258,7 +293,8 @@ function Rotation.RenderCompendium(args)
     -- RenderPanel: the fork's patch rewrote upstream's `showCtx and -30 or 0` at
     -- all four sites but declared the variable at only one of them, so every
     -- Compendium rotation render threw "arithmetic on a nil value".
-    local dropdownOffset = -DROPDOWN_ROW * (showCtx and 1 or 0)
+    if showCtx then rowsUsed = rowsUsed + 1 end
+    local dropdownOffset = -DROPDOWN_ROW * rowsUsed
 
     for i = 1, MAX_STEPS do comp.rows[i]:Hide() end
     comp.fallback:Hide()

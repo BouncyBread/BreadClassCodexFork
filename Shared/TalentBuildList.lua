@@ -72,6 +72,21 @@ function ns.FormatBuildLabel(build)
     return label
 end
 
+-- FormatPlainBuildLabel(build) -> string
+-- The same text as FormatBuildLabel with the colour escapes removed.
+--
+-- Use this for anything that is not a display string: loadout names reach
+-- C_ClassTalents.RenameConfig and the Save-as dialog's edit box, where a
+-- |cff00cc00...|r would be shown literally. Taking the formatted label and
+-- stripping it (rather than rebuilding from buildLabel alone) keeps the name in
+-- step with what the player clicked AND keeps the context, without which
+-- Archon's "Recommended Class Tree" collides between Mythic+ and Raid.
+function ns.FormatPlainBuildLabel(build)
+    local s = ns.FormatBuildLabel(build)
+    s = s:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    return s
+end
+
 -- ExtractTalentBits(exportString) -> string or nil
 -- Decodes just the per-node bits from a Blizzard talent export string,
 -- skipping the 152-bit header (8 version + 16 spec + 128 tree hash).

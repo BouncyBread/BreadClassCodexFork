@@ -92,8 +92,12 @@ function Omnium.RenderPanel(args)
         local row = panel.rows[i]
         row.icon:SetSpell(r.spellId)
         row.spellId = r.spellId
-        row.week:SetText(WeekLabel(i))
-        row.name:SetText(SpellName(r.spellId, r.label))
+        -- The data's label is authoritative ("Tier N" specs, duplicated weeks);
+        -- the loop index is only a fallback for specs that carry no labels.
+        row.week:SetText(r.label or WeekLabel(i))
+        local name = SpellName(r.spellId, r.label)
+        if r.note then name = name .. " |cFF999999" .. r.note .. "|r" end
+        row.name:SetText(name)
         row:ClearAllPoints()
         row:SetPoint("TOPLEFT", panel.content, "TOPLEFT", 0, -(i - 1) * ROW_HEIGHT)
         row:SetPoint("RIGHT", panel.content, "RIGHT", 0, 0)

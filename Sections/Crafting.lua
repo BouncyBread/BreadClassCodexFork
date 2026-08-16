@@ -701,9 +701,11 @@ local function CtxHasData(class, spec, ctxKey)
     return d ~= nil and ((d.crafts and #d.crafts > 0) or (d.embellishments and #d.embellishments > 0))
 end
 
--- The persisted context if it has data, else the first context that does.
-local function ResolveActiveCtx(class, spec)
-    local ctx = GetPerSpecCtx()
+-- The active context if it has data, else the first context that does.
+-- ctx defaults to the persisted per-spec value (panel); the Compendium
+-- passes its session-scoped compCtx instead.
+local function ResolveActiveCtx(class, spec, ctx)
+    if ctx == nil then ctx = GetPerSpecCtx() end
     if CtxHasData(class, spec, ctx) then return ctx end
     for _, c in ipairs(CONTEXTS) do
         if CtxHasData(class, spec, c.key) then return c.key end
@@ -886,6 +888,14 @@ function Crafting.GetPanelCardHeight() return CARD_HEIGHT end
 
 local comp = {}
 
+-- Session-scoped Compendium context, independent of the panel's persisted
+-- per-spec value (GetPerSpecCtx/SetPerSpecCtx). Resets when the browsed spec
+-- changes so browsing another spec never rewrites the player's own saved
+-- craftingContext — same model as the Compendium trinket source in
+-- Sections/Trinkets.lua.
+local compCtx = "raid"
+local compLastSpec = nil
+
 -- opts: { parent = scrollChild, headerFactory = CreateSectionHeader }
 -- Returns section, header, content so the Compendium layout pass can
 -- reference them (kept symmetrical with the other Compendium tabs).
@@ -940,15 +950,25 @@ end
 
 -- args = { class, spec, refresh }
 -- `refresh` is a callback the dropdown invokes after the user changes
--- the per-spec context — the Compendium owns the master refresh.
+-- the context — the Compendium owns the master refresh.
 function Crafting.RenderCompendium(args)
     for i = 1, MAX_CARDS do comp.cards[i]:Hide() end
     for i = 1, #comp.headerRows do comp.headerRows[i]:Hide() end
     comp.fallback:Hide()
 
+    -- Session-scoped context: reset when the browsed spec changes rather
+    -- than carrying the player's per-spec saved craftingContext.
+    -- Class-qualified: frost/holy/protection/restoration each belong to two
+    -- classes, so the bare slug would not reset between them.
+    local compKey = (args.class or "") .. "-" .. (args.spec or "")
+    if compKey ~= compLastSpec then
+        compCtx = "raid"
+        compLastSpec = compKey
+    end
+
     -- Land on a context that has data, and only offer those the spec uses
     -- (with a fallback to the full list so the picker is never empty).
-    local ctxKey = ResolveActiveCtx(args.class, args.spec)
+    local ctxKey = ResolveActiveCtx(args.class, args.spec, compCtx)
     local ctxChoices = {}
     for _, c in ipairs(CONTEXTS) do
         if CtxHasData(args.class, args.spec, c.key) then ctxChoices[#ctxChoices + 1] = c end
@@ -960,7 +980,7 @@ function Crafting.RenderCompendium(args)
                 c.label(),
                 function() return ctxKey == c.key end,
                 function()
-                    SetPerSpecCtx(c.key)
+                    compCtx = c.key
                     if args.refresh then args.refresh() end
                 end,
                 c.key

@@ -1914,7 +1914,7 @@ local function RenderAllTalentsHeroGrouped(builds, emptyText, applyPrefix, yPos)
             -- in the save dialog's edit box, where an escape would be shown
             -- literally in the player's own loadout name.
             local text = ns.FormatBuildLabel(build)
-            local plain = build.buildLabel or build.context or "Build"
+            local plain = ns.FormatPlainBuildLabel(build)
             row.label:ClearAllPoints()
             row.label:SetPoint("LEFT", row, "LEFT", 8, 0)
             row.label:SetPoint("RIGHT", row.copyBtn, "LEFT", -4, 0)
@@ -3315,12 +3315,16 @@ do
 end
 
 -- Tooltip helpers (hoisted to file scope to avoid re-creation per hover)
-local BIS_TIER_HEX = {
-    S = "|cffff8000", A = "|cffa336ee",
-    B = "|cff0070dd", C = "|cff1eff00",
-    D = "|cff9e9e9e",
-}
-local BIS_TIER_ORDER = { S = 1, A = 2, B = 3, C = 4, D = 5 }
+-- Derived from the shared tier tables rather than a fourth hand-written S-D
+-- copy. Wowhead's trinket tier lists also use E/F/G and "+" variants, and an
+-- unknown tier here fell to white text and sortKey 6 -- so an S+ trinket sorted
+-- BELOW a D one in the tooltip.
+local BIS_TIER_HEX = {}
+for tier, c in pairs(ns.TIER_COLORS or {}) do
+    BIS_TIER_HEX[tier] = string.format("|cff%02x%02x%02x",
+        math.floor(c.r * 255 + 0.5), math.floor(c.g * 255 + 0.5), math.floor(c.b * 255 + 0.5))
+end
+local BIS_TIER_ORDER = ns.TIER_ORDER or {}
 local BIS_CLASS_ID_MAP = {
     WARRIOR = 1, PALADIN = 2, HUNTER = 3, ROGUE = 4, PRIEST = 5,
     DEATHKNIGHT = 6, SHAMAN = 7, MAGE = 8, WARLOCK = 9, MONK = 10,
@@ -3509,11 +3513,18 @@ local function BuildTooltipEntries(itemId)
             for _, entry in ipairs(trinketSpecs) do
                 if not filterSet or filterSet[entry.class] then
                     local hex = BIS_TIER_HEX[entry.tier] or "|cffffffff"
+                    -- Name whose tier this is. The list is built from the first
+                    -- source that rates each trinket, so rows can legitimately
+                    -- come from different sources; an unlabelled letter would
+                    -- read as one ranking.
+                    local srcIcon = entry.src and ns.SourceIcon and ns.SourceIcon(entry.src, 11) or ""
                     entries[#entries + 1] = {
                         left = GetEntryIcon(entry) .. " " .. GetClassColorHex(entry.class) .. entry.label .. "|r",
-                        right = hex .. entry.tier .. "|r",
+                        right = srcIcon .. " " .. hex .. entry.tier .. "|r",
                         classToken = entry.class,
-                        sortKey = BIS_TIER_ORDER[entry.tier] or 6,
+                        -- 99, not 6: the shared TIER_ORDER runs to 16 (G), so a 6
+                        -- fallback would sort an unknown tier above half the scale.
+                        sortKey = BIS_TIER_ORDER[entry.tier] or 99,
                         isTrinketEntry = true,
                     }
                     seen[entry.label] = true
@@ -3902,6 +3913,8 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
             dockLoadoutShowSaved = true,
             dockLoadoutShowIcyVeins = true,
             dockLoadoutShowUgg = true,
+            dockLoadoutShowWowhead = true,
+            dockLoadoutShowArchon = true,
             dockLoadoutOpacity = 95,
             dockLoadoutWidth = 200,
             dockLoadoutAutoWidth = false,

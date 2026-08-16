@@ -355,15 +355,26 @@ local EnsureCompendiumRow
 -- panel's saved per-spec pref. Resets to Icy Veins when the browsed spec
 -- changes — mirrors the BiS Compendium source model in Sections/Gear.lua.
 local compSource = "icyveins"
+-- Session-scoped Compendium context, same reset-per-spec model as the source
+-- above. LoadCtx/SaveCtx key on the PLAYER's spec, so the Compendium using
+-- them would rewrite your own spec's saved trinketContext while browsing
+-- another spec.
+local compCtx = "All"
 local compLastSpecKey = nil
 
 -- Resolve (and validate) the active Compendium trinket source for a spec.
 -- Called by Compendium.lua before fetching, so the reset happens before the
 -- data is read.
 function Trinkets.GetCompendiumSourceKey(classToken, specKey)
-    if specKey ~= compLastSpecKey then
+    -- Class-qualified: four spec slugs are shared by two classes each
+    -- (frost, holy, protection, restoration), so keying on the bare slug
+    -- carried the source and context straight from Paladin/holy into
+    -- Priest/holy without resetting.
+    local key = (classToken or "") .. "-" .. (specKey or "")
+    if key ~= compLastSpecKey then
         compSource = "icyveins"
-        compLastSpecKey = specKey
+        compCtx = "All"
+        compLastSpecKey = key
     end
     -- Was a two-key icyveins<->ugg toggle, which silently mishandled any third
     -- or fourth source. Validate against the full ordered list instead.
@@ -428,6 +439,12 @@ function Trinkets.InitCompendium(opts)
     comp.ctxDropdown:SetHeight(24)
     comp.ctxDropdown:Hide()
 
+    -- Empty-state line for the zero-rows case (see RenderCompendium); same
+    -- pattern as comp.fallback in Sections/Crafting.lua.
+    comp.emptyText = comp.content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    comp.emptyText:SetTextColor(0.5, 0.5, 0.5)
+    comp.emptyText:Hide()
+
     return comp.section, comp.header, comp.content
 end
 
@@ -435,6 +452,7 @@ end
 function Trinkets.RenderCompendium(args)
     if not args or not args.trinkets then return end
     for _, r in ipairs(comp.rows) do r:Hide() end
+    comp.emptyText:Hide()
 
     local dropH = 0
 
@@ -463,19 +481,23 @@ function Trinkets.RenderCompendium(args)
         comp.sourceDropdown:Hide()
     end
 
-    local ctxKey = LoadCtx()
+    local ctxKey = compCtx
     local contexts = CollectContexts(args.trinkets)
+    -- Validation runs even when no dropdown renders: Icy Veins and u.gg
+    -- publish no per-row contexts, so #contexts can be 0 and a stale compCtx
+    -- ("mplus" saved while browsing Archon or Wowhead) would filter every row
+    -- away with no dropdown to fix it from. The panel reconciles the same way.
+    local ctxValid = ctxKey == "All"
+    for _, c in ipairs(contexts) do
+        if c == ctxKey then ctxValid = true; break end
+    end
+    if not ctxValid then
+        ctxKey = "All"
+        compCtx = "All"
+    end
     local showDropdown = #contexts > 1
 
     if showDropdown then
-        local valid = ctxKey == "All"
-        if not valid then
-            for _, c in ipairs(contexts) do
-                if c == ctxKey then valid = true; break end
-            end
-        end
-        if not valid then ctxKey = "All"; SaveCtx("All") end
-
         local allOptions = { "All" }
         for _, c in ipairs(contexts) do allOptions[#allOptions + 1] = c end
 
@@ -485,7 +507,7 @@ function Trinkets.RenderCompendium(args)
                 rootDescription:CreateRadio(label,
                     function() return ctxKey == ctx end,
                     function()
-                        SaveCtx(ctx)
+                        compCtx = ctx
                         if args.refresh then args.refresh() end
                     end,
                     ctx)
@@ -533,7 +555,14 @@ function Trinkets.RenderCompendium(args)
         row:SetPoint("RIGHT", comp.content, "RIGHT", 0, 0)
         row:Show()
     end
-    comp.content:SetHeight(dropH + idx * ns.ROW_HEIGHT)
+    if idx == 0 then
+        comp.emptyText:ClearAllPoints()
+        comp.emptyText:SetPoint("TOPLEFT", comp.content, "TOPLEFT", 2, yOffset)
+        comp.emptyText:SetPoint("RIGHT", comp.content, "RIGHT", -2, 0)
+        comp.emptyText:SetText(L["empty.no_data"])
+        comp.emptyText:Show()
+    end
+    comp.content:SetHeight(dropH + math.max(idx, 1) * ns.ROW_HEIGHT)
     comp.section:Show()
 end
 
@@ -544,5 +573,6 @@ function Trinkets.GetCompendiumContentHeight()
     for _, r in ipairs(comp.rows) do
         if r:IsShown() then h = h + ns.ROW_HEIGHT end
     end
+    if comp.emptyText:IsShown() then h = h + ns.ROW_HEIGHT end
     return h
 end

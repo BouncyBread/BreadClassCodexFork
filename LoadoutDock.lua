@@ -596,6 +596,70 @@ local function BuildLoadoutMenu(_, root)
         end
     end
 
+    -- Sections 3b/3c: Class Codex - Wowhead and Archon.
+    --
+    -- Both publish one build per (hero talent, context), so unlike Icy Veins'
+    -- flat context list they group by hero: a submenu per hero when the spec has
+    -- more than one, flat when it has one. Same shape the Compendium and the
+    -- panel Talents tab use, via ns.GroupBuildsByHero.
+    --
+    -- This dock was the last of the five talent surfaces still offering only
+    -- Icy Veins / u.gg / PvP.
+    local function emitHeroGrouped(builds, sourceName, iconTex, anyBefore)
+        if not builds or #builds == 0 then return false end
+        if anyBefore then root:CreateDivider() end
+        root:CreateTitle("|TInterface\\AddOns\\BreadClassCodex\\Textures\\"
+            .. iconTex .. ":14:14:0:0|t  " .. sourceName)
+        local heroOrder, heroBuilds = ns.GroupBuildsByHero(builds)
+        for _, hero in ipairs(heroOrder) do
+            local parent = root
+            if #heroOrder > 1 then
+                parent = root:CreateButton(ns.FormatHeroHeaderText(hero))
+            end
+            for _, build in ipairs(heroBuilds[hero]) do
+                local capturedExport = build.exportString
+                -- FormatBuildLabel embeds |cff...|r for the source's own "(Best)"
+                -- tag, so it is DISPLAY ONLY. The name handed to
+                -- ApplyTalentExportString reaches C_ClassTalents.RenameConfig, and
+                -- an escape there shows up literally in the player's loadout list.
+                local plain = ns.FormatPlainBuildLabel(build)
+                local label = ns.FormatBuildLabel(build)
+                if activeMatches(capturedExport) then
+                    label = label .. MARKER_MATCH
+                end
+                parent:CreateButton(label, function()
+                    if InCombatLockdown() then
+                        UIErrorsFrame:AddMessage(L["loadout_dock.cannot_switch_combat"], 1, 0.3, 0.3)
+                        return
+                    end
+                    rememberApplied(capturedExport)
+                    if ns.ApplyTalentExportString then
+                        ns.ApplyTalentExportString(capturedExport, sourceName .. " " .. hero .. " " .. plain)
+                    end
+                end)
+            end
+        end
+        return true
+    end
+
+    local hasWowhead = false
+    if db.dockLoadoutShowWowhead ~= false and classToken and specSlug
+        and ns.GetWowheadTalentBuilds then
+        hasWowhead = emitHeroGrouped(
+            ns:GetWowheadTalentBuilds(classToken, specSlug),
+            L["settings.value.wowhead"] or "Wowhead", "wowhead",
+            hasBlizzard or hasIcyVeins or hasUgg)
+    end
+
+    local hasArchon = false
+    if db.dockLoadoutShowArchon ~= false and classToken and specSlug
+        and ns.GetArchonTalentBuilds then
+        hasArchon = emitHeroGrouped(
+            ns:GetArchonTalentBuilds(classToken, specSlug),
+            L["settings.value.archongg"] or "Archon", "archon",
+            hasBlizzard or hasIcyVeins or hasUgg or hasWowhead)
+    end
+
     -- Section 4: Class Codex - PvP (per-bracket recommendations from
     -- Bnet talent_loadout_code + u.gg). Mirrors u.gg's submenu
     -- pattern (M+ Dungeons / Raid Heroic / Raid Mythic above): an
@@ -739,7 +803,7 @@ local function BuildLoadoutMenu(_, root)
             local arenaHas = groupHasAny(ARENA_GROUP)
             local bgHas = groupHasAny(BG_GROUP)
 
-            if hasBlizzard or hasUgg or hasIcyVeins then root:CreateDivider() end
+            if hasBlizzard or hasUgg or hasIcyVeins or hasWowhead or hasArchon then root:CreateDivider() end
             root:CreateTitle("|TInterface\\AddOns\\BreadClassCodex\\Textures\\bnet:14:14:0:0|t  " .. (L["pvp.label"] or "PvP"))
 
             if not arenaHas and not bgHas then
@@ -766,7 +830,8 @@ local function BuildLoadoutMenu(_, root)
         end
     end
 
-    if not hasBlizzard and not hasUgg and not hasIcyVeins and not hasPvp and (not specData or not specData.talents or #specData.talents == 0) then
+    if not hasBlizzard and not hasUgg and not hasIcyVeins and not hasWowhead
+        and not hasArchon and not hasPvp and (not specData or not specData.talents or #specData.talents == 0) then
         root:CreateTitle(L["loadout_dock.no_loadouts"])
     end
 end

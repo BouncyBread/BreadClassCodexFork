@@ -56,10 +56,11 @@ local CONTEXT_LABELS = {
     crafting = L["context.crafting"],
 }
 
-local CONSUMABLE_ORDER = { "flask", "combatPotion", "food", "weaponBuff", "augmentRune" }
+local CONSUMABLE_ORDER = { "flask", "combatPotion", "healthPotion", "food", "weaponBuff", "augmentRune" }
 local CONSUMABLE_LABELS = {
     flask = L["consumable.flask"],
     combatPotion = L["consumable.combat_potion"],
+    healthPotion = L["consumable.health_potion"],
     food = L["consumable.food"],
     weaponBuff = L["consumable.weapon_buff"],
     augmentRune = L["consumable.augment_rune"],
@@ -300,6 +301,13 @@ local function GetSpecGearData(classToken, specKey, trinketSourceOverride)
                 -- location is its only per-row signal, so it must survive the
                 -- projection or its rows render with an empty right column.
                 source = t.source,
+                -- Both Trinkets surfaces set row.bonusIDs from this and nothing
+                -- ever supplied it: NO source publishes bonus ids on a trinket
+                -- row (only Icy Veins' GEAR rows carry them). So every trinket
+                -- link was built at base item level. Borrow from the harvested
+                -- itemId -> bonusIDs map, exactly as Sections/Gear.lua's
+                -- ResolveRow does for u.gg gear rows.
+                bonusIDs = t.bonusIDs or (ns.GetItemBonusIDs and ns:GetItemBonusIDs(t.itemId)),
             }
         end
         out.trinkets = list
@@ -497,14 +505,37 @@ local function BuildBisLookup()
         CLASS_SPEC_COUNT[classToken] = (CLASS_SPEC_COUNT[classToken] or 0) + 1
         local label = GetLocalizedSpecName(classToken, specKey) .. " " .. GetLocalizedClassName(classToken)
 
-        -- Trinket reverse lookup (u.gg): itemId + popularity tier.
-        local usd = ns.SourceSpec and ns.SourceSpec("ugg", classToken, specKey)
-        local tr = usd and usd.trinkets and usd.trinkets["all"] and usd.trinkets["all"]["all"]
-        if tr then
-            for _, t in ipairs(tr) do
+        -- Trinket reverse lookup: itemId + tier, per spec.
+        --
+        -- Read u.gg alone, which missed almost everything once Wowhead began
+        -- publishing a full S-D tier list (907 rows across all 40 specs) and
+        -- Icy Veins its own. Walk TRINKET_SOURCE_ORDER and take the FIRST
+        -- source that rates this trinket for this spec, so a spec is never
+        -- listed twice with two sources' disagreeing letters. The winning
+        -- source is recorded on the entry so the tooltip can show whose tier
+        -- it is rather than mixing provenance silently.
+        local ratedHere = {}
+        for _, srcKey in ipairs(ns.TRINKET_SOURCE_ORDER or {}) do
+            local ssd = ns.SourceSpec and ns.SourceSpec(srcKey, classToken, specKey)
+            local st = ssd and ssd.trinkets
+            local rows = st and st["all"] and st["all"]["all"]
+            if not rows and st then
+                -- Archon splits by zone type instead of the wildcard.
+                rows = {}
+                for _, ctx in ipairs({ "mplus", "raid" }) do
+                    for _, t in ipairs(ns.ResolveCategory(st, "all", ctx) or {}) do
+                        rows[#rows + 1] = t
+                    end
+                end
+            end
+            for _, t in ipairs(rows or {}) do
                 local id = t.itemId
-                trinketLookup[id] = trinketLookup[id] or {}
-                trinketLookup[id][#trinketLookup[id] + 1] = { label = label, class = classToken, spec = specKey, tier = t.tier }
+                if id and t.tier and not ratedHere[id] then
+                    ratedHere[id] = true
+                    trinketLookup[id] = trinketLookup[id] or {}
+                    trinketLookup[id][#trinketLookup[id] + 1] =
+                        { label = label, class = classToken, spec = specKey, tier = t.tier, src = srcKey }
+                end
             end
         end
 
@@ -643,11 +674,20 @@ local function ConsolidateByClass(entries)
             for _, e in ipairs(classEntries) do
                 if e.pct and (not best or e.pct > best.pct) then best = e end
             end
+            -- Same for `src`, which names whose tier letter this is: carry it
+            -- only when every spec of the class was rated by the SAME source.
+            -- Mixed provenance leaves it nil, so the tooltip shows the letter
+            -- without claiming a source rather than crediting one arbitrarily.
+            local src, mixed = classEntries[1].src, false
+            for _, e in ipairs(classEntries) do
+                if e.src ~= src then mixed = true; break end
+            end
             result[#result + 1] = {
                 label = className, class = classToken, tier = classEntries[1].tier,
                 consolidated = true,
                 popularity = best and best.popularity or nil,
                 pct = best and best.pct or nil,
+                src = (not mixed) and src or nil,
             }
         else
             for _, e in ipairs(classEntries) do
@@ -1004,6 +1044,7 @@ function ns:GetWowheadEnhancements(classToken, specKey)
         out.consumables = {
             flask        = top(c.flask),
             combatPotion = top(c.potions),
+            healthPotion = top(c.healthPotion),
             food         = top(c.food),
             weaponBuff   = top(c.weaponBuff),
             augmentRune  = top(c.augmentRune),
@@ -1063,6 +1104,7 @@ function ns:GetArchonEnhancements(classToken, specKey)
         out.consumables = {
             flask        = top(c.flask),
             combatPotion = top(c.potions),
+            healthPotion = top(c.healthPotion),
             food         = top(c.food),
             weaponBuff   = top(c.weaponBuff),
             augmentRune  = top(c.augmentRune),

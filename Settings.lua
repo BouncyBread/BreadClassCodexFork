@@ -203,6 +203,10 @@ function ns.RegisterSettings()
             L["settings.tooltip.dock_show_icyveins"], true, nil, dockOn)
         check("dockLoadoutShowUgg", L["settings.label.dock_show_ugg"],
             L["settings.tooltip.dock_show_ugg"], true, nil, dockOn)
+        check("dockLoadoutShowWowhead", L["settings.label.dock_show_wowhead"],
+            L["settings.tooltip.dock_show_wowhead"], true, nil, dockOn)
+        check("dockLoadoutShowArchon", L["settings.label.dock_show_archon"],
+            L["settings.tooltip.dock_show_archon"], true, nil, dockOn)
         slider("dockLoadoutOpacity", L["settings.label.dock_opacity"],
             L["settings.tooltip.dock_opacity"], 95, 0, 100, 5, fmtPercent,
             function() if ns.ApplyLoadoutDockOpacity then ns.ApplyLoadoutDockOpacity() end end, dockOn)
