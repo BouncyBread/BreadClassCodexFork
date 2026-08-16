@@ -4,6 +4,10 @@
 ## Author: jfstn (fork maintained by BouncyBread)
 ## Version: @project-version@
 ## X-Fork-Of: Class Codex by jfstn (MIT) - https://addons.wago.io/addons/classcodex
+# This fork's OWN Wago project, not upstream's (rNkynwKa). With upstream's id here
+# every addon manager would treat this as Class Codex and overwrite it with jfstn's
+# builds -- which is why the inherited X-Wago-ID/X-Curse-Project-ID were stripped.
+## X-Wago-ID: aNDMng6o
 ## SavedVariables: ClassCodexDB
 ## SavedVariablesPerCharacter: ClassCodexCharDB
 ## IconTexture: Interface\AddOns\BreadClassCodex\icon
