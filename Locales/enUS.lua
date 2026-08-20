@@ -279,6 +279,9 @@ L["settings.value.archongg"] = "Archon"
 L["context.mplus_dungeons"] = "M+ Dungeons"
 L["context.raid_heroic"] = "Raid Bosses (Heroic)"
 L["context.raid_mythic"] = "Raid Bosses (Mythic)"
+-- Tag on the build Archon itself recommends, which is often not the most
+-- played one, so the rows can be ordered by popularity without losing it.
+L["archon.pick"] = "Archon pick"
 
 -- Loadout Dock
 L["settings.header.loadout_dock"] = "Loadout Dock"

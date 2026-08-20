@@ -72,6 +72,8 @@ local setupDone = false
 -- aware), overridable per-character × per-spec via the source dropdown.
 local selectedSource           -- "ugg" | "ugg" | "pvp"
 local selectedUggScope      -- "mplus" | "raidHeroic" | "raidMythic"
+local selectedArchonScope   -- same tokens, tracked separately from u.gg's
+local SeedArchonDefaultPreview -- assigned with the Archon menu helpers below
 local selectedPvpBracket       -- "pvp-shuffle" | "pvp-blitz" | "pvp-2v2" | "pvp-3v3" | "pvp-rbg"
 
 -- WoW retail's Lua 5.1 doesn't support \xHH escapes; the previous
@@ -81,6 +83,26 @@ local selectedPvpBracket       -- "pvp-shuffle" | "pvp-blitz" | "pvp-2v2" | "pvp
 -- any non-ASCII characters elsewhere.
 -- Raid difficulty labels come from Blizzard's own global strings so they
 -- always match the player's client language. \226\128\148 = U+2014 em dash.
+-- Sources that pair the scope dropdown with the build dropdown. Both publish
+-- per-encounter contexts, so the scope picker is what keeps their build menus
+-- short: without it Archon renders every dungeon and boss at once (19 contexts
+-- x 4 builds on a Season 2 spec).
+local SCOPED_SOURCES = { ugg = true, archongg = true }
+
+-- Assigned below, once CurrentClassSpec exists: Archon only earns the scope
+-- dropdown on specs that actually carry per-encounter data. Aggregate-only
+-- specs fall back to the flat hero-grouped menu, which no scope can filter,
+-- so the control would sit there dead.
+local ArchonScopeApplies
+
+local function SourceUsesScope(source)
+    if not SCOPED_SOURCES[source or ""] then return false end
+    if source == "archongg" then
+        return ArchonScopeApplies and ArchonScopeApplies() or false
+    end
+    return true
+end
+
 local SCOPE_LABELS = {
     mplus      = (ns.L and ns.L["context.mythic_plus"]) or "Mythic+",
     raidHeroic = ((RAID and PLAYER_DIFFICULTY2) and (RAID .. " \226\128\148 " .. PLAYER_DIFFICULTY2)) or "Raid \226\128\148 Heroic",
@@ -397,7 +419,7 @@ local function GetMediumWidth()
     local w = CONTAINER_PADDING_X * 2 + ICON_SIZE
         + ICON_GAP + SOURCE_DROPDOWN_WIDTH
         + ICON_GAP + BUILD_DROPDOWN_WIDTH
-    if selectedSource == "ugg" then
+    if SourceUsesScope(selectedSource) then
         w = w + ICON_GAP + SCOPE_DROPDOWN_WIDTH
     end
     return w
@@ -418,11 +440,11 @@ local function GetTargetWidth()
     return GetMediumWidth()
 end
 
--- Scope dropdown is only visible when source = ugg. The other two
+-- Scope dropdown is only visible for the per-encounter sources. The other two
 -- dropdowns track panelExpanded; scope is gated additionally by source.
 local function UpdateScopeDropdownVisibility()
     if not scopeDropdown then return end
-    if selectedSource == "ugg" and panelExpanded then
+    if SourceUsesScope(selectedSource) and panelExpanded then
         scopeDropdown:Show()
         scopeDropdown:SetAlpha(1)
     else
@@ -503,9 +525,9 @@ local function UpdateRevealAnimation()
         and math.abs(startDropdownAlpha - dropdownTarget) < 0.01
         and math.abs(startActionAlpha - actionTarget) < 0.01
 
-    -- Scope follows the same alpha as the other dropdowns when source =
-    -- ugg, else snaps to 0 and stays hidden.
-    local scopeTarget = (selectedSource == "ugg") and dropdownTarget or 0
+    -- Scope follows the same alpha as the other dropdowns for the
+    -- per-encounter sources, else snaps to 0 and stays hidden.
+    local scopeTarget = SourceUsesScope(selectedSource) and dropdownTarget or 0
 
     if atTarget then
         container:SetWidth(targetWidth)
@@ -532,7 +554,7 @@ local function UpdateRevealAnimation()
         local aAlpha = startActionAlpha + (actionTarget - startActionAlpha) * eased
         if sourceDropdown then sourceDropdown:SetAlpha(dAlpha) end
         if buildDropdown then buildDropdown:SetAlpha(dAlpha) end
-        if scopeDropdown and selectedSource == "ugg" then
+        if scopeDropdown and SourceUsesScope(selectedSource) then
             scopeDropdown:Show(); scopeDropdown:SetAlpha(dAlpha)
         end
         if applyBtn then applyBtn:SetAlpha(aAlpha) end
@@ -622,6 +644,15 @@ local function CurrentClassSpec()
     if not ns.GetSpecData then return nil, nil end
     local _, classToken, specKey = ns.GetSpecData()
     return classToken, specKey
+end
+
+-- Fills the forward declaration made above SourceUsesScope; defined here
+-- because it needs CurrentClassSpec.
+function ArchonScopeApplies()
+    local classFile, specName = CurrentClassSpec()
+    if not classFile or not specName then return false end
+    if not ns.HasArchonEncounterData then return false end
+    return ns.HasArchonEncounterData(classFile, specName) and true or false
 end
 
 -- u.gg spec data resolution: in inspect mode we look up directly
@@ -1115,14 +1146,57 @@ local function PopulateUggMenu(rootDescription)
     end
 end
 
+-- The scope dropdown serves both per-encounter sources, so it reads and
+-- writes whichever source's scope is live rather than u.gg's alone.
+local function CurrentScope()
+    if selectedSource == "archongg" then return selectedArchonScope end
+    return selectedUggScope
+end
+
+local function SetCurrentScope(value)
+    if selectedSource == "archongg" then
+        selectedArchonScope = value
+    else
+        selectedUggScope = value
+    end
+end
+
+local function SeedScopeDefaultPreview()
+    if selectedSource == "archongg" then
+        if SeedArchonDefaultPreview then SeedArchonDefaultPreview() end
+    else
+        SeedUggDefaultPreview()
+    end
+end
+
+-- Which scopes actually carry data for the active source. Archon's Mythic raid
+-- branch is empty for most of a tier (the difficulty has no logged parses until
+-- it opens), and offering a scope whose build menu is empty is worse than not
+-- offering it. u.gg keeps all three unconditionally, as before.
+local function AvailableScopes()
+    if selectedSource ~= "archongg" then
+        return { "mplus", "raidHeroic", "raidMythic" }
+    end
+    local classFile, specName = CurrentClassSpec()
+    local groups = classFile and specName and ns.GroupArchonContexts
+        and ns.GroupArchonContexts(classFile, specName) or nil
+    if not groups then return { "mplus" } end
+    local out = {}
+    if groups.mplusOverview or #groups.mplusDungeons > 0 then out[#out + 1] = "mplus" end
+    if groups.raidOverviewHeroic or #groups.raidHeroicBosses > 0 then out[#out + 1] = "raidHeroic" end
+    if groups.raidOverviewMythic or #groups.raidMythicBosses > 0 then out[#out + 1] = "raidMythic" end
+    if #out == 0 then out[1] = "mplus" end
+    return out
+end
+
 local function PopulateScopeMenu(_, rootDescription)
     local function makeRadio(label, value)
         rootDescription:CreateRadio(
             label,
-            function() return selectedUggScope == value end,
+            function() return CurrentScope() == value end,
             function()
-                if selectedUggScope == value then return end
-                selectedUggScope = value
+                if CurrentScope() == value then return end
+                SetCurrentScope(value)
                 if scopeDropdown then
                     if scopeDropdown.SetDefaultText then
                         scopeDropdown:SetDefaultText(SCOPE_LABELS[value] or label)
@@ -1134,16 +1208,16 @@ local function PopulateScopeMenu(_, rootDescription)
                 -- previewedBuild via IsSelected. Otherwise the closed
                 -- label keeps showing the old scope's pick until the
                 -- user clicks the dropdown.
-                SeedUggDefaultPreview()
+                SeedScopeDefaultPreview()
                 if buildDropdown and buildDropdown.GenerateMenu then
                     buildDropdown:GenerateMenu()
                 end
             end
         )
     end
-    makeRadio(SCOPE_LABELS.mplus, "mplus")
-    makeRadio(SCOPE_LABELS.raidHeroic, "raidHeroic")
-    makeRadio(SCOPE_LABELS.raidMythic, "raidMythic")
+    for _, scope in ipairs(AvailableScopes()) do
+        makeRadio(SCOPE_LABELS[scope], scope)
+    end
 end
 
 -- Icy Veins "build" record matching the shape SetPreview /
@@ -1285,6 +1359,155 @@ local function ArchonBuildRecord(build)
     }
 end
 
+-- Archon context keys use the scraper's vocabulary (mplus, mplus:<dungeon>,
+-- raid:heroic, raid:heroic:<boss>), which is not u.gg's, hence its own mapper
+-- rather than ScopeForContextKey. "raid" is Archon's historical Mythic
+-- all-bosses aggregate key.
+local function ArchonScopeForContextKey(contextKey)
+    if not contextKey then return nil end
+    if contextKey == "mplus" or contextKey:find("^mplus:") then return "mplus" end
+    if contextKey == "raid:heroic" or contextKey:find("^raid:heroic:") then return "raidHeroic" end
+    if contextKey == "raid" or contextKey:find("^raid:mythic:") then return "raidMythic" end
+    return nil
+end
+
+local function ResolveDefaultArchonScope(groups)
+    local autoScope = ArchonScopeForContextKey(
+        ns.GetActiveArchonContext and ns.GetActiveArchonContext() or nil)
+    if autoScope then return autoScope end
+    if groups.mplusOverview or #groups.mplusDungeons > 0 then return "mplus" end
+    if groups.raidOverviewHeroic or #groups.raidHeroicBosses > 0 then return "raidHeroic" end
+    if groups.raidOverviewMythic or #groups.raidMythicBosses > 0 then return "raidMythic" end
+    return "mplus"
+end
+
+-- The overview entry plus the encounter list for one scope.
+local function ArchonScopeEntries(groups, scope)
+    if scope == "raidHeroic" then
+        return groups.raidOverviewHeroic, groups.raidHeroicBosses
+    elseif scope == "raidMythic" then
+        return groups.raidOverviewMythic, groups.raidMythicBosses
+    end
+    return groups.mplusOverview, groups.mplusDungeons
+end
+
+-- "59.5%" -> 59.5. Missing or unparsable shares sort last rather than first.
+local function ArchonPopularityValue(text)
+    if type(text) ~= "string" then return -1 end
+    return tonumber(text:match("([%d%.]+)")) or -1
+end
+
+-- Archon's own "Recommended Class Tree" is frequently not the build people run
+-- (Season 2 Retribution: recommended 1.0%, alternative #1 59.5%), so rows are
+-- ordered by popularity and Archon's pick is tagged instead of pinned to the
+-- top. The scraper preserves site order, so _order == 1 is that pick.
+local function ArchonBuildsByPopularity(entry)
+    local out = {}
+    for _, b in ipairs(entry.builds or {}) do out[#out + 1] = b end
+    table.sort(out, function(a, b)
+        local pa, pb = ArchonPopularityValue(a._popularity), ArchonPopularityValue(b._popularity)
+        if pa ~= pb then return pa > pb end
+        return (a._order or 0) < (b._order or 0)
+    end)
+    return out
+end
+
+local function ArchonBuildLabel(build)
+    local label = build.buildLabel or "Build"
+    if build.heroTalent and build.heroTalent ~= "All" then
+        label = build.heroTalent .. " \226\128\148 " .. label
+    end
+    if build._order == 1 then
+        label = label .. "  |cff40c0f0[" ..
+            ((ns.L and ns.L["archon.pick"]) or "Archon pick") .. "]|r"
+    end
+    if build._popularity then
+        label = label .. "  |cff808080" .. build._popularity .. "|r"
+    end
+    return label
+end
+
+-- One selectable build row. Used for the encounter row itself (carrying that
+-- encounter's most-played build) and for every row inside its submenu.
+local function AddArchonBuildRadio(parent, entry, build, label)
+    local record = ArchonBuildRecord(build)
+    record._archonContextKey = entry.contextKey
+    local export = build.exportString
+    local isActive = BuildMatchesActive({ exportString = export })
+    if isActive then
+        label = label .. "  |TInterface\\COMMON\\Indicator-Green:12:12:0:0|t"
+    end
+    local item = parent:CreateRadio(
+        label,
+        function()
+            if previewedBuild and previewedBuild.exportString == export then return true end
+            if previewedBuild == nil and isActive then return true end
+            return false
+        end,
+        function()
+            if previewedBuild and previewedBuild.exportString == export then
+                SetPreview(nil)
+            else
+                SetPreview(record)
+                if ns.SetPersistedArchonContext then
+                    ns.SetPersistedArchonContext(entry.contextKey)
+                end
+            end
+        end
+    )
+    HookItemBehavior(item, record)
+    return item
+end
+
+-- An encounter row: clicking it picks that encounter's most-played build,
+-- hovering opens a submenu with every build for the encounter. This is the
+-- u.gg source's shape (scope dropdown, then one row per encounter) with
+-- Archon's alternatives kept reachable instead of dropped.
+local function AddArchonEncounterRow(rootDescription, entry, autoKey)
+    local builds = ArchonBuildsByPopularity(entry)
+    local top = builds[1]
+    if not top then return end
+    local label = entry.label or entry.contextKey or "Build"
+    if autoKey and autoKey == entry.contextKey then
+        label = "|cffffd100" .. label .. "|r"
+    end
+    if top._popularity then
+        label = label .. "  |cff808080" .. top._popularity .. "|r"
+    end
+    local item = AddArchonBuildRadio(rootDescription, entry, top, label)
+    -- Older menu backends have no nested descriptions; the encounter row still
+    -- works on its own there, so degrade rather than error.
+    if item and item.CreateRadio and #builds > 1 then
+        for _, build in ipairs(builds) do
+            AddArchonBuildRadio(item, entry, build, ArchonBuildLabel(build))
+        end
+    end
+end
+
+function SeedArchonDefaultPreview()
+    local classFile, specName = CurrentClassSpec()
+    if not classFile or not specName or not ns.GroupArchonContexts then return end
+    local groups = ns.GroupArchonContexts(classFile, specName)
+    if not groups then return end
+    if not selectedArchonScope then
+        selectedArchonScope = ResolveDefaultArchonScope(groups)
+    end
+    local autoKey = ns.GetActiveArchonContext and ns.GetActiveArchonContext() or nil
+    local overview, encounters = ArchonScopeEntries(groups, selectedArchonScope)
+    local chosen = overview or (encounters and encounters[1])
+    if autoKey then
+        for _, e in ipairs(encounters or {}) do
+            if e.contextKey == autoKey then chosen = e; break end
+        end
+    end
+    if not chosen then return end
+    local build = ArchonBuildsByPopularity(chosen)[1]
+    if not build then return end
+    local record = ArchonBuildRecord(build)
+    record._archonContextKey = chosen.contextKey
+    SetPreview(record)
+end
+
 local function PopulateArchonMenu(rootDescription)
     local classFile, specName = CurrentClassSpec()
     if not classFile or not specName then
@@ -1300,69 +1523,22 @@ local function PopulateArchonMenu(rootDescription)
     local hasEncounters = groups and (
         #groups.mplusDungeons > 0 or #groups.raidHeroicBosses > 0 or #groups.raidMythicBosses > 0)
     if hasEncounters then
+        -- The scope dropdown (Mythic+ / Raid) sits between source and build, so
+        -- the build menu lists only the chosen bucket: one row per encounter,
+        -- alternatives one level in. Rendering every context at once put 19
+        -- titles and 76 radios in a single menu.
+        if not selectedArchonScope then
+            selectedArchonScope = ResolveDefaultArchonScope(groups)
+        end
         local autoKey = ns.GetActiveArchonContext and ns.GetActiveArchonContext() or nil
-        local ordered = {}
-        local seen = {}
-        local function push(e)
-            if e and not seen[e.contextKey] then
-                seen[e.contextKey] = true
-                ordered[#ordered + 1] = e
-            end
+        local overview, encounters = ArchonScopeEntries(groups, selectedArchonScope)
+        if overview then AddArchonEncounterRow(rootDescription, overview, autoKey) end
+        for _, entry in ipairs(encounters or {}) do
+            AddArchonEncounterRow(rootDescription, entry, autoKey)
         end
-        local function findAuto()
-            if not autoKey then return nil end
-            for _, bucket in ipairs({ groups.mplusOverview, groups.raidOverviewHeroic,
-                                      groups.raidOverviewMythic }) do
-                if bucket and bucket.contextKey == autoKey then return bucket end
-            end
-            for _, bucket in ipairs({ groups.mplusDungeons, groups.raidHeroicBosses,
-                                      groups.raidMythicBosses }) do
-                for _, e in ipairs(bucket) do
-                    if e.contextKey == autoKey then return e end
-                end
-            end
-            return nil
-        end
-        push(findAuto())
-        push(groups.mplusOverview)
-        for _, e in ipairs(groups.mplusDungeons) do push(e) end
-        push(groups.raidOverviewHeroic)
-        for _, e in ipairs(groups.raidHeroicBosses) do push(e) end
-        push(groups.raidOverviewMythic)
-        for _, e in ipairs(groups.raidMythicBosses) do push(e) end
-
-        for _, entry in ipairs(ordered) do
-            rootDescription:CreateTitle(entry.label or entry.contextKey)
-            for _, build in ipairs(entry.builds) do
-                local label = build.buildLabel or "Build"
-                if build.heroTalent and build.heroTalent ~= "All" then
-                    label = build.heroTalent .. " — " .. label
-                end
-                -- Archon is the only source with a popularity share, so show it —
-                -- it's the whole reason to pick this source over the editorial ones.
-                if build._popularity then label = label .. "  |cff808080" .. build._popularity .. "|r" end
-                local isActive = BuildMatchesActive({ exportString = build.exportString })
-                if isActive then label = label .. "  |TInterface\\COMMON\\Indicator-Green:12:12:0:0|t" end
-                local capturedRecord = ArchonBuildRecord(build)
-                local capturedExport = build.exportString
-                local capturedActive = isActive
-                local item = rootDescription:CreateRadio(
-                    label,
-                    function()
-                        if previewedBuild and previewedBuild.exportString == capturedExport then return true end
-                        if previewedBuild == nil and capturedActive then return true end
-                        return false
-                    end,
-                    function()
-                        if previewedBuild and previewedBuild.exportString == capturedExport then
-                            SetPreview(nil)
-                        else
-                            SetPreview(capturedRecord)
-                        end
-                    end
-                )
-                HookItemBehavior(item, capturedRecord)
-            end
+        if not overview and #(encounters or {}) == 0 then
+            rootDescription:CreateTitle((ns.L and ns.L["loadout_dock.no_archon_builds"])
+                or "No Archon talent builds available.")
         end
         return
     end
@@ -1489,6 +1665,20 @@ local function PopulateSourceMenu(_, rootDescription)
                 -- BEFORE regenerating the build menu so the closed
                 -- dropdown shows the seeded build, not the placeholder.
                 if value == "ugg" then SeedUggDefaultPreview() end
+                if value == "archongg" and SeedArchonDefaultPreview then
+                    SeedArchonDefaultPreview()
+                end
+                -- u.gg and Archon keep separate scopes, so the shared scope
+                -- dropdown has to relabel itself for whichever source just
+                -- became active (seeding above is what fills a nil scope).
+                if scopeDropdown and SourceUsesScope(value) then
+                    local scope = (value == "archongg") and selectedArchonScope
+                        or selectedUggScope
+                    if scope and scopeDropdown.SetDefaultText then
+                        scopeDropdown:SetDefaultText(SCOPE_LABELS[scope] or SCOPE_LABELS.mplus)
+                    end
+                    if scopeDropdown.GenerateMenu then scopeDropdown:GenerateMenu() end
+                end
                 if value == "icyveins" then SeedIcyVeinsDefaultPreview() end
                 if value == "pvp" then SeedPvpDefaultPreview() end
                 if buildDropdown and buildDropdown.GenerateMenu then
@@ -1676,7 +1866,7 @@ local function EnsureContainer()
 
     local function RelayoutBuildDropdown()
         buildDropdown:ClearAllPoints()
-        if selectedSource == "ugg" then
+        if SourceUsesScope(selectedSource) then
             buildDropdown:SetPoint("LEFT", scopeDropdown, "RIGHT", ICON_GAP, 0)
         else
             buildDropdown:SetPoint("LEFT", sourceDropdown, "RIGHT", ICON_GAP, 0)
