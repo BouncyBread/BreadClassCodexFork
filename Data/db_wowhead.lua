@@ -132,7 +132,7 @@ ClassCodexSource["wowhead"] = {
           all = {
             all = {
               { itemId = 268202, slot = "Weapon", source = "Ula'tek" },
-              { itemId = 268202, slot = "Offhand", source = "Ula'tek" },
+              { itemId = 268209, slot = "Offhand", source = "The Coiled Altar" },
               { itemId = 271474, slot = "Head", source = "Tier Set" },
               { itemId = 268265, slot = "Neck", source = "Ula'tek" },
               { itemId = 271472, slot = "Shoulders", source = "Tier Set" },
@@ -3507,30 +3507,30 @@ ClassCodexSource["wowhead"] = {
         talents = {
           deathstalker = {
             ["raid-single-target"] = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlxsNDGAAAAAYWGsNDAAAAAIbzMzMzMjxyMzMbzsMzMzYGzYMmZMMAbmlBGwSwywEYYxgZGgxYA", label = "Raid Single Target", recommended = "Best" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlxsNDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMzMjZMjxYmxwAsZWGYALBLDTghFwMDwMjB", label = "Raid Single Target", recommended = "Best" },
             },
             raid = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDGAAAAAYWGsNDAAAAAIbzMzMzMjxyMzMbzsMzMPgZMzYMMzYMAbmlBGwSwywEYYxgZGgxYA", label = "Raid", recommended = "Best" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAsZWGYALBLDTghFwMDwMjB", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDGAAAAAYWGsNDAAAAAIbzMzMzMjxyMzMbzsMzMPgZMzYMMzYMAbmlBGwSwywEYYxgZGgxYA", label = "Mythic+", recommended = "Best" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAsZWGYALBLDTghFwMDwMjB", label = "Mythic+", recommended = "Best" },
             },
             delves = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDGAAAAAYWGsNDAAAAAIbzMzMzMjxyMzMbzsMzMPgZMzYMMzYMAbmlBGwSwywEYYxgZGgxYA", label = "Delves", recommended = "Best" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAsZWGYALBLDTghFwMDwMjB", label = "Delves", recommended = "Best" },
             },
           },
           fatebound = {
             ["raid-single-target"] = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlxsNDGAAAAAYWGsNDAAAAAIbzMzMzMjxyMzMbzsMzMzYGzYMmZMMAGYBmxoxsBy2A2MAYmZMGA", label = "Raid Single Target" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlxsNDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMzMjZMjxYmxwAYgFYGjGzGIbDYDAMzMzYA", label = "Raid Single Target" },
             },
             raid = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDGAAAAAYWGsNDAAAAAIbzMzMzMjxyMzMbzsMzMPgZMzYMMzYMAGYBmxoxsBy2A2MAYmZMGA", label = "Raid" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAYgFYGjGzGIbDYDAMzMzYA", label = "Raid" },
             },
             mplus = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDGAAAAAYWGsNDAAAAAIbzMzMzMjxyMzMbzsMzMPgZMzYMMzYMAGYBmxoxsBy2A2MAYmZMGA", label = "Mythic+" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAYgFYGjGzGIbDYDAMzMzYA", label = "Mythic+" },
             },
             delves = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDGAAAAAYWGsNDAAAAAIbzMzMzMjxyMzMbzsMzMPgZMzYMMzYMAGYBmxoxsBy2A2MAYmZMGA", label = "Delves" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAYgFYGjGzGIbDYDAMzMzYA", label = "Delves" },
             },
           },
         },
@@ -5019,5 +5019,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-08-19", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-08-20", schemaVersion = 1, source = "wowhead" },
 }
