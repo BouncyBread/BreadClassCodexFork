@@ -773,17 +773,17 @@ ClassCodexSource["wowhead"] = {
               { itemId = 245769, slot = "Offhand", source = "Crafting/Misc" },
               { itemId = 271875, slot = "Head", source = "Ula'tek" },
               { itemId = 268265, slot = "Neck", source = "Ula'tek" },
-              { itemId = 244572, slot = "Shoulders", source = "Crafting/Misc" },
+              { itemId = 268246, slot = "Shoulders", source = "The Lost Explorers" },
               { itemId = 268253, slot = "Cloak", source = "The Coiled Altar" },
               { itemId = 251159, slot = "Chest", source = "Den of Nalorakk" },
-              { itemId = 268240, slot = "Wrist", source = "Nek'zali the Soulcoiler" },
-              { itemId = 268234, slot = "Gloves", source = "Tier Set" },
+              { itemId = 244576, slot = "Wrist", source = "Crafting/Misc" },
+              { itemId = 268234, slot = "Gloves", source = "Sszorak" },
               { itemId = 268256, slot = "Belt", source = "The Coiled Altar" },
               { itemId = 268225, slot = "Legs", source = "The Coiled Altar" },
-              { itemId = 251153, slot = "Boots", source = "Den of Nalorakk" },
-              { itemId = 252258, slot = "Ring", source = "Voidscar Arena" },
+              { itemId = 268261, slot = "Boots", source = "The Twin Fangs" },
+              { itemId = 158366, slot = "Ring", source = "Temple of Sethraliss" },
               { itemId = 268249, slot = "Ring", source = "Vashnik the Malignant" },
-              { itemId = 270164, slot = "Trinket", source = "The Lost Explorers" },
+              { itemId = 270167, slot = "Trinket", source = "Nymrissa Wavecaller" },
               { itemId = 273796, slot = "Trinket", source = "Altar of Fangs" },
             },
           },
@@ -791,10 +791,10 @@ ClassCodexSource["wowhead"] = {
         trinkets = {
           all = {
             all = {
-              { itemId = 270164, tier = "S", source = "The Lost Explorers", contexts = { "raid" } },
+              { itemId = 270164, tier = "S", source = "Mor'zahi", contexts = { "raid" } },
+              { itemId = 270167, tier = "S", source = "Nymrissa Wavecaller", contexts = { "raid" } },
               { itemId = 273796, tier = "S", source = "Altar of Fangs", contexts = { "mplus" } },
               { itemId = 250215, tier = "A", source = "Zaen Bladesorrow", contexts = { "mplus" } },
-              { itemId = 270167, tier = "A", source = "Nymrissa Wavecaller", contexts = { "raid" } },
               { itemId = 250214, tier = "A", source = "Lightwarden Ruia", contexts = { "mplus" } },
               { itemId = 270169, tier = "B", source = "Hex Lord Malacrass", contexts = { "raid" } },
               { itemId = 193757, tier = "B", source = "Melidrussa Chillworn", contexts = { "mplus" } },
@@ -2640,7 +2640,7 @@ ClassCodexSource["wowhead"] = {
         talents = {
           ["shado-pan"] = {
             ["raid-single-target"] = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYM2GmhlZGbzAAAAAAAAAAAAsMMaGzAGwMGmZmZY2GmhZZmAAWMz2MjZmZmBAwGAMLzSzMzsAgBmZAYsMQMgLA", label = "Raid - Single Target", recommended = "Recommended" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYM2GmhlZGbzAAAAAAAAAAAAsMMCzwwAmZGmZmZY2GmhZZmAAWMz2MjZmZmBAwGAMLzSzMzsAgBmZAYsMQMgLA", label = "Raid - Single Target", recommended = "Recommended" },
             },
             ["raid-cleave"] = {
               { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMYMYbmZ2mxAAAAAAAAAAAALDjwMMMgZMMzMzwsNMDzyMBAsYmtxwYmZAAsBAzys0MzMLADDMzAwYZMEDYA", label = "Raid - Cleave", recommended = "Recommended" },
@@ -2654,10 +2654,10 @@ ClassCodexSource["wowhead"] = {
           },
           ["conduit-of-the-celestials"] = {
             ["raid-single-target"] = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYM2GmhlZmZbGAAAAAAAAAAAglhRzYGwAmxwMzMDz2wMMLzEAwiZ2mZMjZmBAwiZWmlxEEAAGAzAMWGImZmFXA", label = "Raid - Single Target (Advanced)", recommended = "Best" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYM2GmhlZmZbGAAAAAAAAAAAglhRYGGGwMzwMzMDz2wMMLzEAwiZ2mZMjZmBAwiZWmlxEEAAGAzAMWGImZmFXA", label = "Raid - Single Target (Advanced)", recommended = "Best" },
             },
             ["raid-cleave"] = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMgxYZmx2MDAAAAAAAAAAAYZY0MmBMgZMMzMzwsNMDzyMBAsYmtxMGzMDAgFzsMLjJIAghBwMAjlBiZmZzA", label = "Raid - Cleave (Advanced)", recommended = "Best" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMgxYZmx2MDAAAAAAAAAAAYZYEmhhBMzMMzMzwsNMDzyMBAsYmtxMGzMDAgFzsMLjJIAghBwMAjlBiZmZzA", label = "Raid - Cleave (Advanced)", recommended = "Best" },
             },
             mplus = {
               { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMgxYZmZ2mBAAAAAAAAAAAYZYEmhhBMjhZmZGmNMDzyMBAswsxMmZmZAAsYmlZZMBBAMzMAmBYsMGiZmZzA", label = "Mythic+ (High Keys)", recommended = "Best" },
@@ -3746,8 +3746,8 @@ ClassCodexSource["wowhead"] = {
               { itemId = 268256, slot = "Belt", source = "The Coiled Altar" },
               { itemId = 271509, slot = "Legs", source = "The Coiled Altar" },
               { itemId = 271512, slot = "Boots", source = "Catalyst" },
-              { itemId = 252258, slot = "Ring", source = "Voidscar Arena" },
-              { itemId = 251194, slot = "Ring", source = "Blinding Vale" },
+              { itemId = 251194, slot = "Ring", source = "Voidscar Arena" },
+              { itemId = 162544, slot = "Ring", source = "Temple of Sethraliss" },
               { itemId = 270173, slot = "Trinket", source = "The Coiled Altar" },
               { itemId = 270175, slot = "Trinket", source = "Ula'tek" },
             },
