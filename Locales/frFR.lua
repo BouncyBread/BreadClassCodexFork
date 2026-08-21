@@ -3,38 +3,36 @@ local locale = GetLocale()
 if locale ~= "frFR" then return end
 local L = ns.L
 
-
--- Tab labels
 L["tab.guide"] = "Guide"
-L["tab.enchants_gems"] = "Enchantements & Gemmes"
 L["tab.enchants"] = "Enchantements"
 L["tab.gems"] = "Gemmes"
 L["tab.consumables"] = "Consommables"
 L["tab.trinkets"] = "Bijoux"
-L["tab.crafts"] = "Fabrications"
+L["tab.gear"] = "Équipement"
 L["tab.bis_gear"] = "Meilleur équipement"
 L["tab.best_in_slot"] = "Meilleur équipement"
 L["bis.help.intro"] = "Équipement recommandé par emplacement. Utilisez le menu de source pour comparer les guides."
-L["bis.help.ugg"] = "u.gg montre l'équipement que les meilleurs joueurs utilisent réellement en Mythique+ et en raid cette saison — basé sur la popularité, pas une liste Best in Slot organisée."
+L["bis.help.ugg"] =
+    "U.GG montre l'équipement que les meilleurs joueurs utilisent réellement en Mythique+ et en raid cette saison — basé sur la popularité, pas une liste Best in Slot organisée."
 L["bis.help.ugg_mplus"] = "Les données Mythique+ proviennent des hautes clés."
-L["tab.about"] = "À propos"
 L["tab.enhancements"] = "Améliorations"
 L["talent_pane.view_talents"] = "Voir les talents"
 L["talent_pane.save_as.tooltip"] = "Enregistrer comme nouvelle configuration"
+L["talent_pane.auto_recommend"] = "Auto-pick recommended"
+L["talent_pane.difficulty"] = "Difficulty"
+L["talent_pane.recommended"] = "Recommended"
+L["talent_pane.build_options"] = "Build options"
 L["talent_pane.save_as.prompt"] = "Nom de la configuration :"
 L["talent_pane.save_as.confirm"] = "Enregistrer"
 
--- Section headers
 L["section.stat_priority"] = "Priorité des stats"
 L["section.talents"] = "Talents"
 L["section.rotation"] = "Rotation"
 L["section.omnium"] = "Omnium Folio"
 L["omnium.week"] = "Semaine %d"
 
--- Title-bar cog menu
 L["title_bar.menu_hint"] = "Ancrage, taille et affichage"
-L["title_bar.compendium_hint"] = "Parcourir toutes les classes et spés"
-L["title_bar.close_hint"] = "Rouvrez à tout moment avec /cc"
+L["title_bar.open_settings"] = "Open settings"
 L["title_bar.menu.dock"] = "Ancrer au panneau du personnage"
 L["title_bar.menu.float"] = "Détacher (flottant)"
 L["title_bar.menu.width"] = "Largeur"
@@ -45,100 +43,107 @@ L["title_bar.menu.width_extra_wide"] = "Très large"
 L["title_bar.menu.sections"] = "Sections"
 L["title_bar.menu.all_settings"] = "Tous les paramètres…"
 
--- Context labels
 L["context.raid"] = "Raid"
 L["context.dungeon"] = "Donjon"
 L["context.delves"] = "Gouffres"
 L["context.crafting"] = "Fabrication"
 L["context.overall"] = "Général"
+L["context.label"] = "Contenu"
 
--- Cross-spec BiS tooltip section (item tooltips)
 L["tooltip.bis_header"] = "Meilleur équipement"
 L["tooltip.source"] = "Source"
+L["tooltip.popularity"] = "Popularité"
 
--- Rotation / stat contexts (u.gg headings)
-L["rotation.single_target"] = "Cible unique"
-L["rotation.multitarget"] = "Cibles multiples"
-L["rotation.opener"] = "Ouverture"
-L["rotation.aoe_opener"] = "Ouverture de zone"
-L["rotation.single_target_opener"] = "Ouverture cible unique"
-L["rotation.easy_mode"] = "Mode facile"
-L["rotation.opener_cooldowns"] = "Ouverture / Cooldowns"
 L["context.mythic_plus"] = "Mythique+"
-L["rotation.dps_priority"] = "Priorité DPS"
-L["rotation.healing_priority"] = "Priorité de soins"
--- L["settings.header.general"] handled by the Settings section below ("Général").
 
--- Consumable labels
 L["consumable.flask"] = "Flacon"
 L["consumable.combat_potion"] = "Potion de combat"
 L["consumable.food"] = "Nourriture"
 L["consumable.weapon_buff"] = "Renforcement d'arme"
 L["consumable.augment_rune"] = "Rune d'augmentation"
 
--- Gem labels
 L["gem.primary"] = "Primaire"
 L["gem.secondary"] = "Secondaire"
 
--- Craft section headers
-L["craft.early"] = "Fabrications initiales"
-L["craft.bis"] = "Meilleures fabrications"
-
--- Talent build fallback
 L["talent.build"] = "Build"
 
--- Empty / fallback states
 L["empty.select_class_spec"] = "Sélectionnez une classe et une spécialisation ci-dessus."
 L["empty.no_data"] = "Aucune donnée disponible pour cette spécialisation."
-L["empty.no_builds_details"] = "Aucun build disponible — consultez u.gg pour plus de détails."
-L["empty.no_builds_for"] = "Aucun build pour %s — consultez u.gg."
-L["empty.no_rotation_for_details"] = "Aucune rotation pour %s — consultez u.gg pour plus de détails."
-L["empty.no_rotation_for"] = "Aucune rotation pour %s — consultez u.gg."
-L["empty.no_rotation_available"] = "Rotation bientôt disponible.\nNous n'en avons pas encore pour cette spécialisation."
+L["empty.no_spec"] = "Choisissez une spécialisation pour afficher votre Class Codex."
+L["empty.spec_leveling"] = "Guide de niveau %s"
+L["empty.no_builds_details"] = "Aucun build disponible — consultez U.GG pour plus de détails."
+L["empty.no_builds_for"] = "Aucun build pour %s — consultez U.GG."
+L["empty.no_rotation_for_details"] = "Aucune rotation pour %s — consultez U.GG pour plus de détails."
+L["empty.no_rotation_available"] =
+    "Rotation bientôt disponible.\nNous n'en avons pas encore pour cette spécialisation."
+L["empty.no_pvp_guide"] = "Guide PvP bientôt disponible.\nNous n'en avons pas encore pour cette spécialisation."
+L["empty.no_stat_targets"] =
+    "Objectifs de statistiques bientôt disponibles.\nPas encore assez de données pour cette spécialisation cette saison."
 
--- About panel
-L["about.title"] = "À propos de Bread Codex v%s"
-L["about.description"] = "Priorités des stats, talents, rotation et équipement pour votre spécialisation. Indications générales — simulez avec Raidbots pour des résultats précis."
-L["about.links"] = "Liens :"
-L["about.help_hint"] = "Tapez /cc help pour afficher la liste des commandes."
+L["settings.description"] =
+    "Best in slot gear, trinkets, enchants, gems, talents, stat priorities, rotation and crafting for your spec, pulled straight from Icy Veins and U.GG into the game."
+L["settings.help_hint"] = "Tapez /cc help pour afficher la liste des commandes."
 L["attribution.copy_url"] = "Cliquez pour copier le lien"
 L["attribution.visit_source"] = "Voir la source : %s"
+L["attribution.page_title"] = "%s %s Page"
 L["attribution.visit_cta"] = "Découvrir"
-L["attribution.source"] = "Source :"
-L["about.community"] = "Communauté"
-L["about.role.compendium"] = "Parcourir toutes les spés"
-L["about.role.settings"] = "Options et affichage"
-L["about.role.patreon"] = "Soutenir l'extension"
-L["about.role.discord"] = "Bugs, retours et aide"
-L["about.data_sources"] = "Sources"
-L["about.source_role.icyveins"] = "Guides éditoriaux"
-L["about.source_role.ugg"] = "Méta basée sur les données"
-L["about.supporters"] = "Supporters"
-L["about.support_patreon"] = "Soutenir sur Patreon"
-L["about.free_message"] = "Bread Codex est gratuit et ouvert à tous. Les soutiens sur Patreon aident à garder les données à jour et à faire avancer le projet."
-L["about.be_first_supporter"] = "Soyez le premier à soutenir Bread Codex !"
+L["settings.role.patreon"] = "Soutenir l'extension"
+L["settings.role.discord"] = "Bugs, retours et aide"
+L["settings.source_role.icyveins"] = "Guides éditoriaux"
+L["settings.source_role.ugg"] = "Méta basée sur les données"
+L["settings.champions"] = "Champions"
+L["settings.supporters"] = "Supporters"
 L["compendium.open_settings"] = "Ouvrir les paramètres"
 
--- Tooltip
 L["settings.label.stat_priority_on_tooltips"] = "Priorité des stats dans les infobulles"
 
--- Settings headers
 L["settings.header.tooltips"] = "Infobulles"
 L["settings.header.general"] = "Général"
+L["settings.label.float_auto_height"] = "Auto-size to content"
+L["settings.tooltip.float_auto_height"] =
+    "Grow the floating panel to fit its content instead of paging within a fixed height."
+L["settings.label.float_height"] = "Floating panel height"
+L["settings.label.float_max_height"] = "Max height"
+L["settings.tooltip.float_max_height"] = "The tallest the floating panel can grow; taller content scrolls."
+L["settings.tooltip.float_height"] = "Height of the floating panel when auto-size is off."
 L["settings.header.floating_panel"] = "Panneau flottant"
 L["settings.header.docked_panel"] = "Panneau ancré"
+L["settings.subcat.panels"] = "Panneaux"
+L["settings.subcat.compendium"] = "Compendium"
+L["settings.subcat.tabs"] = "Tabs"
+L["settings.label.floating_mode"] = "Floating panel"
+L["settings.tooltip.floating_mode"] = "Detach the panel from the character pane so you can move it anywhere on screen."
+L["settings.tooltip.comp_show_tab"] = "Show this tab in the Compendium."
+L["settings.header.dock_behavior"] = "Behavior"
+L["settings.header.dock_display"] = "Display"
+L["settings.header.dock_appearance"] = "Appearance"
+L["settings.header.tab_order"] = "Order"
+L["settings.label.reorder_tabs"] = "Reorder tabs"
+L["settings.value.reorder"] = "Reorder"
+L["settings.tooltip.reorder_tabs"] = "Drag the side tabs to rearrange them. Opens your panel and closes this window."
+L["settings.label.reset_tabs"] = "Reset tab order"
+L["settings.value.reset"] = "Reset"
+L["settings.tooltip.reset_tabs"] = "Restore the default tab order."
+L["settings.tooltip.dock_show_omnium"] = "Show or hide the Omnium Folio in the docked panel."
+L["settings.tooltip.float_show_omnium"] = "Show or hide the Omnium Folio in the floating panel."
 L["settings.header.panel"] = "Panneau"
 
--- Settings: checkbox labels
 L["settings.label.stat_priority_ranks"] = "Rangs de priorité des stats"
-L["settings.label.ugg_bis"] = "Info BiS u.gg dans les infobulles"
+L["settings.label.ugg_bis"] = "Info BiS U.GG dans les infobulles"
 L["settings.label.icy_veins_bis"] = "Info BiS Icy Veins dans les infobulles"
-L["settings.label.bis_source"] = "Source BiS"
 L["settings.label.trinket_tier"] = "Niveau des bijoux dans les infobulles"
 L["settings.label.bis_scope"] = "Portée du BiS dans les infobulles"
 L["settings.label.highlight_owned"] = "Surligner l'équipement possédé"
+L["settings.label.page_hard_stops"] = "Hard section boundaries"
+L["settings.tooltip.page_hard_stops"] =
+    "Lock scrolling to the current section — the mouse wheel stops at each section instead of sliding into the next. Use the side tabs to change sections."
 L["settings.label.panel_width"] = "Largeur du panneau"
-L["settings.tooltip.panel_width"] = "Largeur du panneau Bread Codex en pixels. S'applique aux modes ancré et flottant."
+L["settings.tooltip.panel_width"] = "Largeur du panneau Class Codex en pixels. S'applique aux modes ancré et flottant."
+L["settings.label.gear_source"] = "Afficher la source des objets"
+L["settings.hint.gear_source_no_icons"] = "Apparaît en vue tableau et liste."
+L["settings.tooltip.gear_source"] =
+    "Indique la provenance de chaque objet recommandé – lieu d'obtention ou artisanat. Sous le nom de l'objet en vue liste et sous forme de colonne en vue tableau. La vue icônes la conserve dans l'infobulle. Chaque panneau mémorise ce choix séparément. Données Icy Veins uniquement."
+L["settings.hint.gear_source_no_icons"] = "Apparaît en vue tableau et liste."
 L["settings.label.minimap_button"] = "Bouton minicarte"
 L["settings.label.login_message"] = "Message de connexion"
 L["settings.label.pin_talent_source"] = "Épingler la source des talents"
@@ -155,19 +160,27 @@ L["settings.tooltip.dock_show_embellishments"] = "Afficher la section Enjoliveme
 L["settings.tooltip.float_show_embellishments"] = "Afficher la section Enjolivements lorsque le panneau est flottant."
 L["settings.label.show_bis_gear"] = "Afficher le meilleur équipement"
 
--- Settings: tooltip descriptions
-L["settings.tooltip.stat_priority_ranks"] = "Affiche le rang de priorité (#1, #2, #3) à côté des noms de stats dans les infobulles d'objets."
-L["settings.tooltip.ugg_bis"] = "Affiche les spécialisations pour lesquelles un objet est Best in Slot dans les infobulles (u.gg)."
-L["settings.tooltip.icy_veins_bis"] = "Affiche les spécialisations pour lesquelles un objet est Best in Slot dans les infobulles (Icy Veins)."
-L["settings.tooltip.trinket_tier"] = "Affiche le classement et le badge de niveau des bijoux dans les infobulles d'objets."
-L["settings.tooltip.bis_scope"] = "Quelles lignes BiS de classes afficher sur les infobulles d'objets. 'Toutes les classes' affiche chaque classe pour laquelle un objet est BiS ; 'Groupe actuel uniquement' filtre aux classes de votre groupe/raid actuel (par défaut votre propre classe en solo) ; 'Ma classe uniquement' affiche uniquement votre classe ; 'Désactivé' masque la liste BiS (le badge de niveau des bijoux sur la ligne du titre apparaît toujours)."
+L["settings.tooltip.stat_priority_ranks"] =
+    "Affiche le rang de priorité (#1, #2, #3) à côté des noms de stats dans les infobulles d'objets."
+L["settings.tooltip.ugg_bis"] =
+    "Affiche les spécialisations pour lesquelles un objet est Best in Slot dans les infobulles (U.GG)."
+L["settings.tooltip.icy_veins_bis"] =
+    "Affiche les spécialisations pour lesquelles un objet est Best in Slot dans les infobulles (Icy Veins)."
+L["settings.tooltip.trinket_tier"] =
+    "Affiche le classement et le badge de niveau des bijoux dans les infobulles d'objets."
+L["settings.tooltip.bis_scope"] =
+    "Quelles lignes BiS de classes afficher sur les infobulles d'objets. 'Toutes les classes' affiche chaque classe pour laquelle un objet est BiS ; 'Groupe actuel uniquement' filtre aux classes de votre groupe/raid actuel (par défaut votre propre classe en solo) ; 'Ma classe uniquement' affiche uniquement votre classe ; 'Désactivé' masque la liste BiS (le badge de niveau des bijoux sur la ligne du titre apparaît toujours)."
 L["settings.value.bis_scope_all"] = "Toutes les classes"
 L["settings.value.bis_scope_group"] = "Groupe actuel uniquement"
 L["settings.value.bis_scope_self"] = "Ma classe uniquement"
-L["settings.tooltip.highlight_owned"] = "Colore les lignes BiS et Bijoux d'un fond vert subtil lorsque vous possédez déjà l'objet (sacs, banque, banque de composants, banque de bande de guerre ou équipé). S'applique aux panneaux ancré et flottant."
-L["settings.tooltip.minimap_button"] = "Affiche un bouton minicarte pour un accès rapide. Clic gauche ouvre le compendium, clic droit ouvre les paramètres."
-L["settings.tooltip.login_message"] = "Affiche le message 'Bread Codex chargé — tapez /cc pour ouvrir' dans le chat lors de la connexion ou du rechargement."
-L["settings.tooltip.pin_talent_source"] = "Verrouille le panneau de talents sur la source que vous avez sélectionnée manuellement. Désactivé, la source suit ce que vous faites — u.gg en donjons et raids, JcJ en arènes et champs de bataille, Icy Veins ailleurs."
+L["settings.tooltip.highlight_owned"] =
+    "Colore les lignes BiS et Bijoux d'un fond vert subtil lorsque vous possédez déjà l'objet (sacs, banque, banque de composants, banque de bande de guerre ou équipé). S'applique aux panneaux ancré et flottant."
+L["settings.tooltip.minimap_button"] =
+    "Affiche un bouton minicarte pour un accès rapide. Clic gauche ouvre le compendium, clic droit ouvre les paramètres."
+L["settings.tooltip.login_message"] =
+    "Affiche le message 'Class Codex chargé — tapez /cc pour ouvrir' dans le chat lors de la connexion ou du rechargement."
+L["settings.tooltip.pin_talent_source"] =
+    "Verrouille le panneau de talents sur la source que vous avez sélectionnée manuellement. Désactivé, la source suit ce que vous faites — U.GG en donjons et raids, JcJ en arènes et champs de bataille, Icy Veins ailleurs."
 L["settings.tooltip.float_show_stat_priority"] = "Affiche la section Priorité des stats dans le panneau flottant."
 L["settings.tooltip.float_show_talents"] = "Affiche la section Talents dans le panneau flottant."
 L["settings.tooltip.float_show_rotation"] = "Affiche la section Rotation dans le panneau flottant."
@@ -187,9 +200,9 @@ L["settings.tooltip.dock_show_trinkets"] = "Affiche la section Bijoux dans le pa
 L["settings.tooltip.dock_show_crafts"] = "Affiche la section Fabrications dans le panneau ancré."
 L["settings.tooltip.dock_show_bis_gear"] = "Affiche la section Meilleur équipement dans le panneau ancré."
 
--- Chat messages
 L["chat.loaded"] = "chargé — tapez |cff00ccff/cc|r pour ouvrir"
-L["chat.slash_conflict"] = "Un autre addon utilise |cff00ccff/cc|r — tapez |cff00ccff/classcodex|r pour ouvrir Bread Codex."
+L["chat.slash_conflict"] =
+    "Un autre addon utilise |cff00ccff/cc|r — tapez |cff00ccff/classcodex|r pour ouvrir Class Codex."
 L["chat.switched_to"] = "Basculé vers %s (détecté)"
 L["chat.mode_docked"] = "Ancré"
 L["chat.mode_floating"] = "Flottant"
@@ -202,123 +215,178 @@ L["chat.unknown_command"] = "Commande inconnue. Tapez /cc help"
 L["chat.settings_registration_failed"] = "Échec de l'enregistrement des paramètres : %s"
 L["chat.compendium_data_not_loaded"] = "Données du compendium non chargées."
 
--- Stat Targets / DR (character pane tooltip extras)
 L["settings.label.stat_priority_source_line"] = "Ligne source de la priorité de stats"
 
--- Stat Targets (Stats tab)
 L["section.stat_targets"] = "Objectifs de stats"
 L["settings.label.show_stat_targets"] = "Afficher les objectifs de stats"
-L["settings.tooltip.dock_show_stat_targets"] = "Affiche la section « Objectifs de stats » (barres en direct comparées aux objectifs BiS d'u.gg) dans l'onglet Stats lorsque le panneau est ancré."
-L["settings.tooltip.float_show_stat_targets"] = "Affiche la section « Objectifs de stats » (barres en direct comparées aux objectifs BiS d'u.gg) dans l'onglet Stats lorsque le panneau est flottant."
-L["stat_targets.combat_warning"] = "Les objectifs de stats ne peuvent pas être calculés en combat — les valeurs se mettent à jour à la fin du combat."
+L["settings.tooltip.dock_show_stat_targets"] =
+    "Affiche la section « Objectifs de stats » (barres en direct comparées aux objectifs BiS d'U.GG) dans l'onglet Stats lorsque le panneau est ancré."
+L["settings.tooltip.float_show_stat_targets"] =
+    "Affiche la section « Objectifs de stats » (barres en direct comparées aux objectifs BiS d'U.GG) dans l'onglet Stats lorsque le panneau est flottant."
 L["tooltip.stat_priority_footer"] = "Priorité de stats"
-L["loadout.alt"] = "alt"
-L["loadout.alt_n"] = "alt %d"
 
--- Tooltip / data source labels
 L["settings.label.source_display"] = "Affichage des sources"
-L["settings.tooltip.source_display"] = "Comment afficher les sources de données (u.gg, Icy Veins) dans les infobulles d'objets."
-L["settings.tooltip.bis_source"] = "Quand afficher une ligne de pied de page dans les infobulles d'objets indiquant de quel talent héroïque / contexte proviennent les rangs affichés. « Seulement si différent » n'affiche la ligne que lorsque le talent héroïque résolu diffère de celui que vous jouez actuellement — un rappel discret qu'une épingle ou une sélection du panneau s'est désynchronisée de votre état en jeu."
+L["settings.tooltip.source_display"] =
+    "Comment afficher les sources de données (U.GG, Icy Veins) dans les infobulles d'objets."
+L["settings.tooltip.bis_source"] =
+    "Quand afficher une ligne de pied de page dans les infobulles d'objets indiquant de quel talent héroïque / contexte proviennent les rangs affichés. « Seulement si différent » n'affiche la ligne que lorsque le talent héroïque résolu diffère de celui que vous jouez actuellement — un rappel discret qu'une épingle ou une sélection du panneau s'est désynchronisée de votre état en jeu."
 L["settings.value.always"] = "Toujours"
 L["settings.value.off"] = "Désactivé"
 L["settings.value.only_when_different"] = "Seulement si différent"
 L["settings.value.both"] = "Les deux"
 L["settings.value.icons"] = "Icônes"
+L["settings.value.view"] = "Affichage"
+L["settings.value.list"] = "Liste"
+L["settings.value.table"] = "Tableau"
 L["settings.value.labels"] = "Étiquettes"
-L["settings.value.ugg"] = "u.gg"
+L["settings.value.ugg"] = "U.GG"
 
--- Encounter context labels
 L["context.mplus_dungeons"] = "Donjons M+"
 L["context.raid_heroic"] = "Boss de raid (Héroïque)"
 L["context.raid_mythic"] = "Boss de raid (Mythique)"
 
--- Loadout Dock
 L["settings.header.loadout_dock"] = "Dock des configurations"
 L["settings.label.show_loadout_dock"] = "Afficher le dock des configurations"
-L["settings.tooltip.show_loadout_dock"] = "Widget flottant affichant le nom de la configuration de talents active. Cliquez pour passer à une configuration Blizzard enregistrée ou une recommandation Bread Codex."
+L["settings.tooltip.show_loadout_dock"] =
+    "Widget flottant affichant le nom de la configuration de talents active. Cliquez pour passer à une configuration Blizzard enregistrée ou une recommandation Class Codex."
 L["loadout_dock.click_to_switch"] = "Cliquez pour changer de configuration."
 L["loadout_dock.right_click_options"] = "Clic droit pour les options."
 L["loadout_dock.cannot_switch_combat"] = "Impossible de changer de configuration en combat."
 L["loadout_dock.switch_failed"] = "Impossible de changer de configuration."
 L["loadout_dock.no_loadouts"] = "Aucune configuration disponible"
 L["loadout_dock.no_talent_builds"] = "Aucun build de talents disponible."
-L["loadout_dock.no_ugg_builds"] = "Aucun build u.gg disponible."
+L["loadout_dock.no_ugg_builds"] = "Aucun build U.GG disponible."
 L["loadout_dock.pick_a_build"] = "Choisir un build"
 L["talent_pane.placeholder.encounter"] = "Choisir une rencontre"
 L["talent_pane.placeholder.bracket"] = "Choisir une catégorie"
 L["gear.tooltip.alternative"] = "Alternative :"
 L["gear.tooltip.embellishment"] = "Enjolivement :"
 L["loadout_dock.custom_build"] = "Build personnalisé"
+L["loadout_dock.no_spec"] = "Choisir une spécialisation"
 L["loadout_dock.saved_loadouts"] = "Configurations enregistrées"
 L["settings.label.dock_show_saved"] = "Afficher les configurations enregistrées dans le menu"
-L["settings.label.dock_show_ugg"] = "Afficher les recommandations u.gg dans le menu"
-L["settings.tooltip.dock_show_saved"] = "Inclut vos configurations de talents Blizzard enregistrées dans le menu du dock."
-L["settings.tooltip.dock_show_ugg"] = "Inclut les builds u.gg recommandés par rencontre dans le menu du dock."
+L["settings.label.dock_show_ugg"] = "Afficher les recommandations U.GG dans le menu"
+L["settings.tooltip.dock_show_saved"] =
+    "Inclut vos configurations de talents Blizzard enregistrées dans le menu du dock."
+L["settings.tooltip.dock_show_ugg"] = "Inclut les builds U.GG recommandés par rencontre dans le menu du dock."
 L["settings.label.dock_show_spec_icon"] = "Afficher l'icône de spé"
-L["settings.tooltip.dock_show_spec_icon"] = "Affiche l'icône de votre spécialisation active à côté du nom de la configuration."
+L["settings.label.dock_show_icons"] = "Show build icons"
+L["settings.tooltip.dock_show_icons"] = "Show the spec and hero talent icons on the loadout dock."
+L["settings.tooltip.dock_show_spec_icon"] =
+    "Affiche l'icône de votre spécialisation active à côté du nom de la configuration."
 L["settings.label.dock_show_hero_icon"] = "Afficher l'icône du talent héroïque"
-L["settings.tooltip.dock_show_hero_icon"] = "Affiche l'icône de votre talent héroïque actif à côté du nom de la configuration."
+L["settings.tooltip.dock_show_hero_icon"] =
+    "Affiche l'icône de votre talent héroïque actif à côté du nom de la configuration."
 L["settings.label.dock_show_border"] = "Afficher la bordure"
-L["settings.tooltip.dock_show_border"] = "Trace une fine bordure autour du dock. Désactivé pour un aspect minimaliste sans bordure."
+L["settings.tooltip.dock_show_border"] =
+    "Trace une fine bordure autour du dock. Désactivé pour un aspect minimaliste sans bordure."
 L["settings.label.dock_opacity"] = "Opacité de l'arrière-plan"
 L["settings.tooltip.dock_opacity"] = "Transparence de la plaque d'arrière-plan du dock. 0 = invisible, 100 = opaque."
 L["settings.label.dock_width"] = "Largeur"
 L["settings.tooltip.dock_width"] = "Largeur du dock en pixels. Ignoré lorsque « Largeur auto » est activée."
 L["settings.label.dock_auto_width"] = "Largeur auto"
-L["settings.tooltip.dock_auto_width"] = "Redimensionne le dock automatiquement pour s'adapter au nom de la configuration active. Remplace le curseur de largeur lorsqu'activé."
+L["settings.tooltip.dock_auto_width"] =
+    "Redimensionne le dock automatiquement pour s'adapter au nom de la configuration active. Remplace le curseur de largeur lorsqu'activé."
 L["settings.label.dock_scale"] = "Échelle"
-L["settings.tooltip.dock_scale"] = "Échelle du dock. Augmente la police, les icônes et la hauteur proportionnellement."
+L["settings.tooltip.dock_scale"] =
+    "Échelle du dock. Augmente la police, les icônes et la hauteur proportionnellement."
 L["settings.label.dock_alignment"] = "Alignement du contenu"
-L["settings.tooltip.dock_alignment"] = "Position des icônes et de l'étiquette quand le dock est plus large que son contenu."
+L["settings.tooltip.dock_alignment"] =
+    "Position des icônes et de l'étiquette quand le dock est plus large que son contenu."
 L["settings.value.center"] = "Centre"
 L["settings.value.left"] = "Gauche"
 L["settings.value.right"] = "Droite"
 L["settings.label.dock_hide_in_combat"] = "Masquer en combat"
-L["settings.tooltip.dock_hide_in_combat"] = "Masque entièrement le dock pendant le combat. Les changements de talents échouent en combat de toute façon, donc cela ne fait que retirer le bruit visuel."
+L["settings.tooltip.dock_hide_in_combat"] =
+    "Masque entièrement le dock pendant le combat. Les changements de talents échouent en combat de toute façon, donc cela ne fait que retirer le bruit visuel."
 L["settings.label.dock_lock_position"] = "Verrouiller la position du dock"
-L["settings.tooltip.dock_lock_position"] = "Empêche le dock d'être déplacé. Désactivez pour repositionner, puis réactivez pour éviter tout déplacement accidentel."
+L["settings.tooltip.dock_lock_position"] =
+    "Empêche le dock d'être déplacé. Désactivez pour repositionner, puis réactivez pour éviter tout déplacement accidentel."
 L["loadout_dock.lock_position"] = "Verrouiller la position"
 L["loadout_dock.unlock_position"] = "Déverrouiller la position"
 L["character_pane.position_locked"] = "Position verrouillée - déverrouillez dans les Paramètres"
 
--- PvP
 L["pvp.label"] = "JcJ"
-L["pvp.arena"] = "Arène"
-L["pvp.battleground"] = "Champ de bataille"
-L["pvp.honor_talents"] = "Talents d'honneur"
-L["pvp.honor_talents_apply"] = "Les talents d'honneur s'appliquent en Mode Guerre ou dans les instances JcJ."
 L["pvp.no_builds"] = "Aucun build JcJ disponible."
 L["pvp.no_gear_data"] = "Aucune donnée d'équipement JcJ pour cette spécialisation pour l'instant."
 L["pvp.no_enchants"] = "Aucun enchantement JcJ pour cette spécialisation pour l'instant."
 L["pvp.no_enchant_gem_data"] = "Aucune donnée d'enchantement / gemme JcJ pour cette spécialisation pour l'instant."
 L["pvp.no_stat_priority"] = "Aucune priorité de stat JcJ pour cette spécialisation pour l'instant."
 
--- Talent Pane / Character Pane Button
 L["settings.header.talent_pane"] = "Panneau de talents"
-L["settings.label.talent_pane_show"] = "Afficher Bread Codex dans le panneau de talents"
-L["settings.tooltip.talent_pane_show"] = "Affiche le sélecteur de build Bread Codex dans le panneau de talents Blizzard. Désactivez pour le masquer complètement."
+L["settings.label.talent_pane_show"] = "Afficher Class Codex dans le panneau de talents"
+L["settings.tooltip.talent_pane_show"] =
+    "Affiche le sélecteur de build Class Codex dans le panneau de talents Blizzard. Désactivez pour le masquer complètement."
 L["settings.header.unit_menus"] = "Menus d'unité"
 L["settings.label.unit_menu_enabled"] = "Ajouter « Voir les talents » au menu clic droit des unités"
-L["settings.tooltip.unit_menu_enabled"] = "Ajoute « Voir les talents » au menu clic droit des cadres de raid, de groupe et d'unité. Désactivez si vous voyez des erreurs « AddOn a essayé d'appeler une fonction protégée » après un clic droit — c'est un bug Blizzard connu."
-L["chat.blizzard_bug_notice"] = "|cff66ccff[Bread Codex]|r L'erreur « %s » que vous venez de voir est un bug Blizzard connu, pas un bug de Bread Codex. Désactivez « Ajouter Voir les talents au menu clic droit des unités » dans les paramètres pour l'arrêter."
+L["settings.tooltip.unit_menu_enabled"] =
+    "Ajoute « Voir les talents » au menu clic droit des cadres de raid, de groupe et d'unité. Désactivez si vous voyez des erreurs « AddOn a essayé d'appeler une fonction protégée » après un clic droit — c'est un bug Blizzard connu."
+L["chat.blizzard_bug_notice"] =
+    "|cff66ccff[Class Codex]|r L'erreur « %s » que vous venez de voir est un bug Blizzard connu, pas un bug de Class Codex. Désactivez « Ajouter Voir les talents au menu clic droit des unités » dans les paramètres pour l'arrêter."
 L["settings.header.character_pane_button"] = "Bouton du panneau de personnage"
 L["character_pane.click_to_toggle"] = "Cliquez pour afficher/masquer le panneau"
 L["settings.label.lock_button_position"] = "Verrouiller la position du bouton"
-L["settings.tooltip.lock_button_position"] = "Empêche le bouton d'équipement d'être déplacé par Maj-glisser sur le panneau du personnage."
+L["settings.tooltip.lock_button_position"] =
+    "Empêche le bouton d'équipement d'être déplacé par Maj-glisser sur le panneau du personnage."
 L["character_pane.shift_drag_hint"] = "Maj-glisser pour déplacer - Maj+Clic droit pour réinitialiser"
 L["settings.label.horizontal_offset"] = "Décalage horizontal"
-L["settings.tooltip.horizontal_offset"] = "Décalage horizontal (pixels) depuis le coin supérieur droit du panneau de personnage."
+L["settings.tooltip.horizontal_offset"] =
+    "Décalage horizontal (pixels) depuis le coin supérieur droit du panneau de personnage."
 L["settings.label.vertical_offset"] = "Décalage vertical"
-L["settings.tooltip.vertical_offset"] = "Décalage vertical (pixels) depuis le coin supérieur droit du panneau de personnage."
-L["settings.label.reset_position"] = "Réinitialiser la position"
+L["settings.tooltip.vertical_offset"] =
+    "Décalage vertical (pixels) depuis le coin supérieur droit du panneau de personnage."
 L["settings.tooltip.reset_position"] = "Restaure le bouton d'équipement à sa position par défaut."
 
--- Footer
 L["footer.today"] = "Aujourd'hui"
 L["footer.yesterday"] = "Hier"
 L["footer.days_ago"] = "Il y a %d jours"
-L["footer.last_refreshed"] = "Dernière mise à jour : %s"
-L["footer.data_refresh_hint"] = "Les données sont mises à jour chaque jour. Mettez à jour Bread Codex pour obtenir les dernières informations."
+L["tab.settings"] = "Settings"
+L["tab.about"] = "About"
+L["about.header"] = "About Class Codex"
+L["about.version"] = "Addon Version"
+L["about.data_update"] = "Data Updated"
+L["about.more"] = "Explore & Customize"
+L["about.website_page"] = "Class Codex Page"
+L["about.compendium"] = "Compendium"
+L["about.loadout_dock"] = "Loadout Dock"
+L["about.loadout_dock_tip"] = "Show a movable bar with your talent loadouts."
+L["about.talent_highlight"] = "Talent Highlight"
+L["about.talent_highlight_tip"] = "Open your talent tree to see the recommended talents highlighted."
+L["about.toggle_hint"] = "Click to enable or disable."
+L["about.all_settings"] = "All Settings"
+L["about.discord"] = "Class Codex Discord"
+L["about.support_iv"] = "Support with Icy Veins Premium"
+L["about.compendium_tip"] = "Browse gear, talents and more for every class and spec."
+L["about.settings_tip"] = "Open the full Class Codex options."
+L["about.discord_tip"] = "Bugs, feedback and theorycrafting."
+L["about.support_iv_tip"] = "Support Class Codex by going Premium on Icy Veins."
+L["tab.supporters"] = "Supporters"
+L["settings.open_compendium"] = "Open Compendium"
+L["settings.header.display"] = "Display"
+L["settings.header.tabs"] = "Tabs"
+L["settings.header.more"] = "More"
+L["settings.header.sources"] = "Sources"
+L["settings.row.window"] = "Window"
+L["settings.value.docked"] = "Docked"
+L["settings.value.floating"] = "Floating"
+L["settings.row.rearrange"] = "Rearrange tabs"
+L["settings.row.reset_order"] = "Reset tab order"
+L["settings.row.reorder"] = "Reorder tabs"
+L["settings.tooltip.reorder"] = "Drag to rearrange the side tabs, or reset them to the default order."
+L["settings.row.advanced"] = "Advanced settings"
+L["settings.tooltip.window"] = "Dock the panel to your character sheet, or let it float freely."
+L["settings.tooltip.width"] = "How wide the docked panel is."
+L["settings.tooltip.rearrange"] = "Drag the side tabs up or down to reorder them."
+L["settings.tooltip.reset_order"] = "Restore the default tab order."
+L["settings.tooltip.advanced"] = "Open the full Class Codex options window."
+L["settings.tooltip.compendium"] = "Browse gear, talents and more for every class and spec."
+L["settings.tooltip.omnium"] = "Show or hide the Omnium Folio in the Compendium."
+L["settings.tooltip.section_visibility"] = "Show or hide this tab in the panel."
+L["settings.label.title_context"] = "Show content & hero in title"
+L["settings.tooltip.title_context"] = "Append the active content type and hero talent to the panel title."
+L["section.stats"] = "Stats"
+L["empty.rotation_source_unavailable"] = "Rotation is only available for the Icy Veins source."
+L["empty.report_discord"] = "Report issues or request data on Discord"
 L["tab.crafting"] = "Artisanat"
 L["crafting.section_crafts"] = "Objets crafted"
 L["crafting.section_embellishments"] = "Embellissements"
@@ -326,27 +394,86 @@ L["crafting.help.embellishment_icyveins"] = "Embellissement recommandé (Icy Vei
 L["crafting.tooltip.embellishment_icyveins"] = "Recommandé par Icy Veins"
 L["crafting.no_data"] = "Pas encore de données d artisanat — mise à jour quotidienne."
 L["crafting.menu.track_materials"] = "Suivre les matériaux"
+L["crafting.menu.no_recipe"] = "Aucune donnée de recette"
 L["crafting.help.intro"] = "Objets d artisanat recommandés pour cette spécialisation."
-L["crafting.help.star"] = "Choix optimal selon u.gg."
-L["crafting.help.check"] = "Possédé — sacs, banque, équipé ou appliqué comme embellissement."
-L["crafting.help.popular_ugg"] = "Populaire sur u.gg — les 2 choix les plus joués dans l'échantillon PvE des meilleurs joueurs d'u.gg."
-L["crafting.help.menu"] = "Clic droit sur un objet pour suivre les matériaux ou copier un lien u.gg."
-L["crafting.help.embellishment_limit"] = "Fabriquez autant d'objets que nécessaire, mais seuls 2 enjolivements peuvent être équipés par personnage."
-L["crafting.tooltip.bis"] = "Choix optimal."
-L["crafting.tooltip.popular_ugg"] = "Populaire sur u.gg"
+L["crafting.help.menu"] = "Clic droit sur un objet pour suivre les matériaux ou copier un lien U.GG."
+L["crafting.help.embellishment_limit"] =
+    "Fabriquez autant d'objets que nécessaire, mais seuls 2 enjolivements peuvent être équipés par personnage."
 L["crafting.tooltip.menu_hint"] = "Clic droit pour les options"
-L["crafting.menu.top_picks_only"] = "Afficher uniquement les meilleurs choix"
-L["crafting.menu.options_tooltip"] = "Options d'artisanat"
-L["settings.header.crafting"] = "Artisanat"
-L["settings.label.crafting_top_picks_only"] = "Afficher uniquement les meilleurs choix"
-L["settings.tooltip.crafting_top_picks_only"] = "Masque les entrées en bas de l'onglet artisanat — affiche uniquement les BiS u.gg et les choix les plus joués."
 
-
--- Icy Veins talent source
 L["talents.leveling"] = "Montée de niveau"
 L["loadout_dock.no_icyveins_builds"] = "Aucune composition de talents Icy Veins disponible."
 
--- Icy Veins loadout-dock toggle
 L["settings.value.icyveins"] = "Icy Veins"
 L["settings.label.dock_show_icyveins"] = "Afficher les builds Icy Veins dans le menu"
-L["settings.tooltip.dock_show_icyveins"] = "Inclure les compositions de talents Icy Veins (montée de niveau comprise) dans le menu du dock."
+L["settings.tooltip.dock_show_icyveins"] =
+    "Inclure les compositions de talents Icy Veins (montée de niveau comprise) dans le menu du dock."
+L["context.arena"] = "Arena"
+L["context.battleground"] = "Battleground"
+L["omnium.help.intro"] =
+    "The Omnium Folio is Midnight's rune system: spend Omnium to slot a rune of power in each node. Pick the recommended rune (green) in each slot; a red border means your current pick differs from the recommendation."
+L["omnium.unset"] = "No rune selected"
+L["reorder.hint"] = "Drag the tabs to reorder · click to lock"
+L["title_bar.menu.reorder"] = "Unlock order (drag tabs)"
+L["title_bar.menu.reset_order"] = "Reset section order"
+L["hero.all"] = "All heroes"
+
+-- Untranslated: enUS fallback (TODO)
+L["loadout_dock.all_settings"] = "All settings"
+L["loadout_dock.builds_all"] = "All"
+L["loadout_dock.builds_hero"] = "My hero talent only"
+L["loadout_dock.builds_recommended"] = "Recommended"
+L["loadout_dock.builds_title"] = "Show builds"
+L["loadout_dock.hero_active"] = "Active spec's"
+L["loadout_dock.hero_title"] = "Hero talent"
+L["loadout_dock.pvp_all_brackets"] = "All Brackets"
+L["loadout_dock.show_pvp"] = "Show PvP builds"
+L["loadout_dock.theme_codex"] = "Class Codex"
+L["loadout_dock.theme_compact"] = "Compact"
+L["loadout_dock.theme_minimalist"] = "Minimalist"
+L["loadout_dock.theme_title"] = "Theme"
+L["settings.label.dock_background"] = "Background"
+L["settings.label.dock_max_width"] = "Max dock width"
+L["settings.label.dock_pick_color"] = "Custom background color"
+L["settings.label.raid_difficulty"] = "Raid difficulty"
+L["settings.tooltip.dock_background"] =
+    "Dock background color at full opacity: your class color, or a custom color. Class Codex theme only."
+L["settings.tooltip.dock_build_filter"] =
+    "Which recommended builds appear in the dock's loadout menu: everything, only builds for your current hero talent, or the recommended picks only."
+L["settings.tooltip.dock_hero_filter"] =
+    "Which hero talent the hero build filter matches against: the active spec's, or a specific hero talent."
+L["settings.tooltip.dock_max_width"] =
+    "Upper limit for the dock's width — applies both to the fixed width and to auto-width sizing."
+L["settings.tooltip.dock_pick_color"] =
+    "Open the color picker for the dock background. Choosing a color switches the background to Custom."
+L["settings.tooltip.dock_show_pvp"] = "Include the U.GG arena and battleground builds in the dock's loadout menu."
+L["settings.tooltip.dock_theme"] =
+    "Class Codex: selector styling — gradient background, border and ringed icons. Compact: same, without background or border. Minimalist: label only."
+L["settings.tooltip.raid_difficulty"] =
+    "Which raid difficulty's builds to show — drives the loadout dock's raid section and the talents page."
+L["settings.value.dock_bg_class"] = "Class color"
+L["settings.value.dock_bg_custom"] = "Custom"
+L["settings.value.dock_pick_color_pick"] = "Pick color…"
+L["settings.value.heroic"] = "Heroic"
+L["settings.value.mythic"] = "Mythic"
+
+-- Untranslated: enUS fallback (TODO)
+L["item.menu.search_ah"] = "Add to Auctionator List"
+L["item.menu.ah_listed"] = 'Added to your Auctionator "Class Codex" shopping list.'
+L["item.menu.ah_list_fail"] = "Could not update the Auctionator shopping list."
+
+L["item.menu.copy_name"] = "Copy name"
+
+L["item.tooltip.menu_hint"] = "Right-click for options"
+
+L["crafting.menu.sort_popular"] = "Show most popular only"
+L["crafting.menu.popularity_title"] = "Popularity"
+
+L["settings.header.tooltip_stat_priority"] = "Stat Priority"
+L["settings.header.tooltip_bis"] = "Best in Slot"
+L["settings.header.tooltip_trinket"] = "Trinket Tier"
+L["settings.tooltip.stat_priority_source_line"] = "Show the "
+
+L["settings.label.priority_display"] = "Priority Display"
+L["settings.tooltip.priority_display"] =
+    "How the Stat Priority line shows the hero and content: icons, labels, or both."

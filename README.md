@@ -1,24 +1,30 @@
 # Bread Class Codex
 
-A fork of **[Class Codex](https://addons.wago.io/addons/classcodex)** by jfstn (MIT) that
-adds **Wowhead** and **archon.gg** as data sources alongside the original's Icy Veins and
-u.gg, and keeps it working on current retail.
+A fork of **Class Codex** by jfstn that adds **Wowhead** and **archon.gg** data alongside
+the original's Icy Veins and u.gg, and keeps it working on current retail.
+
+> **Licensing:** this release is based on Class Codex **1.0.3**, which ships only inside the
+> Icy Veins desktop app and carries **no license file**. Redistribution terms are unresolved —
+> see [NOTICE](NOTICE). The MIT text in `LICENSE` covers the older 0.40.14-based lineage only.
 
 Not affiliated with or endorsed by jfstn. **Please don't report issues with this fork
 upstream.**
 
 ## What's different
 
-- **Wowhead** — editorial BiS, talent builds and written rotations.
-- **archon.gg** — log-derived popularity split by **Mythic+ and Raid**, with each item's
-  adoption share, max key and DPS. Covers the evoker talents and marksmanship hunter gear
-  that Wowhead has gaps on.
-- Both appear in the existing source dropdowns on the gear, talent, enhancement and
-  trinket surfaces. Nothing from upstream was removed.
-- The item tooltip's "BiS for these specs" badge covers all four sources (Wowhead and
-  Archon are off by default — four sources on one tooltip is a lot of text).
-- Compatible with WoW **12.1.0**; upstream's `GetInspectSpecialization` call was removed
-  by that patch.
+Built on Class Codex **1.0.3**. Upstream's Icy Veins / u.gg data is the base and is never
+overwritten — **Wowhead** and **archon.gg** fill the gaps in it.
+
+- Where upstream has no value for a category, hero talent or content context, the locally
+  scraped data supplies one. Across all 40 specs that means a **`rotation` section for the
+  34 u.gg specs that have none**, consumables for 40 specs, and roughly 1,500 extra talent
+  build contexts plus ~160 each of gems, enchants and trinkets.
+- Wowhead and Archon are **not** separate entries in the source dropdown. They fill
+  upstream's gaps rather than sitting beside it as alternative views.
+- Compatible with WoW **12.1.0** — 1.0.3 still calls `GetInspectSpecialization`, removed by
+  that patch, unguarded in one place; this fork routes it through `C_SpecializationInfo`.
+- **Not yet ported from the 0.40.14 lineage:** the "BiS for these specs" tooltip badge and
+  the Archon per-encounter talent menu.
 
 Data refreshes automatically once a week, so BiS tracks the current season.
 

@@ -1,20 +1,5 @@
 local _, ns = ...
 
--------------------------------------------------------------------------------
--- TalentBuildList: shared helpers for rendering grouped talent builds.
---
--- Pure functions used by every place that renders talent builds:
---   - Main panel Talents tab (ClassCodex.lua: ns:UpdateAllTalents)
---   - Compendium talents section (Compendium.lua: ns:UpdateCompendiumAllTalents)
---   - Talent-pane frame (TalentPaneFrame.lua)
---
--- Each caller owns its own widget pool and action wiring; this file owns the
--- grouping, formatting, and active-build detection so all three stay in sync.
--------------------------------------------------------------------------------
-
--- GroupBuildsByHero(talents) -> heroOrder, heroBuilds
--- Groups a list of talent builds by their heroTalent field, preserving the
--- original order of both heroes and builds within each hero.
 function ns.GroupBuildsByHero(talents)
     local heroOrder, heroBuilds = {}, {}
     if not talents then return heroOrder, heroBuilds end
@@ -29,45 +14,38 @@ function ns.GroupBuildsByHero(talents)
     return heroOrder, heroBuilds
 end
 
--- FormatHeroHeaderText(hero) -> string
--- Returns the display text for a hero talent group header. Includes the
--- hero's atlas icon if available, and localizes "All" -> "General".
-function ns.FormatHeroHeaderText(hero)
+local TIER_COLORS = {
+    S = "ffff6a00",
+    A = "ffffd200",
+    B = "ff4fd14f",
+    C = "ffb0b0b0",
+    D = "ff909090",
+    F = "ff808080",
+}
+
+local function FormatTierBadge(tier, pop)
+    if not tier or tier == "" then return "" end
+    local color = TIER_COLORS[tier:sub(1, 1):upper()] or "ffb0b0b0"
+    local badge = "  |c" .. color .. tier .. "|r"
+    if pop then badge = badge .. " |cff808080" .. pop .. "%|r" end
+    return badge
+end
+
+function ns.FormatHeroHeaderText(hero, tier, pop)
     local L = ns.L
     local displayHero = (hero == "All" and L and L["settings.header.general"]) or (hero == "All" and "General") or hero
     local atlas = ns.HERO_TALENT_ATLAS and ns.HERO_TALENT_ATLAS[hero]
-    if atlas then
-        return "|A:" .. atlas .. ":14:14|a " .. displayHero
-    end
-    return displayHero
+    local badge = FormatTierBadge(tier, pop)
+    if atlas then return "|A:" .. atlas .. ":14:14|a " .. displayHero .. badge end
+    return displayHero .. badge
 end
 
--- FormatBuildLabel(build) -> string
--- Returns the display text for a build row: "Context — BuildLabel (Best)".
--- The context is only prepended when the build label doesn't already convey it,
--- so we never get redundant labels like "Raid — Raid" or "Delves — Delves"
--- (Icy Veins sometimes names a build the same as its context).
---
--- `build.recommended` may be `true` or the source's own tag text. Wowhead's tag
--- varies per row — frost mage marks one Raid build "(Best ST)" and the other
--- "(Best Cleave)" — so printing a flat "(Best)" on both would claim two
--- different builds are the single best for Raid. Print what the source printed.
 function ns.FormatBuildLabel(build)
     local context = build.context
     local buildLabel = build.buildLabel
     local label
     if buildLabel and buildLabel ~= "" then
-        local lowerLabel = buildLabel:lower()
-        local lowerContext = context and context:lower() or ""
-        -- Wowhead sometimes spells the row name "M+ - Virtue" while the
-        -- normalized context is "Mythic+". They convey the same scope, so keep
-        -- the source-authored label verbatim instead of rendering the redundant
-        -- "Mythic+ — M+ - Virtue".
-        local conveysContext = lowerContext ~= "" and (
-            lowerLabel:find(lowerContext, 1, true)
-            or (lowerContext == "mythic+" and lowerLabel:match("^m%+[%s%-—]"))
-        )
-        if not context or context == "" or conveysContext then
+        if not context or context == "" or buildLabel:lower():find(context:lower(), 1, true) then
             label = buildLabel
         else
             label = context .. " — " .. buildLabel
@@ -75,43 +53,30 @@ function ns.FormatBuildLabel(build)
     else
         label = context or "Build"
     end
-    if build.recommended then
-        local tag = type(build.recommended) == "string" and build.recommended or "Best"
-        label = label .. " |cff00cc00(" .. tag .. ")|r"
-    end
+    if build.recommended then label = label .. "  |cff1abc3cRecommended|r" end
     return label
 end
 
--- FormatPlainBuildLabel(build) -> string
--- The same text as FormatBuildLabel with the colour escapes removed.
---
--- Use this for anything that is not a display string: loadout names reach
--- C_ClassTalents.RenameConfig and the Save-as dialog's edit box, where a
--- |cff00cc00...|r would be shown literally. Taking the formatted label and
--- stripping it (rather than rebuilding from buildLabel alone) keeps the name in
--- step with what the player clicked AND keeps the context, without which
--- Archon's "Recommended Class Tree" collides between Mythic+ and Raid.
-function ns.FormatPlainBuildLabel(build)
-    local s = ns.FormatBuildLabel(build)
-    s = s:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
-    return s
+function ns.BuildStatSuffix(build)
+    local suffix = ""
+    if build.pickrate and build.pickrate > 0 then suffix = suffix .. " |cff808080" .. build.pickrate .. "%|r" end
+    if build.topDps then suffix = suffix .. " |cffffd200★ top dps|r" end
+    return suffix
 end
 
--- ExtractTalentBits(exportString) -> string or nil
--- Decodes just the per-node bits from a Blizzard talent export string,
--- skipping the 152-bit header (8 version + 16 spec + 128 tree hash).
--- Used for comparing two builds for equality without depending on the
--- tree hash (which can differ even for identical node selections).
 function ns.ExtractTalentBits(exportString)
-    if not exportString or not ExportUtil or not ExportUtil.MakeImportDataStream then
-        return nil
-    end
+    if not exportString or not ExportUtil or not ExportUtil.MakeImportDataStream then return nil end
     local ok, stream = pcall(ExportUtil.MakeImportDataStream, exportString)
     if not ok or not stream then return nil end
-    -- Skip 152-bit header: 19 reads of 8 bits
-    for _ = 1, 19 do pcall(stream.ExtractValue, stream, 8) end
+
+    for _ = 1, 19 do
+        pcall(stream.ExtractValue, stream, 8)
+    end
+    -- Read the entire content bitstream: capping at 500 bits truncated the
+    -- tail of the string (hero-tree selections serialize last), which made
+    -- different builds compare as equal.
     local bits = {}
-    for _ = 1, 500 do
+    for _ = 1, 4096 do
         local bok, val = pcall(stream.ExtractValue, stream, 1)
         if not bok then break end
         bits[#bits + 1] = val
@@ -119,31 +84,34 @@ function ns.ExtractTalentBits(exportString)
     return table.concat(bits)
 end
 
--- GetActiveTalentSignature() -> string or nil
--- Returns a signature for the currently-active talent build, suitable for
--- equality comparison against a build's exportString via ExtractTalentBits.
--- In inspect mode (ns._talentPaneInspect set by TalentPaneDropdown) we
--- read the configID from the talent frame itself rather than hardcoding
--- INSPECT_TRAIT_CONFIG_ID — Blizzard uses VIEW_TRAIT_CONFIG_ID for
--- inspect-by-string, INSPECT_TRAIT_CONFIG_ID for inspect-by-unit.
-function ns.GetActiveTalentSignature()
+-- forcePlayerConfig: the apply pipeline and other non-pane consumers must
+-- never read through the inspect override. A stale inspect flag made them
+-- call C_Traits.GenerateImportString with the inspect sentinel config (-1),
+-- which hard-crashes the client (pcall cannot catch a native fault).
+function ns.GetActiveTalentSignature(forcePlayerConfig)
     if not C_Traits or not C_Traits.GenerateImportString then return nil end
     local configID
-    if ns._talentPaneInspect then
-        local tf = PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame
-        if tf and tf.GetConfigID then
-            local ok, id = pcall(tf.GetConfigID, tf)
-            if ok then configID = id end
+    if ns._talentPaneInspect and not forcePlayerConfig then
+        -- Only read the inspect config while an inspect is actually open;
+        -- otherwise fall through to the player's config.
+        local inspecting = PlayerSpellsFrame and PlayerSpellsFrame.IsInspecting and PlayerSpellsFrame:IsInspecting()
+        if inspecting then
+            local tf = PlayerSpellsFrame.TalentsFrame
+            if tf and tf.GetConfigID then
+                local ok, id = pcall(tf.GetConfigID, tf)
+                if ok then configID = id end
+            end
+            if not configID then
+                configID = (Constants and Constants.TraitConsts and Constants.TraitConsts.INSPECT_TRAIT_CONFIG_ID)
+            end
         end
-        if not configID then
-            configID = (Constants and Constants.TraitConsts and Constants.TraitConsts.INSPECT_TRAIT_CONFIG_ID) or -1
-        end
-    else
+    end
+    if not configID then
         if not C_ClassTalents or not C_ClassTalents.GetActiveConfigID then return nil end
         configID = C_ClassTalents.GetActiveConfigID()
     end
     if not configID then return nil end
-    local str = C_Traits.GenerateImportString(configID)
-    if not str then return nil end
+    local ok, str = pcall(C_Traits.GenerateImportString, configID)
+    if not ok or not str then return nil end
     return ns.ExtractTalentBits(str)
 end

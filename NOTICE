@@ -1,13 +1,23 @@
 Bread Class Codex
 =================
 
-This is a FORK of **Class Codex** by **jfstn**, used and redistributed under the
-MIT License. The upstream copyright notice and licence text are preserved
-verbatim in LICENSE and in BreadClassCodex/LICENSE.
+This is a FORK of **Class Codex** by **jfstn**.
+
+LICENSING STATUS — UNRESOLVED, READ BEFORE REDISTRIBUTING
+---------------------------------------------------------
+This release is based on Class Codex **1.0.3**, which is distributed only inside
+the Icy Veins desktop app. That build ships **no LICENSE file** and states no
+redistribution terms.
+
+Earlier releases of this fork were based on Class Codex 0.40.14, which WAS
+MIT-licensed; the LICENSE file in this repository is jfstn's MIT text and covers
+that 0.40.14-derived lineage, NOT the 1.0.3 code in this tree. Do not read the
+presence of LICENSE as a grant covering this release.
 
 Upstream project:
-  Wago        https://addons.wago.io/addons/classcodex
-  CurseForge  project 1480030
+  Icy Veins app  https://www.icy-veins.com/download   (1.0.3 and later)
+  Wago           https://addons.wago.io/addons/classcodex   (0.40.14, MIT)
+  CurseForge     project 1480030   (listing removed)
 
 This fork is not affiliated with or endorsed by jfstn. Please do not report
 issues with this fork to the upstream author.
@@ -17,16 +27,33 @@ What this fork changes
 ----------------------
 
 1. Interface compatibility for WoW 12.1.0 ("Curse of Ula'tek"). Upstream's
-   `GetInspectSpecialization` call was removed by that patch; this fork routes
-   it through `C_SpecializationInfo.GetInspectSpecialization` behind a fallback.
+   `GetInspectSpecialization` call was removed by that patch; 1.0.3 still calls
+   it, unguarded in one place. This fork routes both calls through
+   `C_SpecializationInfo.GetInspectSpecialization` behind a fallback.
 
-2. Two additional data sources alongside upstream's Icy Veins / u.gg:
-     - **Wowhead**  — editorial BiS, talent builds and written rotations
-     - **archon.gg** — log-derived popularity, split by Mythic+ and Raid,
-                       with adoption share, max key and DPS per item
-   Both appear in the existing source pickers; nothing upstream was removed.
+2. Gap-filling from two extra data sets, **Wowhead** and **archon.gg**.
 
-3. The item tooltip's "BiS for these specs" badge covers all four sources.
+   Upstream's own Icy Veins / u.gg data is the BASE and is never overwritten.
+   Where it has no value for a category / hero-talent / content-context, the
+   locally scraped data supplies one. The merge happens in
+   `Shared/SourceData.lua` (`ns.SourceSpec`), so every section inherits it
+   without its own lookup code changing.
+
+   Wowhead and archon.gg are deliberately NOT offered as pickable sources in
+   the source dropdown — they fill upstream's gaps rather than standing beside
+   it as alternative views.
+
+   What that actually supplies, measured across all 40 specs:
+     - a `rotation` category for 34 u.gg specs, which u.gg has none of
+     - `consumables` for 40 specs
+     - ~1,500 talent build contexts, ~160 each of gems / enchants / trinkets
+
+   `links` and `archonContexts` are excluded from the merge: they are
+   per-source attribution and private indexes, not content.
+
+3. Not in this release (present in the 0.40.14-based lineage, not yet ported to
+   1.0.3): the item tooltip's "BiS for these specs" badge, and the Archon
+   per-encounter talent menu.
 
 
 Data attribution

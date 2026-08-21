@@ -1,36 +1,29 @@
-## Interface: 120007, 120100
+## Interface: 120100
 ## Title: Bread Codex
-## Notes: |cff33ff99Fork.|r Stat priorities, talent builds, rotation guides, and gearing recommendations for your current spec.
-## Author: jfstn (fork maintained by BouncyBread)
-## Version: @project-version@
-## X-Fork-Of: Class Codex by jfstn (MIT) - https://addons.wago.io/addons/classcodex
-# This fork's OWN Wago project, not upstream's (rNkynwKa). With upstream's id here
-# every addon manager would treat this as Class Codex and overwrite it with jfstn's
-# builds -- which is why the inherited X-Wago-ID/X-Curse-Project-ID were stripped.
-## X-Wago-ID: aNDMng6o
+## Notes: |cff8888ffBread Codex|r - stat priorities, talent builds, rotation guides, and gearing recommendations for your current spec.
+## Author: jfstn
+## Version: 1.0.3-bread-2026-08-21
 ## SavedVariables: ClassCodexDB
 ## SavedVariablesPerCharacter: ClassCodexCharDB
-## IconTexture: Interface\AddOns\BreadClassCodex\icon
+## X-Curse-Project-ID: 1480030
+## X-Wago-ID: rNkynwKa
+## X-Website: https://www.icy-veins.com/download
+## IconTexture: Interface\AddOns\BreadClassCodex\Media\icon
 ## AddonCompartmentFunc: ClassCodex_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: ClassCodex_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: ClassCodex_OnAddonCompartmentLeave
 
 Libs\embeds.xml
 
-Data\Generated.lua
 
-# Normalized per-source data (Class Codex Service). The UI accessors read these
-# directly through the SourceData seam; SourceReader builds only the two globals
-# that are read inline (ClassCodexData) or need in-game encoding (ClassCodexUggBuilds).
 Data\db_ugg.lua
 Data\db_icyveins.lua
+Data\db_gamedata.lua
 Data\db_wowhead.lua
 Data\db_archon.lua
-Data\db_blizzard.lua
-Data\db_reference.lua
 
 
-Locales.lua
+Core\Locales.lua
 Locales\enUS.lua
 Locales\koKR.lua
 Locales\zhCN.lua
@@ -42,41 +35,49 @@ Locales\itIT.lua
 Locales\ruRU.lua
 Locales\zhTW.lua
 Shared\SourceData.lua
+Shared\ItemCache.lua
+Shared\Context.lua
+Shared\SourceQuery.lua
 Shared\Sources.lua
 Shared\SelfTest.lua
 Shared\ItemLabel.lua
 Shared\ImportExport.lua
 Shared\TalentEncode.lua
 Shared\ReduceTaint.lua
-Shared\PvPData.lua
-Shared\StatTargets.lua
+Shared\PvPTalents.lua
+Shared\OmniumFolio.lua
 Shared\TalentBuildList.lua
 Shared\UggContext.lua
-# SourceReader loads after the seam + talent-encode helpers it depends on.
-Data\SourceReader.lua
+Shared\SpecData.lua
+Shared\RotationFormat.lua
+Shared\SourceReader.lua
 Shared\GearingUtils.lua
-Shared\ArchonContext.lua
-UI\SectionTitle.lua
-UI\HelpIcon.lua
+Shared\StatTargets.lua
+Shared\DungeonArt.lua
+UI\Tooltip.lua
 UI\SlotIcon.lua
-UI\TooltipScanner.lua
 UI\CollapsibleSection.lua
+UI\PageTitle.lua
+UI\CogGlow.lua
+UI\Card.lua
+UI\AnchorPane.lua
 Sections\init.lua
 Sections\Crafting.lua
 Sections\Trinkets.lua
 Sections\Gear.lua
-Sections\Supporters.lua
-Sections\About.lua
 Sections\Stats.lua
 Sections\Enhancements.lua
-Sections\StatTargets.lua
 Sections\Rotation.lua
 Sections\Omnium.lua
+Sections\PvpEmpty.lua
 Sections\Talents.lua
-ClassCodex.lua
-GearingSections.lua
-Compendium.lua
-TalentPaneDropdown.lua
-LoadoutDock.lua
-UnitMenuIntegration.lua
-Settings.lua
+Core\AboutPage.lua
+Core\SupportersPage.lua
+Core\ClassCodex.lua
+Core\GearingSections.lua
+Core\Compendium.lua
+Core\TalentPaneDropdown.lua
+Core\LoadoutDock.lua
+Core\UnitMenuIntegration.lua
+Core\SettingsAbout.lua
+Core\Settings.lua

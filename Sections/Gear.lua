@@ -3,30 +3,23 @@ ns.Sections = ns.Sections or {}
 
 local L = ns.L
 
--- "Gear" section — Best in Slot gear from u.gg / Icy Veins / PvP. The
--- displayed title still reads "Best in Slot Gear" (L["tab.best_in_slot"]).
 local Gear = {}
 ns.Sections.Gear = Gear
 
--------------------------------------------------------------------------------
--- Shared helpers + state persistence
--------------------------------------------------------------------------------
-
 local MAX_ROWS = 20
+local ICON_SIZE = 32
+local SLOT_FRAME = math.floor(ICON_SIZE * 1.8125 + 0.5)
+local CARD_HEIGHT = 40
 
--- BiS source dropdown string -> registry key. PvP gear comes from u.gg.
-local COMP_SOURCE_KEYS = {
-    ["Icy Veins"] = "icyveins",
-    ["Wowhead"] = "wowhead",
-    ["Archon"] = "archongg",
-    ["u.gg"] = "ugg", ["PvP"] = "ugg",
-}
+local ICON_STRIDE = 42
+local ROW_STRIDE = 42
+local TOP_PAD = 4
+local GRID_INSET = 4
 
-local function LoadBisPrefs()
-    local specKey = ns.GetSpecKey and ns.GetSpecKey()
+local function LoadBisPrefs(specKey)
+    specKey = specKey or (ns.GetSpecKey and ns.GetSpecKey())
     local source, tabLabel = "Icy Veins", nil
-    if specKey and ClassCodexCharDB and ClassCodexCharDB.perSpec
-        and ClassCodexCharDB.perSpec[specKey] then
+    if specKey and ClassCodexCharDB and ClassCodexCharDB.perSpec and ClassCodexCharDB.perSpec[specKey] then
         local s = ClassCodexCharDB.perSpec[specKey]
         if s.bisSource then source = s.bisSource end
         if s.bisTab then tabLabel = s.bisTab end
@@ -34,15 +27,62 @@ local function LoadBisPrefs()
     return source, tabLabel
 end
 
-local function SaveBisPrefs(source, tabLabel)
-    local specKey = ns.GetSpecKey and ns.GetSpecKey()
+local function SaveBisPrefs(specKey, source, tabLabel)
+    specKey = specKey or (ns.GetSpecKey and ns.GetSpecKey())
     if not specKey or not ClassCodexCharDB then return end
     if not ClassCodexCharDB.perSpec then ClassCodexCharDB.perSpec = {} end
-    if not ClassCodexCharDB.perSpec[specKey] then
-        ClassCodexCharDB.perSpec[specKey] = {}
-    end
+    if not ClassCodexCharDB.perSpec[specKey] then ClassCodexCharDB.perSpec[specKey] = {} end
     if source ~= nil then ClassCodexCharDB.perSpec[specKey].bisSource = source end
     if tabLabel ~= nil then ClassCodexCharDB.perSpec[specKey].bisTab = tabLabel end
+end
+
+local function viewContext(override)
+    if override then return override end
+    if ns.isFloating and ns.isFloating() then return "float" end
+    return "dock"
+end
+
+local function refreshView(context)
+    context = viewContext(context)
+    if context == "comp" then
+        if ns.UpdateCompendiumBis then ns:UpdateCompendiumBis() end
+        if ns.LayoutCompendium then ns:LayoutCompendium() end
+    else
+        if ns.UpdateGearingSections then ns:UpdateGearingSections() end
+        if ns.LayoutPanel then ns:LayoutPanel() end
+    end
+end
+
+function Gear.GetViewMode(context)
+    context = viewContext(context)
+    return (ClassCodexDB and ClassCodexDB["gearView_" .. context]) or "table"
+end
+
+function Gear.SetViewMode(mode, context)
+    context = viewContext(context)
+    if not ClassCodexDB then ClassCodexDB = {} end
+    ClassCodexDB["gearView_" .. context] = mode
+    refreshView(context)
+end
+
+-- The docked panel and the Compendium remember the source setting separately
+-- (same convention as the per-context view mode above).
+function Gear.IsSourceShown(context)
+    context = viewContext(context)
+    local shown = ClassCodexDB and ClassCodexDB["gearSource_" .. context]
+    return shown == true
+end
+
+function Gear.SetSourceShown(shown, context)
+    context = viewContext(context)
+    if not ClassCodexDB then ClassCodexDB = {} end
+    ClassCodexDB["gearSource_" .. context] = shown and true or false
+    refreshView(context)
+end
+
+function Gear.ToggleSource(context)
+    context = viewContext(context)
+    Gear.SetSourceShown(not Gear.IsSourceShown(context), context)
 end
 
 local function FindTabByLabel(tabs, label)
@@ -53,490 +93,449 @@ local function FindTabByLabel(tabs, label)
     return nil
 end
 
--- u.gg's rows carry only { item, pop, bis } — no slot label and no drop
--- source (u.gg ranks by popularity, not acquisition). We recover the slot
--- from the item's equip location and fall back to the popularity percent.
-
--- Resolve the slot + source columns for one row. u.gg / Icy Veins rows
--- already carry both; u.gg rows derive them. `whLookup` is only built for
--- the u.gg source.
---
--- We deliberately don't surface u.gg's raw popularity percent: the rest of
--- the addon attributes u.gg popularity with a marker rather than a number,
--- and u.gg's raid figures count parses across all bosses so they routinely
--- exceed 100%. Instead the source column shows the item's drop location
--- (borrowed from the u.gg set when it lists the same item) and falls back
--- to a "BiS" tag on rows whose popular pick also matches u.gg's BiS.
 local function ResolveRow(entry, whLookup, context)
     local itemId = entry.item and entry.item.itemId
-    local slot = entry.slot
-    if not slot or slot == "" then slot = ns.GearSlotName(itemId) end
     local source = entry.source
     if not source or source == "" then
-        source = (whLookup and whLookup[itemId])
-            or (itemId and ns:GetTrinketSource(itemId))
+        source = (whLookup and whLookup[itemId]) or (itemId and ns:GetTrinketSource(itemId))
         if (not source or source == "") and entry.bis then source = "BiS" end
     end
-    -- u.gg rows carry no bonus IDs (its pages don't publish them), so the
-    -- item would render at base item level. Borrow the real bonus IDs we know
-    -- for this item from the other sources, falling back to the content's
-    -- typical upgrade track so a raid pick still shows a mythic-raid ilvl.
+
     local bonusIDs = entry.item and entry.item.bonusIDs
     if not bonusIDs and itemId then
-        bonusIDs = ns:GetItemBonusIDs(itemId)
-            or (context and ns:GetContextBonusDefault(context))
+        bonusIDs = ns:GetItemBonusIDs(itemId) or (context and ns:GetContextBonusDefault(context))
     end
-    return slot or "", source or "", bonusIDs
+    return source or "", bonusIDs
 end
 
--- Map an u.gg tab to the trinket-context key used for bonus-ID defaults.
-local function UggTabContext(source, tab)
-    if source ~= "u.gg" or not tab then return nil end
-    return tab.label == "Raid" and "raid" or "dungeon"
+local CONTENT_LABEL = { mplus = "Mythic+", raid = "Raid", pvp = "PvP" }
+
+local function makeCog(inst, ctx)
+    if not (inst.header and inst.header.AddHeaderWidget) then return end
+    local cog = CreateFrame("Button", nil, inst.header)
+    cog:SetSize(14, 14)
+    cog:RegisterForClicks("LeftButtonUp")
+    local icon = cog:CreateTexture(nil, "ARTWORK")
+    icon:SetAllPoints()
+    icon:SetAtlas("QuestLog-icon-setting")
+    icon:SetVertexColor(0.6, 0.6, 0.6)
+    cog:SetScript("OnEnter", function(self)
+        icon:SetVertexColor(1, 1, 1)
+        ns.Tooltip
+            .Open(self, "ANCHOR_RIGHT")
+            .Title(L["tab.best_in_slot"] or "Best in Slot")
+            .Hint("Click to change build or view.")
+            .Show()
+    end)
+    cog:SetScript("OnLeave", function()
+        icon:SetVertexColor(0.6, 0.6, 0.6)
+        ns.Tooltip.Hide()
+    end)
+    cog:SetScript("OnClick", function(self)
+        if not (MenuUtil and MenuUtil.CreateContextMenu) then return end
+        MenuUtil.CreateContextMenu(self, function(_, root)
+            local opts = inst.variantOptions
+            if opts and #opts > 1 then
+                root:CreateTitle(L["tab.best_in_slot"] or "Best in Slot")
+                for _, label in ipairs(opts) do
+                    root:CreateRadio(label, function()
+                        return inst.currentVariant == label
+                    end, function()
+                        if inst.onVariantPick then inst.onVariantPick(label) end
+                        return MenuResponse.Refresh
+                    end)
+                end
+                root:CreateDivider()
+            end
+            root:CreateTitle(L["settings.value.view"] or "View")
+            root:CreateRadio(L["settings.value.table"] or "Table", function()
+                return Gear.GetViewMode(ctx) == "table"
+            end, function()
+                Gear.SetViewMode("table", ctx)
+                return MenuResponse.Refresh
+            end)
+            root:CreateRadio(L["settings.value.list"] or "List", function()
+                return Gear.GetViewMode(ctx) == "list"
+            end, function()
+                Gear.SetViewMode("list", ctx)
+                return MenuResponse.Refresh
+            end)
+            root:CreateRadio(L["settings.value.icons"] or "Icons", function()
+                return Gear.GetViewMode(ctx) == "icons"
+            end, function()
+                Gear.SetViewMode("icons", ctx)
+                return MenuResponse.Refresh
+            end)
+            root:CreateDivider()
+            local srcCheck = root:CreateCheckbox(L["settings.label.gear_source"] or "Show Item Source", function()
+                return Gear.IsSourceShown(ctx)
+            end, function()
+                Gear.ToggleSource(ctx)
+                return MenuResponse.Refresh
+            end)
+            if srcCheck and srcCheck.SetTooltip then
+                srcCheck:SetTooltip(function(tip)
+                    GameTooltip_AddNormalLine(
+                        tip,
+                        L["settings.hint.gear_source_no_icons"] or "Appears in the table and list views."
+                    )
+                end)
+            end
+        end)
+    end)
+    cog:Hide()
+    inst.variantCog = cog
+    if ns.MakeCogGlow then
+        ns.MakeCogGlow(cog, icon)
+        ns.MakeLabelMenuHotspot(inst.header, cog)
+    end
 end
 
--------------------------------------------------------------------------------
--- Panel surface (always reflects the player's current spec)
--------------------------------------------------------------------------------
+local function placeCog(inst, title)
+    local cog = inst.variantCog
+    if not cog then return end
+    if title then
+        cog:SetParent(title)
+        if ns.LinkCogHover then
+            ns.LinkCogHover(title, cog)
+            ns.LinkCogMenu(title, cog, "LeftButton")
+        end
+        cog:ClearAllPoints()
+        if title.link then
+            cog:SetPoint("RIGHT", title.link, "LEFT", -3, 0)
+        else
+            cog:SetPoint("RIGHT", title, "RIGHT", -(ns.PAGE_TITLE_HPAD or 8), 0)
+        end
+    elseif inst.header and inst.header.AddHeaderWidget then
+        inst.header:AddHeaderWidget(cog)
+    end
+end
 
-local panel = {}
+local CARD_INSET_X = 8
 
-function Gear.InitPanel(parent)
-    panel.section = CreateFrame("Frame", nil, parent)
-    panel.section:SetHeight(ns.SECTION_HEADER_HEIGHT)
-    panel.title = ns.CreateSectionTitle(panel.section, L["tab.bis_gear"])
-    panel.content = CreateFrame("Frame", nil, panel.section)
-    panel.content:SetPoint("TOPLEFT", panel.title, "BOTTOMLEFT", 0, 0)
-    panel.content:SetPoint("RIGHT", 0, 0)
-    panel.content:Show()
+local function hideIcons(icons)
+    for i = 1, #icons do
+        if icons[i] then icons[i]:Hide() end
+    end
+end
 
-    panel.sourceDropdown = ns.CreateOptionDropdown("ClassCodexBisSourceDropdown", panel.content)
-    panel.sourceDropdown:SetPoint("TOPLEFT", 0, 0)
-    panel.sourceDropdown:SetPoint("TOPRIGHT", 0, 0)
-    panel.sourceDropdown:Hide()
+local function layoutGrid(content, icons, items)
+    hideIcons(icons)
+    local count = math.min(#items, #icons)
+    if count == 0 then return 0 end
 
-    panel.tabDropdown = ns.CreateOptionDropdown("ClassCodexBisTabDropdown", panel.content)
-    panel.tabDropdown:SetPoint("TOPLEFT", 0, 0)
-    panel.tabDropdown:SetPoint("TOPRIGHT", 0, 0)
-    panel.tabDropdown:Hide()
+    local width = content:GetWidth()
+    if not width or width < 100 then width = 300 end
+    local maxPerRow = math.max(1, math.floor((width - GRID_INSET * 2) / ICON_STRIDE))
+    local numRows = math.ceil(count / maxPerRow)
+    local perRow = math.ceil(count / numRows)
 
-    panel.rows = {}
+    local y = -TOP_PAD
+    for i = 1, count do
+        local item = items[i]
+        local ic = icons[i]
+        local rowN = math.floor((i - 1) / perRow)
+        local col = (i - 1) % perRow
+        local iconsInRow = math.min(perRow, count - rowN * perRow)
+        local totalRowW = (iconsInRow - 1) * ICON_STRIDE + ICON_SIZE
+        local rowStartX = (width - totalRowW) / 2
+        local x = rowStartX + col * ICON_STRIDE
+
+        ic:ClearAllPoints()
+        ic:SetPoint("TOPLEFT", content, "TOPLEFT", x, y - rowN * ROW_STRIDE)
+
+        ic:SetItem(item.itemId)
+        ic.itemId = item.itemId
+        ic.bonusIDs = item.bonusIDs
+        ic.altItemId = nil
+        ic.embItemId = nil
+        ic.sourceText = item.sourceText
+        ic.popText = item.popText
+        ic:ToggleMarker("owned", item.isOwned and true or false)
+        ic:Show()
+    end
+
+    return numRows * ROW_STRIDE + TOP_PAD
+end
+
+local function buildRows(inst)
+    inst.rows = {}
+    local inset = CARD_INSET_X
     for i = 1, MAX_ROWS do
-        local row = CreateFrame("Frame", nil, panel.content)
-        row:SetHeight(ns.ROW_HEIGHT)
-        local slot = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        slot:SetPoint("LEFT", 2, 0); slot:SetWidth(55); slot:SetJustifyH("LEFT")
-        slot:SetTextColor(0.6, 0.6, 0.6)
-        row.slotText = slot
-        ns.CreateRowIcon(row)
-        row.icon:ClearAllPoints()
-        row.icon:SetPoint("LEFT", slot, "RIGHT", 2, 0)
-        local source = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        source:SetPoint("RIGHT", -2, 0); source:SetWidth(80); source:SetJustifyH("RIGHT")
-        source:SetWordWrap(false); source:SetTextColor(0.5, 0.5, 0.5)
-        row.sourceLabel = source
-        local ownedBg = row:CreateTexture(nil, "BACKGROUND")
-        ownedBg:SetAllPoints(row); ownedBg:SetColorTexture(0.2, 0.9, 0.2, 0.10); ownedBg:Hide()
-        row.ownedBg = ownedBg
+        local row = CreateFrame("Frame", nil, inst.content)
+        row:SetHeight(CARD_HEIGHT)
+
+        row.icon = ns.CreateSlotIcon(row, { size = ICON_SIZE, slotSize = SLOT_FRAME })
+        row.icon:SetPoint("LEFT", row, "LEFT", inset, 0)
+
         local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        name:SetPoint("LEFT", row.icon, "RIGHT", 4, 0)
-        name:SetPoint("RIGHT", source, "LEFT", -4, 0)
-        name:SetJustifyH("LEFT"); name:SetWordWrap(false)
+        name:SetPoint("LEFT", row.icon.slot, "RIGHT", 2, 0)
+        name:SetPoint("RIGHT", row, "RIGHT", -4, 0)
+        name:SetJustifyH("LEFT")
+        name:SetWordWrap(false)
         row.itemText = name
+
+        local src = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        src:SetPoint("TOPLEFT", name, "BOTTOMLEFT", 0, 0)
+        src:SetPoint("RIGHT", row, "RIGHT", -4, 0)
+        src:SetJustifyH("LEFT")
+        src:SetWordWrap(false)
+        src:SetTextColor(0.5, 0.5, 0.52)
+        src:Hide()
+        row.sourceLine = src
+
         ns.SetupItemTooltip(row)
         row:Hide()
-        panel.rows[i] = row
+        inst.rows[i] = row
     end
 
-    panel.fallback = panel.content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    panel.fallback:SetTextColor(0.5, 0.5, 0.5)
-    panel.fallback:Hide()
+    inst.icons = {}
+    for i = 1, MAX_ROWS do
+        local ic = ns.CreateSlotIcon(inst.content, { size = ICON_SIZE, slotSize = SLOT_FRAME })
+        ns.SetupItemTooltip(ic)
+        ic:Hide()
+        inst.icons[i] = ic
+    end
 
-    -- Help "i" on the section title — explains the gear sources, including
-    -- that u.gg's data is what top players actually run (popularity-based),
-    -- not a curated Best in Slot list.
-    ns.CreateHelpIcon(panel.title, {
-        title = L["tab.bis_gear"],
-        intro = L["bis.help.intro"],
-        lines = { L["bis.help.ugg"], L["bis.help.ugg_mplus"] },
-    })
+    inst.tableRows = {}
+    for i = 1, MAX_ROWS do
+        inst.tableRows[i] = ns.MakeTableRow(inst.content)
+    end
 
-    return panel.section
+    inst.fallback = inst.content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    inst.fallback:SetTextColor(0.5, 0.5, 0.5)
+    inst.fallback:Hide()
 end
 
-function Gear.IsPanelSourceDropdownShown() return panel.sourceDropdown:IsShown() end
-function Gear.IsPanelTabDropdownShown() return panel.tabDropdown:IsShown() end
-function Gear.IsPanelFallbackShown() return panel.fallback:IsShown() end
+local function render(inst, args)
+    if not inst.rows then return 0 end
+    for i = 1, MAX_ROWS do
+        inst.rows[i]:Hide()
+    end
+    hideIcons(inst.icons)
+    inst.fallback:Hide()
+    inst.lastContentHeight = 0
 
--- args = { uggBis, ivBis, whBis, pvpBis, onChange }
--- Returns the rendered row count (height in ROW_HEIGHT units).
-function Gear.RenderPanel(args)
-    for i = 1, MAX_ROWS do panel.rows[i]:Hide() end
-    panel.fallback:Hide()
+    local bisGear = args.bisGear
+    local hasGear = bisGear and #bisGear > 0
+    local hasPvP = bisGear and FindTabByLabel(bisGear, "PvP") ~= nil
 
-    local ivBis, uggBis, whBis, archonBis, pvpBis =
-        args.ivBis, args.uggBis, args.whBis, args.archonBis, args.pvpBis
-    local hasIV     = ivBis and #ivBis > 0
-    local hasUgg = uggBis and #uggBis > 0
-    local hasWH     = whBis and #whBis > 0
-    local hasArchon = archonBis and #archonBis > 0
-    local hasPvP    = pvpBis ~= nil
-
-    if not (hasIV or hasUgg or hasWH or hasArchon or hasPvP) then
-        panel.sourceDropdown:Hide()
-        panel.tabDropdown:Hide()
-        panel.section:Hide()
+    if not hasGear then
+        if inst.variantCog then inst.variantCog:Hide() end
+        if inst.section then inst.section:Hide() end
         return 0
     end
 
-    local currentSource, currentTab = LoadBisPrefs()
-    local function sourceAvailable(src)
-        if src == "Icy Veins" then return hasIV end
-        if src == "u.gg" then return hasUgg end
-        if src == "Wowhead" then return hasWH end
-        if src == "Archon" then return hasArchon end
-        return src == "PvP" -- PvP is always selectable (shows its own fallback)
+    local class, spec = args.class, args.spec
+    if not class and ns.GetClassAndSpec then
+        class, spec = ns.GetClassAndSpec()
     end
-    if not sourceAvailable(currentSource) then
-        currentSource = (hasIV and "Icy Veins") or (hasUgg and "u.gg") or (hasWH and "Wowhead")
-            or (hasArchon and "Archon") or "PvP"
-    end
+    local curSource = args.source or (ns.ActiveSource and ns.ActiveSource()) or "icyveins"
+    local specKey = args.specKey or (ns.GetSpecKey and ns.GetSpecKey())
 
-    -- Source dropdown
-    local labels = ns.BIS_SOURCE_LABELS or {}
-    local availableSources = {}
-    if hasIV then availableSources[#availableSources + 1] = { label = labels["Icy Veins"] or "Icy Veins", value = "Icy Veins" } end
-    if hasUgg then availableSources[#availableSources + 1] = { label = labels["u.gg"] or "u.gg", value = "u.gg" } end
-    if hasWH then availableSources[#availableSources + 1] = { label = labels["Wowhead"] or "Wowhead", value = "Wowhead" } end
-    if hasArchon then availableSources[#availableSources + 1] = { label = labels["Archon"] or "Archon", value = "Archon" } end
-    availableSources[#availableSources + 1] = { label = labels["PvP"] or "PvP", value = "PvP" }
-    if #availableSources > 1 then
-        panel.sourceDropdown:Show()
-        panel.sourceDropdown:SetOptions(availableSources, currentSource, function(picked)
-            -- Don't force a tab here — sources have different tab sets
-            -- (u.gg has Mythic+/Raid, not "Overall"). Leave the saved tab
-            -- and let the render-time FindTabByLabel guard fall back to the
-            -- new source's first tab when the old label doesn't exist.
-            SaveBisPrefs(picked, nil)
-            if args.onChange then args.onChange() end
-        end)
-    else
-        panel.sourceDropdown:Hide()
-    end
-
-    -- PvP-no-data fallback
-    if currentSource == "PvP" and not hasPvP then
-        panel.tabDropdown:Hide()
-        local yOff = panel.sourceDropdown:IsShown() and -30 or 0
-        panel.fallback:SetText(L["pvp.no_gear_data"] or "No PvP gear data for this spec yet.")
-        panel.fallback:ClearAllPoints()
-        panel.fallback:SetPoint("TOPLEFT", 4, yOff - 4)
-        panel.fallback:Show()
-        panel.section:Show()
-        return 0
-    end
-
-    -- Pick the active source's tab list
-    local activeBis
-    if currentSource == "PvP" then activeBis = pvpBis
-    elseif currentSource == "Icy Veins" then activeBis = ivBis
-    elseif currentSource == "Wowhead" then activeBis = whBis
-    elseif currentSource == "Archon" then activeBis = archonBis
-    else activeBis = uggBis end
-    if not activeBis or #activeBis == 0 then
-        activeBis = uggBis or ivBis or whBis or archonBis or pvpBis
-    end
-    if not activeBis or not activeBis[1] then
-        panel.tabDropdown:Hide()
-        panel.section:Hide()
-        return 0
-    end
-
-    -- Validate tab selection
-    if not FindTabByLabel(activeBis, currentTab) then
-        currentTab = activeBis[1].label
-    end
-
-    -- Tab dropdown
-    local showTabDropdown = #activeBis > 1
-    if showTabDropdown then
-        local tabLabels = {}
-        for _, tab in ipairs(activeBis) do tabLabels[#tabLabels + 1] = tab.label end
-        panel.tabDropdown:Show()
-        panel.tabDropdown:SetOptions(tabLabels, currentTab, function(picked)
-            SaveBisPrefs(nil, picked)
-            if args.onChange then args.onChange() end
-        end)
-    else
-        panel.tabDropdown:Hide()
-    end
-
-    -- Selected slots
-    local selectedTab = FindTabByLabel(activeBis, currentTab)
-    local selectedSlots = selectedTab and selectedTab.slots or nil
-
-    local yOffset = 0
-    if panel.sourceDropdown:IsShown() then yOffset = yOffset - 30 end
-    if showTabDropdown then
-        panel.tabDropdown:ClearAllPoints()
-        panel.tabDropdown:SetPoint("TOPLEFT", 0, yOffset)
-        panel.tabDropdown:SetPoint("TOPRIGHT", 0, yOffset)
-        yOffset = yOffset - 30
-    end
-
-    local whLookup = ns:GetWowheadSourceIndex()
-    local uggCtx = UggTabContext(currentSource, selectedTab)
-    local count = selectedSlots and math.min(#selectedSlots, MAX_ROWS) or 0
-    for i = 1, count do
-        local entry = selectedSlots[i]
-        local row = panel.rows[i]
-        local slot, source, bonusIDs = ResolveRow(entry, whLookup, uggCtx)
-        row.slotText:SetText(slot)
-        row.itemText:SetText(ns.FormatItem(entry.item))
-        row.sourceLabel:SetText(source)
-        ns.SizeSourceColumn(row.sourceLabel, row:GetParent():GetWidth(), 85, 92, 180)
-        row.itemId = entry.item.itemId
-        row.bonusIDs = bonusIDs
-        row.altItemId = nil
-        row.embItemId = nil
-        row.sourceText = (source ~= "" and source) or nil
-        ns.SetRowIcon(row, entry.item.itemId)
-        if row.ownedBg then
-            if ns.IsItemOwned(entry.item.itemId) then row.ownedBg:Show() else row.ownedBg:Hide() end
+    local contentOpts = {
+        { label = CONTENT_LABEL.mplus, value = "mplus" },
+        { label = CONTENT_LABEL.raid, value = "raid" },
+    }
+    if hasPvP then contentOpts[#contentOpts + 1] = { label = CONTENT_LABEL.pvp, value = "pvp" } end
+    local curCT = args.contentType or (ns.Context and ns.Context.contentType())
+    local function ctOk(ct)
+        for _, o in ipairs(contentOpts) do
+            if o.value == ct then return true end
         end
-        row:ClearAllPoints()
-        row:SetPoint("TOPLEFT", 0, yOffset - (i - 1) * ns.ROW_HEIGHT)
-        row:SetPoint("RIGHT", 0, 0)
-        row:Show()
     end
-    panel.section:Show()
+    if not ctOk(curCT) then curCT = contentOpts[1] and contentOpts[1].value or "mplus" end
+
+    local variants = ns.GearVariants(class, spec, curSource, curCT)
+    local variantLabels = {}
+    for _, v in ipairs(variants) do
+        variantLabels[#variantLabels + 1] = v.label
+    end
+    local _, savedVariant = LoadBisPrefs(specKey)
+    local curVariant = savedVariant
+    local ok = false
+    for _, l in ipairs(variantLabels) do
+        if l == curVariant then
+            ok = true
+            break
+        end
+    end
+    if not ok then curVariant = variantLabels[1] end
+    local tab = curVariant and FindTabByLabel(bisGear, curVariant)
+    local selectedSlots = tab and tab.slots
+
+    inst.variantOptions = variantLabels
+    inst.currentVariant = curVariant
+    if inst.header and inst.header.label then
+        local base = L["tab.best_in_slot"] or "Best in Slot"
+        if curVariant and curVariant ~= "" then
+            inst.header.label:SetText(base .. " · " .. curVariant)
+        else
+            inst.header.label:SetText(base)
+        end
+    end
+    inst.onVariantPick = function(picked)
+        SaveBisPrefs(specKey, nil, picked)
+        if args.onChange then args.onChange() end
+        if args.refresh then args.refresh() end
+    end
+    if inst.variantCog then inst.variantCog:SetShown(true) end
+
+    if not selectedSlots or #selectedSlots == 0 then
+        inst.fallback:SetText(L["pvp.no_gear_data"] or "No gear data for this context yet.")
+        inst.fallback:ClearAllPoints()
+        inst.fallback:SetPoint("TOPLEFT", 4, -4)
+        inst.fallback:Show()
+        inst.lastContentHeight = 24
+        ns.SetContentHeight(inst.content, 24)
+        if inst.section then inst.section:Show() end
+        return 0
+    end
+
+    local ctxBonus = (curCT == "raid") and "raid" or "dungeon"
+    local count = math.min(#selectedSlots, MAX_ROWS)
+    local viewMode = Gear.GetViewMode(args._viewCtx)
+    local showSource = Gear.IsSourceShown(args._viewCtx)
+
+    if viewMode == "icons" then
+        local items = {}
+        for i = 1, count do
+            local entry = selectedSlots[i]
+            local source, bonusIDs = ResolveRow(entry, nil, ctxBonus)
+            local owned = ns.IsItemOwned(entry.item.itemId)
+            if inst.gateOwned then owned = owned and ns.compOwnClass end
+            items[#items + 1] = {
+                itemId = entry.item.itemId,
+                bonusIDs = bonusIDs,
+                sourceText = (source ~= "" and source) or nil,
+                popText = entry.pop and (entry.pop .. "%") or nil,
+                isOwned = owned,
+            }
+        end
+        for i = 1, MAX_ROWS do
+            if inst.tableRows and inst.tableRows[i] then inst.tableRows[i]:Hide() end
+        end
+        inst.lastContentHeight = layoutGrid(inst.content, inst.icons, items)
+    elseif viewMode == "table" then
+        local items = {}
+        for i = 1, count do
+            local entry = selectedSlots[i]
+            local source, bonusIDs = ResolveRow(entry, nil, ctxBonus)
+            local owned = ns.IsItemOwned(entry.item.itemId)
+            if inst.gateOwned then owned = owned and ns.compOwnClass end
+            items[#items + 1] = {
+                itemId = entry.item.itemId,
+                bonusIDs = bonusIDs,
+                sourceText = (source ~= "" and source) or nil,
+                popText = entry.pop and (entry.pop .. "%") or nil,
+                isOwned = owned,
+                label = entry.slot,
+            }
+        end
+        hideIcons(inst.icons)
+        -- The column is never hidden by panel width — the toggle is an explicit
+        -- choice; it scales down instead so the item name keeps room.
+        local tableOpts = nil
+        if showSource then
+            tableOpts = { showSource = true }
+            local w = inst.content:GetWidth() or 0
+            if w > 0 then tableOpts.sourceWidth = math.min(160, math.floor(w * 0.34)) end
+        end
+        inst.lastContentHeight = ns.LayoutTable(inst.content, inst.tableRows, items, tableOpts)
+    else
+        for i = 1, MAX_ROWS do
+            if inst.tableRows and inst.tableRows[i] then inst.tableRows[i]:Hide() end
+        end
+        for i = 1, count do
+            local entry = selectedSlots[i]
+            local row = inst.rows[i]
+            local source, bonusIDs = ResolveRow(entry, nil, ctxBonus)
+            local itemLabel = ns.FormatItem(entry.item)
+            row.itemText:SetText(itemLabel)
+            local hasSource = showSource and source and source ~= ""
+            local yOff = hasSource and 5 or 0
+            row.itemText:ClearAllPoints()
+            row.itemText:SetPoint("LEFT", row.icon.slot, "RIGHT", 2, yOff)
+            row.itemText:SetPoint("RIGHT", row, "RIGHT", -4, yOff)
+            if hasSource then
+                row.sourceLine:SetText(source)
+                row.sourceLine:Show()
+            else
+                row.sourceLine:Hide()
+            end
+            row.itemId = entry.item.itemId
+            row.bonusIDs = bonusIDs
+            row.altItemId = nil
+            row.embItemId = nil
+            row.sourceText = (source ~= "" and source) or nil
+            row.popText = entry.pop and (entry.pop .. "%") or nil
+            row.icon:SetItem(entry.item.itemId)
+            local owned = ns.IsItemOwned(entry.item.itemId)
+            if inst.gateOwned then owned = owned and ns.compOwnClass end
+            row.icon:ToggleMarker("owned", owned and true or false)
+            row:ClearAllPoints()
+            row:SetPoint("TOPLEFT", 0, -(i - 1) * CARD_HEIGHT)
+            row:SetPoint("RIGHT", 0, 0)
+            row:Show()
+        end
+        inst.lastContentHeight = count * CARD_HEIGHT
+    end
+
+    ns.SetContentHeight(inst.content, inst.lastContentHeight)
+    if inst.section then inst.section:Show() end
     return count
 end
 
--------------------------------------------------------------------------------
--- Compendium surface (reflects the selected spec, may differ from player's)
--------------------------------------------------------------------------------
+local panel = {}
+local comp = { gateOwned = true }
 
-local comp = {}
--- Session-scoped state — only this module owns it now. lastSpecKey is the
--- guard that resets the source/tab when the user picks a different spec in
--- the Compendium.
-local compSource = "u.gg"
-local compTab    = nil
-
--- Active Compendium BiS source as a registry key.
-function Gear.GetCompendiumSourceKey()
-    return COMP_SOURCE_KEYS[compSource] or "ugg"
+function Gear.InitPanel(parent, cogTitle)
+    panel.section, panel.header, panel.content = ns.CreateCollapsibleSection(parent, {
+        label = L["tab.best_in_slot"],
+        stateKey = "bisGear",
+        refresh = function()
+            if ns.LayoutPanel then ns:LayoutPanel() end
+        end,
+    })
+    panel.title = panel.header
+    makeCog(panel, nil)
+    placeCog(panel, cogTitle)
+    buildRows(panel)
+    return panel.section
 end
-local compLastSpecKey = nil
 
--- opts.parent + opts.headerFactory + opts.rowFactory
+function Gear.RenderPanel(args)
+    args._viewCtx = nil
+    return render(panel, args)
+end
+
+function Gear.GetPanelFrames()
+    return {
+        section = panel.section,
+        content = panel.content,
+        collapsed = panel.section.IsCollapsed and panel.section.IsCollapsed() or false,
+    }
+end
+
 function Gear.InitCompendium(opts)
     comp.section = CreateFrame("Frame", nil, opts.parent)
     comp.header = opts.headerFactory(comp.section, L["tab.best_in_slot"], false)
-    ns.CreateHelpIcon(comp.header, {
-        title = L["tab.bis_gear"],
-        intro = L["bis.help.intro"],
-        lines = { L["bis.help.ugg"], L["bis.help.ugg_mplus"] },
-        inset = 18,
-    })
     comp.content = CreateFrame("Frame", nil, comp.section)
-    comp.content:SetPoint("TOPLEFT", comp.header, "BOTTOMLEFT", 0, -2)
+    comp.content:SetPoint("TOPLEFT", comp.header, "BOTTOMLEFT", 0, 0)
     comp.content:SetPoint("RIGHT", 0, 0)
-
-    comp.sourceDropdown = CreateFrame(
-        "DropdownButton", "ClassCodexCompBisSourceDD",
-        comp.content, "WowStyle1DropdownTemplate"
-    )
-    comp.sourceDropdown:SetPoint("TOPLEFT", 0, 0)
-    comp.sourceDropdown:SetPoint("TOPRIGHT", 0, 0)
-    comp.sourceDropdown:SetHeight(24); comp.sourceDropdown:Hide()
-
-    comp.tabDropdown = CreateFrame(
-        "DropdownButton", "ClassCodexCompBisTabDD",
-        comp.content, "WowStyle1DropdownTemplate"
-    )
-    comp.tabDropdown:SetPoint("TOPLEFT", 0, 0)
-    comp.tabDropdown:SetPoint("TOPRIGHT", 0, 0)
-    comp.tabDropdown:SetHeight(24); comp.tabDropdown:Hide()
-
-    comp.rows = {}
-    for i = 1, MAX_ROWS do
-        local row = opts.rowFactory(comp.content)
-        ns.CreateRowIcon(row)
-        local slot = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        slot:SetPoint("LEFT", row.icon, "RIGHT", 4, 0); slot:SetWidth(70)
-        slot:SetJustifyH("LEFT"); slot:SetTextColor(0.6, 0.6, 0.6)
-        row.slot = slot
-        local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        local source = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        source:SetPoint("RIGHT", -2, 0); source:SetWidth(110); source:SetJustifyH("RIGHT")
-        source:SetWordWrap(false); source:SetTextColor(0.5, 0.5, 0.5)
-        name:SetPoint("LEFT", slot, "RIGHT", 4, 0); name:SetPoint("RIGHT", source, "LEFT", -4, 0)
-        name:SetJustifyH("LEFT"); name:SetWordWrap(false)
-        row.name = name
-        row.source = source
-        comp.rows[i] = row
-    end
-
-    comp.pvpFallback = comp.content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    comp.pvpFallback:SetTextColor(0.5, 0.5, 0.5)
-    comp.pvpFallback:Hide()
-
+    makeCog(comp, "comp")
+    placeCog(comp, opts.cogTitle)
+    buildRows(comp)
     return comp.section, comp.header, comp.content
 end
 
--- args = { uggBis, ivBis, whBis, archonBis, pvpBis, specKey, refresh }
 function Gear.RenderCompendium(args)
-    for i = 1, MAX_ROWS do comp.rows[i]:Hide() end
-
-    -- Reset source/tab when browsing a different spec
-    if args.specKey ~= compLastSpecKey then
-        compSource = "Icy Veins"
-        compTab = nil
-        compLastSpecKey = args.specKey
-    end
-
-    local ivBis, uggBis, whBis, archonBis, pvpBis =
-        args.ivBis, args.uggBis, args.whBis, args.archonBis, args.pvpBis
-    local hasIV = ivBis and #ivBis > 0
-    local hasUgg = uggBis and #uggBis > 0
-    local hasWH = whBis and #whBis > 0
-    local hasArchon = archonBis and #archonBis > 0
-    local hasPvP = pvpBis ~= nil
-
-    comp.pvpFallback:Hide()
-    if not hasIV and not hasUgg and not hasWH and not hasArchon and not hasPvP then return end
-
-    local function sourceAvailable(src)
-        if src == "Icy Veins" then return hasIV end
-        if src == "u.gg" then return hasUgg end
-        if src == "Wowhead" then return hasWH end
-        if src == "Archon" then return hasArchon end
-        return src == "PvP"
-    end
-    if not sourceAvailable(compSource) then
-        compSource = (hasIV and "Icy Veins") or (hasUgg and "u.gg") or (hasWH and "Wowhead")
-            or (hasArchon and "Archon") or "PvP"
-    end
-
-    local availableSources = {}
-    if hasIV then availableSources[#availableSources + 1] = "Icy Veins" end
-    if hasUgg then availableSources[#availableSources + 1] = "u.gg" end
-    if hasWH then availableSources[#availableSources + 1] = "Wowhead" end
-    if hasArchon then availableSources[#availableSources + 1] = "Archon" end
-    availableSources[#availableSources + 1] = "PvP"
-
-    local showSourceDropdown = #availableSources > 1
-    if showSourceDropdown then
-        comp.sourceDropdown:SetupMenu(function(_, rootDescription)
-            for _, src in ipairs(availableSources) do
-                rootDescription:CreateRadio(
-                    (ns.BIS_SOURCE_LABELS and ns.BIS_SOURCE_LABELS[src]) or src,
-                    function() return compSource == src end,
-                    function()
-                        compSource = src
-                        compTab = nil
-                        if args.refresh then args.refresh() end
-                    end,
-                    src)
-            end
-        end)
-        comp.sourceDropdown:Show()
-    else
-        comp.sourceDropdown:Hide()
-    end
-
-    local pvpNoData = compSource == "PvP" and not hasPvP
-    local activeBis
-    if compSource == "PvP" then activeBis = pvpBis
-    elseif compSource == "Icy Veins" then activeBis = ivBis
-    elseif compSource == "Wowhead" then activeBis = whBis
-    elseif compSource == "Archon" then activeBis = archonBis
-    else activeBis = uggBis end
-    if not pvpNoData and (not activeBis or #activeBis == 0) then
-        activeBis = uggBis or ivBis or whBis or archonBis or pvpBis
-    end
-
-    if pvpNoData then
-        local yOff = showSourceDropdown and -30 or 0
-        comp.pvpFallback:SetText(L["pvp.no_gear_data"] or "No PvP gear data for this spec yet.")
-        comp.pvpFallback:ClearAllPoints()
-        comp.pvpFallback:SetPoint("TOPLEFT", comp.content, "TOPLEFT", 4, yOff - 4)
-        comp.pvpFallback:Show()
-        comp.tabDropdown:Hide()
-        comp.content:SetHeight(math.abs(yOff) + 20)
-        comp.section:Show()
-        return
-    end
-
-    if not FindTabByLabel(activeBis, compTab) then
-        compTab = activeBis[1].label
-    end
-
-    local showTabDropdown = #activeBis > 1
-    if showTabDropdown then
-        comp.tabDropdown:SetupMenu(function(_, rootDescription)
-            for _, tab in ipairs(activeBis) do
-                rootDescription:CreateRadio(tab.label,
-                    function() return compTab == tab.label end,
-                    function()
-                        compTab = tab.label
-                        if args.refresh then args.refresh() end
-                    end,
-                    tab.label)
-            end
-        end)
-        comp.tabDropdown:Show()
-    else
-        comp.tabDropdown:Hide()
-    end
-
-    local selectedTab = FindTabByLabel(activeBis, compTab)
-    local selectedSlots = selectedTab and selectedTab.slots or nil
-
-    local yOffset = 0
-    if showSourceDropdown then yOffset = yOffset - 30 end
-    if showTabDropdown then
-        comp.tabDropdown:ClearAllPoints()
-        comp.tabDropdown:SetPoint("TOPLEFT", 0, yOffset)
-        comp.tabDropdown:SetPoint("TOPRIGHT", 0, yOffset)
-        yOffset = yOffset - 30
-    end
-
-    local whLookup = ns:GetWowheadSourceIndex()
-    local uggCtx = UggTabContext(compSource, selectedTab)
-    local idx = 0
-    if selectedSlots then
-        for _, g in ipairs(selectedSlots) do
-            idx = idx + 1
-            if idx > MAX_ROWS then break end
-            local row = comp.rows[idx]
-            local slot, source, bonusIDs = ResolveRow(g, whLookup, uggCtx)
-            row.slot:SetText(slot)
-            row.name:SetText(ns.FormatItem(g.item))
-            row.source:SetText(source)
-            row.sourceText = (source ~= "" and source) or nil
-            row.itemId = g.item and g.item.itemId
-            row.bonusIDs = bonusIDs
-            ns.SetRowIcon(row, g.item and g.item.itemId)
-            row:ClearAllPoints()
-            row:SetPoint("TOPLEFT", comp.content, "TOPLEFT", 0, yOffset - (idx - 1) * ns.ROW_HEIGHT)
-            row:SetPoint("RIGHT", comp.content, "RIGHT", 0, 0)
-            row:Show()
-        end
-    end
-    comp.content:SetHeight(math.abs(yOffset) + idx * ns.ROW_HEIGHT)
-    comp.section:Show()
+    args._viewCtx = "comp"
+    return render(comp, args)
 end
 
 function Gear.GetCompendiumContentHeight()
-    local h = 0
-    if comp.sourceDropdown:IsShown() then h = h + 30 end
-    if comp.tabDropdown:IsShown() then h = h + 30 end
-    if comp.pvpFallback:IsShown() then h = h + 20 end
-    for i = 1, MAX_ROWS do
-        if comp.rows[i]:IsShown() then h = h + ns.ROW_HEIGHT end
-    end
-    return h
+    if not comp.rows then return 0 end
+    if comp.fallback:IsShown() then return 24 end
+    return comp.lastContentHeight or 0
 end

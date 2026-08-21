@@ -3,184 +3,437 @@ ns.Sections = ns.Sections or {}
 
 local L = ns.L
 
--- Enhancements section — three sub-sections (Enchants, Gems, Consumables)
--- under a single "Enhancements" tab on both surfaces, plus a source dropdown
--- (u.gg / PvP) that toggles enchants + gems. Consumables come from Icy Veins.
 local Enhancements = {}
 ns.Sections.Enhancements = Enhancements
 
--------------------------------------------------------------------------------
--- Shared helpers
--------------------------------------------------------------------------------
-
-local function StripEnchantPrefix(name)
-    if not name or name == "" then return name end
-    local stripped = name:match("^Enchant [^%-]+ %- (.+)$")
-    return stripped or name
-end
-
-local function ResolveDisplayName(itemRef, fallback)
-    if itemRef and itemRef.name and itemRef.name ~= "" then return itemRef.name end
-    return fallback or ""
-end
-
--------------------------------------------------------------------------------
--- Panel surface
--------------------------------------------------------------------------------
-
 local panel = {}
-local panelState = { currentSource = "u.gg", lastSpecKey = nil }
+local comp = {}
 
-local function MakePanelEnchantSubRow(parent)
-    local sub = CreateFrame("Frame", nil, parent)
-    sub:SetHeight(ns.ROW_HEIGHT)
-    local name = sub:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    name:SetPoint("LEFT", 0, 0); name:SetPoint("RIGHT", 0, 0)
-    name:SetJustifyH("LEFT"); name:SetWordWrap(true)
-    sub.text = name
-    sub:EnableMouse(true)
-    sub:SetScript("OnEnter", function(self)
-        if self.spellId then
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetSpellByID(self.spellId)
-            GameTooltip:Show()
-        elseif self.itemId then
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetItemByID(self.itemId)
-            GameTooltip:Show()
-        end
-    end)
-    sub:SetScript("OnLeave", function() GameTooltip:Hide() end)
-    sub:SetScript("OnMouseUp", ns.HandleItemClick)
-    sub:Hide()
-    return sub
+local ICON_SIZE = 32
+local SLOT_FRAME = math.floor(ICON_SIZE * 1.8125 + 0.5)
+local ICON_STRIDE = 42
+local ROW_STRIDE = 42
+local TOP_PAD = 4
+local GRID_INSET = 4
+local LIST_ROW_H = 40
+local LIST_INSET_X = 8
+local LABEL_W = 60
+
+local MAX_ENCHANT_ICONS = 24
+local MAX_GEM_ICONS = 8
+local MAX_CONSUM_ICONS = 8
+
+local ENCH_SLOT_ORDER = {
+    Head = 1,
+    Neck = 2,
+    Shoulders = 3,
+    Back = 4,
+    Chest = 5,
+    Wrist = 6,
+    Hands = 7,
+    Waist = 8,
+    Legs = 9,
+    Feet = 10,
+    ["Finger 1"] = 11,
+    ["Finger 2"] = 12,
+    ["Main Hand"] = 15,
+    ["Off Hand"] = 16,
+}
+
+local function viewContext(override)
+    if override then return override end
+    if ns.isFloating and ns.isFloating() then return "float" end
+    return "dock"
 end
 
--- opts.parent = ns.contentFrame, opts.collapsedKeys = saved collapse state, opts.refresh
+function Enhancements.GetViewMode(section, context)
+    context = viewContext(context)
+    return (ClassCodexDB and ClassCodexDB["enhView_" .. section .. "_" .. context]) or "table"
+end
+
+function Enhancements.SetViewMode(section, mode, context)
+    context = viewContext(context)
+    if not ClassCodexDB then ClassCodexDB = {} end
+    ClassCodexDB["enhView_" .. section .. "_" .. context] = mode
+    if context == "comp" then
+        if comp.enchIcons then
+            if ns.UpdateCompendiumEnchants then ns:UpdateCompendiumEnchants() end
+            if ns.UpdateCompendiumConsumables then ns:UpdateCompendiumConsumables() end
+            if ns.LayoutCompendium then ns:LayoutCompendium() end
+        end
+    else
+        if ns.UpdateGearingSections then ns:UpdateGearingSections() end
+        if ns.LayoutPanel then ns:LayoutPanel() end
+    end
+end
+
+local function makeViewCog(header, section, ctx)
+    if not (header and header.AddHeaderWidget) then return end
+    local cog = CreateFrame("Button", nil, header)
+    cog:SetSize(14, 14)
+    cog:RegisterForClicks("LeftButtonUp")
+    local icon = cog:CreateTexture(nil, "ARTWORK")
+    icon:SetAllPoints()
+    icon:SetAtlas("QuestLog-icon-setting")
+    icon:SetVertexColor(0.6, 0.6, 0.6)
+    cog:SetScript("OnEnter", function(self)
+        icon:SetVertexColor(1, 1, 1)
+        ns.Tooltip
+            .Open(self, "ANCHOR_RIGHT")
+            .Title(L["settings.value.view"] or "View")
+            .Hint("Click to switch view.")
+            .Show()
+    end)
+    cog:SetScript("OnLeave", function()
+        icon:SetVertexColor(0.6, 0.6, 0.6)
+        ns.Tooltip.Hide()
+    end)
+    cog:SetScript("OnClick", function(self)
+        if not (MenuUtil and MenuUtil.CreateContextMenu) then return end
+        MenuUtil.CreateContextMenu(self, function(_, root)
+            root:CreateTitle(L["settings.value.view"] or "View")
+            root:CreateRadio(L["settings.value.table"] or "Table", function()
+                return Enhancements.GetViewMode(section, ctx) == "table"
+            end, function()
+                Enhancements.SetViewMode(section, "table", ctx)
+                return MenuResponse.Refresh
+            end)
+            root:CreateRadio(L["settings.value.list"] or "List", function()
+                return Enhancements.GetViewMode(section, ctx) == "list"
+            end, function()
+                Enhancements.SetViewMode(section, "list", ctx)
+                return MenuResponse.Refresh
+            end)
+            root:CreateRadio(L["settings.value.icons"] or "Icons", function()
+                return Enhancements.GetViewMode(section, ctx) == "icons"
+            end, function()
+                Enhancements.SetViewMode(section, "icons", ctx)
+                return MenuResponse.Refresh
+            end)
+        end)
+    end)
+    header:AddHeaderWidget(cog)
+end
+
+local function makeGridIcon(content)
+    local ic = ns.CreateSlotIcon(content, { size = ICON_SIZE, slotSize = SLOT_FRAME })
+    ns.SetupItemTooltip(ic)
+    local countText = ic:CreateFontString(nil, "OVERLAY", "GameFontWhiteSmall")
+    countText:SetPoint("BOTTOMRIGHT", ic, "BOTTOMRIGHT", 1, -1)
+    countText:SetJustifyH("RIGHT")
+    countText:Hide()
+    ic.countText = countText
+    ic:Hide()
+    return ic
+end
+
+local function makeListRow(content)
+    local row = CreateFrame("Frame", nil, content)
+    row:SetHeight(LIST_ROW_H)
+
+    row.icon = ns.CreateSlotIcon(row, { size = ICON_SIZE, slotSize = SLOT_FRAME })
+    row.icon:SetPoint("LEFT", row, "LEFT", LIST_INSET_X, 0)
+
+    local label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    label:SetPoint("LEFT", row.icon.slot, "RIGHT", 4, 0)
+    label:SetWidth(LABEL_W)
+    label:SetJustifyH("LEFT")
+    label:SetTextColor(0.6, 0.6, 0.6)
+    row.labelText = label
+
+    local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    name:SetPoint("LEFT", label, "RIGHT", 4, 0)
+    name:SetPoint("RIGHT", row, "RIGHT", -4, 0)
+    name:SetJustifyH("LEFT")
+    name:SetWordWrap(false)
+    row.itemText = name
+
+    ns.SetupItemTooltip(row)
+    row:Hide()
+    return row
+end
+
+local function buildPool(content, max, factory)
+    local pool = {}
+    for i = 1, max do
+        pool[i] = factory(content)
+        -- This tab's items (enchants, gems, consumables) are what you'd shop
+        -- for on the AH; gear/trinket rows elsewhere don't get the search.
+        pool[i].allowAhSearch = true
+    end
+    return pool
+end
+
+local function hideAll(pool)
+    for i = 1, #pool do
+        pool[i]:Hide()
+    end
+end
+
+local function layoutGrid(content, icons, items)
+    hideAll(icons)
+    local count = math.min(#items, #icons)
+    if count == 0 then return 0 end
+
+    local width = content:GetWidth()
+    if not width or width < 100 then width = 300 end
+    local maxPerRow = math.max(1, math.floor((width - GRID_INSET * 2) / ICON_STRIDE))
+    local numRows = math.ceil(count / maxPerRow)
+    local perRow = math.ceil(count / numRows)
+
+    local y = -TOP_PAD
+    for i = 1, count do
+        local item = items[i]
+        local ic = icons[i]
+        local rowN = math.floor((i - 1) / perRow)
+        local col = (i - 1) % perRow
+        local iconsInRow = math.min(perRow, count - rowN * perRow)
+        local totalRowW = (iconsInRow - 1) * ICON_STRIDE + ICON_SIZE
+        local rowStartX = (width - totalRowW) / 2
+        local x = rowStartX + col * ICON_STRIDE
+
+        ic:ClearAllPoints()
+        ic:SetPoint("TOPLEFT", content, "TOPLEFT", x, y - rowN * ROW_STRIDE)
+
+        if item.spellId then
+            ic:SetSpell(item.spellId)
+        elseif item.itemId then
+            ic:SetItem(item.itemId)
+        end
+        ic.itemId = item.itemId
+        ic.spellId = item.spellId
+        ic.bonusIDs = nil
+        ic.altItemId = nil
+        ic.embItemId = nil
+        ic.sourceText = item.sourceText
+        ic.popText = item.popText
+
+        ic:ToggleMarker("owned", item.isOwned and true or false)
+
+        if item.count and item.count > 1 then
+            ic.countText:SetText(tostring(item.count))
+            ic.countText:Show()
+        else
+            ic.countText:Hide()
+        end
+
+        ic:Show()
+    end
+
+    return numRows * ROW_STRIDE + TOP_PAD
+end
+
+local function layoutList(content, rows, items)
+    hideAll(rows)
+    local count = math.min(#items, #rows)
+    if count == 0 then return 0 end
+
+    for i = 1, count do
+        local item = items[i]
+        local row = rows[i]
+
+        row.labelText:SetText("")
+        row.labelText:SetWidth(0)
+        row.itemText:ClearAllPoints()
+        row.itemText:SetPoint("LEFT", row.icon.slot, "RIGHT", 2, 0)
+        local name = (item.itemId or item.spellId)
+                and ns.FormatItem({ itemId = item.itemId, spellId = item.spellId, name = item.name })
+            or ""
+        if item.count and item.count > 1 then name = name .. "  |cff808080×" .. item.count .. "|r" end
+        row.itemText:SetText(name)
+
+        if item.spellId then
+            row.icon:SetSpell(item.spellId)
+        elseif item.itemId then
+            row.icon:SetItem(item.itemId)
+        end
+        row.itemId = item.itemId
+        row.spellId = item.spellId
+        row.bonusIDs = nil
+        row.altItemId = nil
+        row.embItemId = nil
+        row.sourceText = item.sourceText
+        row.popText = item.popText
+        row.icon:ToggleMarker("owned", item.isOwned and true or false)
+
+        row:ClearAllPoints()
+        row:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -(i - 1) * LIST_ROW_H)
+        row:SetPoint("RIGHT", content, "RIGHT", 0, 0)
+        row:Show()
+    end
+
+    return count * LIST_ROW_H
+end
+
+local function renderSection(section, content, icons, rows, tableRows, items, context)
+    local mode = Enhancements.GetViewMode(section, context)
+    if mode == "table" then
+        hideAll(icons)
+        hideAll(rows)
+        return ns.LayoutTable(content, tableRows, items)
+    elseif mode == "list" then
+        hideAll(icons)
+        hideAll(tableRows)
+        return layoutList(content, rows, items)
+    else
+        hideAll(rows)
+        hideAll(tableRows)
+        return layoutGrid(content, icons, items)
+    end
+end
+
+local function buildEnchantItems(activeEnchants)
+    local items = {}
+    if not activeEnchants then return items end
+
+    local sorted = {}
+    for _, e in ipairs(activeEnchants) do
+        sorted[#sorted + 1] = e
+    end
+    table.sort(sorted, function(a, b)
+        return (ENCH_SLOT_ORDER[a.slot] or 99) < (ENCH_SLOT_ORDER[b.slot] or 99)
+    end)
+
+    for _, e in ipairs(sorted) do
+        if e.best then
+            -- Prefer the buyable enchant item (AH tooltip/link). Entries carrying
+            -- only a spellId — DK Runeforge runes, which have no scroll item —
+            -- render as the spell, so the raw enchant id must not leak into
+            -- itemId (it would show as "Item 326805").
+            local itemId = e.best.itemId or (e.best.spellId and nil) or e.best.enchantId
+            items[#items + 1] = {
+                itemId = itemId,
+                spellId = e.best.spellId,
+                isOwned = ns.IsEnchantApplied and ns.IsEnchantApplied(e.best, e.slot) or false,
+                popText = e.best.pop and (e.best.pop .. "%") or nil,
+                label = e.slot,
+            }
+        end
+    end
+    return items
+end
+
+local function buildGemItems(activeGems)
+    local items = {}
+    if not activeGems then return items end
+
+    if activeGems.primary then
+        local id = activeGems.primary.itemId
+        items[#items + 1] = {
+            itemId = id,
+            isOwned = (ns.IsItemOwned(id) or (ns.IsGemSocketed and ns.IsGemSocketed(id))) and true or false,
+            label = L["gem.primary"],
+        }
+    end
+    if activeGems.secondary then
+        for _, gem in ipairs(activeGems.secondary) do
+            local id = gem.itemId
+            items[#items + 1] = {
+                itemId = id,
+                isOwned = (ns.IsItemOwned(id) or (ns.IsGemSocketed and ns.IsGemSocketed(id))) and true or false,
+                label = L["gem.secondary"],
+            }
+        end
+    end
+    return items
+end
+
+local function buildConsumableItems(activeConsumables)
+    local items = {}
+    if not activeConsumables then return items end
+
+    for _, key in ipairs(ns.CONSUMABLE_ORDER) do
+        local c = activeConsumables[key]
+        if c then
+            local id = c.itemId
+            local count = (GetItemCount and GetItemCount(id)) or 0
+            items[#items + 1] = {
+                itemId = id,
+                isOwned = count > 0,
+                count = count,
+                label = ns.CONSUMABLE_LABELS[key] or key,
+            }
+        end
+    end
+    return items
+end
+
 function Enhancements.InitPanel(opts)
     local parent = opts.parent
-    local iconSize = ns.ICON_SIZE_GEAR or 16
 
-    -- Enchants
     panel.enchSection = CreateFrame("Frame", nil, parent)
     panel.enchSection:SetHeight(ns.SECTION_HEADER_HEIGHT)
     panel.enchHeader = ns.CreateSectionHeader(panel.enchSection, L["tab.enchants"])
     panel.enchContent = CreateFrame("Frame", nil, panel.enchSection)
     panel.enchContent:SetPoint("TOPLEFT", panel.enchHeader, "BOTTOMLEFT", 0, 0)
     panel.enchContent:SetPoint("RIGHT", 0, 0)
-    panel.enchCollapsed = false
-    ns.SetCollapsed(panel.enchContent, panel.enchHeader, panel.enchCollapsed)
-    panel.enchHeader:SetScript("OnClick", function()
-        panel.enchCollapsed = not panel.enchCollapsed
-        ns.SetCollapsed(panel.enchContent, panel.enchHeader, panel.enchCollapsed)
-        if ClassCodexCharDB and ClassCodexCharDB.collapsed then
-            ClassCodexCharDB.collapsed.enchants = panel.enchCollapsed
-        end
-        if opts.refresh then opts.refresh() end
-    end)
+    ns.MakeCollapsible(
+        panel.enchSection,
+        panel.enchHeader,
+        panel.enchContent,
+        { stateKey = "enchants", refresh = opts.refresh }
+    )
+    panel.enchIcons = buildPool(panel.enchContent, MAX_ENCHANT_ICONS, makeGridIcon)
+    panel.enchRows = buildPool(panel.enchContent, MAX_ENCHANT_ICONS, makeListRow)
+    panel.enchTableRows = buildPool(panel.enchContent, MAX_ENCHANT_ICONS, ns.MakeTableRow)
+    makeViewCog(panel.enchHeader, "enchants", nil)
 
-    panel.enchRows = {}
-    for i = 1, ns.MAX_ENCHANT_ROWS do
-        local row = CreateFrame("Frame", nil, panel.enchContent)
-        row:SetHeight(ns.ROW_HEIGHT)
-        ns.CreateRowIcon(row)
-        row.icon:ClearAllPoints()
-        row.icon:SetPoint("LEFT", row, "LEFT", 2, 0)
-        local slot = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        slot:SetPoint("LEFT", row.icon, "RIGHT", 4, 0)
-        slot:SetWidth(50); slot:SetJustifyH("LEFT"); slot:SetTextColor(0.6, 0.6, 0.6)
-        row.slotText = slot
-        local bestSub = MakePanelEnchantSubRow(row)
-        bestSub:SetPoint("TOPLEFT", row, "TOPLEFT", 2 + iconSize + 4 + 50 + 2, 0)
-        bestSub:SetPoint("RIGHT", row, "RIGHT", 0, 0)
-        row.bestSub = bestSub
-        local altSub = MakePanelEnchantSubRow(row)
-        altSub:SetPoint("TOPLEFT", bestSub, "BOTTOMLEFT", 0, 0)
-        altSub:SetPoint("RIGHT", row, "RIGHT", 0, 0)
-        row.altSub = altSub
-        row:Hide()
-        panel.enchRows[i] = row
-    end
-
-    -- Source dropdown lives ABOVE the enchant section header (parented to
-    -- the panel contentFrame, not enchContent) so toggles work even when
-    -- the section is collapsed or hidden on a different tab.
     panel.sourceDropdown = ns.CreateOptionDropdown("ClassCodexDockEnhancementsSourceDropdown", parent)
     panel.sourceDropdown:Hide()
 
-    -- PvP "no enchants for this spec" fallback line, lives inside enchContent.
     panel.pvpFallback = panel.enchContent:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    panel.pvpFallback:SetTextColor(0.5, 0.5, 0.5); panel.pvpFallback:Hide()
+    panel.pvpFallback:SetTextColor(0.5, 0.5, 0.5)
+    panel.pvpFallback:Hide()
 
-    -- Gems
     panel.gemSection = CreateFrame("Frame", nil, parent)
     panel.gemSection:SetHeight(ns.SECTION_HEADER_HEIGHT)
     panel.gemHeader = ns.CreateSectionHeader(panel.gemSection, L["tab.gems"])
     panel.gemContent = CreateFrame("Frame", nil, panel.gemSection)
     panel.gemContent:SetPoint("TOPLEFT", panel.gemHeader, "BOTTOMLEFT", 0, 0)
     panel.gemContent:SetPoint("RIGHT", 0, 0)
-    panel.gemCollapsed = false
-    ns.SetCollapsed(panel.gemContent, panel.gemHeader, panel.gemCollapsed)
-    panel.gemHeader:SetScript("OnClick", function()
-        panel.gemCollapsed = not panel.gemCollapsed
-        ns.SetCollapsed(panel.gemContent, panel.gemHeader, panel.gemCollapsed)
-        if ClassCodexCharDB and ClassCodexCharDB.collapsed then
-            ClassCodexCharDB.collapsed.gems = panel.gemCollapsed
-        end
-        if opts.refresh then opts.refresh() end
-    end)
-    panel.gemRows = {}
-    for i = 1, ns.MAX_GEM_ROWS do
-        local row = CreateFrame("Frame", nil, panel.gemContent)
-        row:SetHeight(ns.ROW_HEIGHT)
-        ns.CreateRowIcon(row)
-        local label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        label:SetPoint("LEFT", row.icon, "RIGHT", 4, 0)
-        label:SetWidth(65); label:SetJustifyH("LEFT"); label:SetTextColor(0.6, 0.6, 0.6)
-        row.labelText = label
-        local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        name:SetPoint("LEFT", label, "RIGHT", 4, 0)
-        name:SetPoint("RIGHT", 0, 0); name:SetJustifyH("LEFT")
-        row.itemText = name
-        ns.SetupItemTooltip(row)
-        row:Hide()
-        panel.gemRows[i] = row
-    end
+    ns.MakeCollapsible(
+        panel.gemSection,
+        panel.gemHeader,
+        panel.gemContent,
+        { stateKey = "gems", refresh = opts.refresh }
+    )
+    panel.gemIcons = buildPool(panel.gemContent, MAX_GEM_ICONS, makeGridIcon)
+    panel.gemRows = buildPool(panel.gemContent, MAX_GEM_ICONS, makeListRow)
+    panel.gemTableRows = buildPool(panel.gemContent, MAX_GEM_ICONS, ns.MakeTableRow)
+    makeViewCog(panel.gemHeader, "gems", nil)
 
-    -- Consumables
     panel.consumSection = CreateFrame("Frame", nil, parent)
     panel.consumSection:SetHeight(ns.SECTION_HEADER_HEIGHT)
     panel.consumHeader = ns.CreateSectionHeader(panel.consumSection, L["tab.consumables"])
     panel.consumContent = CreateFrame("Frame", nil, panel.consumSection)
     panel.consumContent:SetPoint("TOPLEFT", panel.consumHeader, "BOTTOMLEFT", 0, 0)
-    panel.consumContent:SetPoint("RIGHT", 0, 0); panel.consumContent:Show()
-    panel.consumCollapsed = false
-    ns.SetCollapsed(panel.consumContent, panel.consumHeader, panel.consumCollapsed)
-    panel.consumHeader:SetScript("OnClick", function()
-        panel.consumCollapsed = not panel.consumCollapsed
-        ns.SetCollapsed(panel.consumContent, panel.consumHeader, panel.consumCollapsed)
-        if ClassCodexCharDB and ClassCodexCharDB.collapsed then
-            ClassCodexCharDB.collapsed.consumables = panel.consumCollapsed
+    panel.consumContent:SetPoint("RIGHT", 0, 0)
+    panel.consumContent:Show()
+    ns.MakeCollapsible(
+        panel.consumSection,
+        panel.consumHeader,
+        panel.consumContent,
+        { stateKey = "consumables", refresh = opts.refresh }
+    )
+    panel.consumIcons = buildPool(panel.consumContent, MAX_CONSUM_ICONS, makeGridIcon)
+    panel.consumRows = buildPool(panel.consumContent, MAX_CONSUM_ICONS, makeListRow)
+    panel.consumTableRows = buildPool(panel.consumContent, MAX_CONSUM_ICONS, ns.MakeTableRow)
+    makeViewCog(panel.consumHeader, "consumables", nil)
+
+    panel.consumIvIcon = ns.CreateSourceAttributionIcon(
+        panel.consumHeader,
+        "icyveins",
+        "Consumables",
+        "Data from Icy Veins",
+        function()
+            if ns.ResolveAttribution and ns.GetClassAndSpec then
+                local class, spec = ns.GetClassAndSpec()
+                local _, url = ns.ResolveAttribution("crafting", class, spec)
+                return url
+            end
         end
-        if opts.refresh then opts.refresh() end
-    end)
-    panel.consumRows = {}
-    for i = 1, ns.MAX_CONSUMABLE_ROWS do
-        local row = CreateFrame("Frame", nil, panel.consumContent)
-        row:SetHeight(ns.ROW_HEIGHT)
-        ns.CreateRowIcon(row)
-        local label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        label:SetPoint("LEFT", row.icon, "RIGHT", 4, 0)
-        label:SetWidth(90); label:SetJustifyH("LEFT"); label:SetTextColor(0.6, 0.6, 0.6)
-        row.labelText = label
-        local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        name:SetPoint("LEFT", label, "RIGHT", 4, 0)
-        name:SetPoint("RIGHT", 0, 0); name:SetJustifyH("LEFT")
-        row.itemText = name
-        ns.SetupItemTooltip(row)
-        row:Hide()
-        panel.consumRows[i] = row
-    end
+    )
+    if panel.consumHeader.AddHeaderWidget then panel.consumHeader:AddHeaderWidget(panel.consumIvIcon) end
 
     return {
         enchSection = panel.enchSection,
@@ -190,592 +443,300 @@ function Enhancements.InitPanel(opts)
     }
 end
 
--- Accessors for the layout pass.
 function Enhancements.GetPanelFrames()
     return {
-        enchSection = panel.enchSection, enchContent = panel.enchContent, enchCollapsed = panel.enchCollapsed,
-        gemSection = panel.gemSection, gemContent = panel.gemContent, gemCollapsed = panel.gemCollapsed,
-        consumSection = panel.consumSection, consumContent = panel.consumContent, consumCollapsed = panel.consumCollapsed,
+        enchSection = panel.enchSection,
+        enchContent = panel.enchContent,
+        enchCollapsed = panel.enchSection.IsCollapsed and panel.enchSection.IsCollapsed() or false,
+        gemSection = panel.gemSection,
+        gemContent = panel.gemContent,
+        gemCollapsed = panel.gemSection.IsCollapsed and panel.gemSection.IsCollapsed() or false,
+        consumSection = panel.consumSection,
+        consumContent = panel.consumContent,
+        consumCollapsed = panel.consumSection.IsCollapsed and panel.consumSection.IsCollapsed() or false,
         sourceDropdown = panel.sourceDropdown,
     }
-end
-
-function Enhancements.RestorePanelCollapsedState(saved)
-    if not saved then return end
-    panel.enchCollapsed = saved.enchants or false
-    panel.gemCollapsed = saved.gems or false
-    panel.consumCollapsed = saved.consumables or false
-    ns.SetCollapsed(panel.enchContent, panel.enchHeader, panel.enchCollapsed)
-    ns.SetCollapsed(panel.gemContent, panel.gemHeader, panel.gemCollapsed)
-    ns.SetCollapsed(panel.consumContent, panel.consumHeader, panel.consumCollapsed)
 end
 
 function Enhancements.HidePanelSourceDropdown()
     panel.sourceDropdown:Hide()
 end
 
--- Active source on the docked Enhancements tab, as a registry key. Used by the
--- tab-title attribution button (via ns.ResolveAttribution) so the footer names
--- the source actually being displayed. PvP enchants/gems come from u.gg, so PvP
--- attributes to u.gg.
-local ENH_SOURCE_KEYS = {
-    ["u.gg"] = "ugg", ["PvP"] = "ugg",
-    ["Wowhead"] = "wowhead", ["Archon"] = "archongg",
-}
-
-function Enhancements.GetActiveSourceKey()
-    return ENH_SOURCE_KEYS[panelState.currentSource] or "ugg"
-end
-
--- args = {
---   uggEnchants, uggGems, consumables,  -- u.gg-sourced records
---   pvpEnchants, pvpGems,                       -- pre-built records (or nil)
---   showSourceDropdown,                         -- bool: only on Enhancements tab
---   specKey,                                    -- "MAGE-frost" etc.
---   sourceLabels,                               -- table { u.gg="...", PvP="..." }
---   onChange,                                   -- callback for refresh
--- }
--- Returns { enchHeight, gemCount, consumCount } for the layout pass.
 function Enhancements.RenderPanel(args)
-    -- Reset source on spec change (matches Compendium behavior).
-    local specKey = args.specKey or ""
-    if specKey ~= panelState.lastSpecKey then
-        panelState.currentSource = "u.gg"
-        panelState.lastSpecKey = specKey
-    end
+    panel.sourceDropdown:Hide()
 
-    local hasPvP = args.pvpEnchants ~= nil or args.pvpGems ~= nil
-    local hasUgg = args.uggEnchants or args.uggGems
-    local hasWH = args.whEnchants or args.whGems
-    local hasArchon = args.archonEnchants or args.archonGems
-    if panelState.currentSource == "u.gg" and not hasUgg then
-        panelState.currentSource = (hasWH and "Wowhead") or (hasArchon and "Archon") or "PvP"
-    end
-    if panelState.currentSource == "Wowhead" and not hasWH then
-        panelState.currentSource = (hasUgg and "u.gg") or (hasArchon and "Archon") or "PvP"
-    end
-    if panelState.currentSource == "Archon" and not hasArchon then
-        panelState.currentSource = (hasUgg and "u.gg") or (hasWH and "Wowhead") or "PvP"
-    end
+    local content = ns.Context and ns.Context.contentType()
+    local isPvp = content == "pvp"
+    local activeEnchants = (not isPvp) and args.enchants or nil
+    local activeGems = (not isPvp) and args.gems or nil
+    local activeConsumables = (not isPvp) and args.consumables or nil
 
-    -- Source dropdown — only show on the Enhancements tab, and only when there
-    -- is more than one source to pick between (a 1-option dropdown is noise).
-    if args.showSourceDropdown and (hasUgg or hasWH or hasArchon) then
-        local labels = args.sourceLabels or {}
-        local opts = {}
-        if hasUgg then opts[#opts + 1] = { label = labels["u.gg"] or "u.gg", value = "u.gg" } end
-        -- Wowhead publishes enchant/gem/consumable items for nearly every spec,
-        -- but it's still offered per-spec so a gap never becomes an empty pane.
-        if hasWH then opts[#opts + 1] = { label = labels["Wowhead"] or "Wowhead", value = "Wowhead" } end
-        if hasArchon then opts[#opts + 1] = { label = labels["Archon"] or "Archon", value = "Archon" } end
-        opts[#opts + 1] = { label = labels["PvP"] or "PvP", value = "PvP" }
-        panel.sourceDropdown:Show()
-        panel.sourceDropdown:SetOptions(
-            opts,
-            panelState.currentSource,
-            function(picked)
-                panelState.currentSource = picked
-                if args.onChange then args.onChange() end
-            end
-        )
-    else
-        panel.sourceDropdown:Hide()
-    end
+    local pvpEnchantsMissing = isPvp
 
-    local activeEnchants, activeGems, activeConsumables
-    if panelState.currentSource == "PvP" then
-        activeEnchants = args.pvpEnchants
-        activeGems = args.pvpGems
-        activeConsumables = args.consumables
-    elseif panelState.currentSource == "Wowhead" then
-        activeEnchants = args.whEnchants
-        activeGems = args.whGems
-        -- Fall back to the default consumables when Wowhead has none, so
-        -- switching source never blanks a section it doesn't own.
-        activeConsumables = args.whConsumables or args.consumables
-    elseif panelState.currentSource == "Archon" then
-        activeEnchants = args.archonEnchants
-        activeGems = args.archonGems
-        activeConsumables = args.archonConsumables or args.consumables
-    else
-        activeEnchants = args.uggEnchants
-        activeGems = args.uggGems
-        activeConsumables = args.consumables
-    end
-
-    local pvpEnchantsMissing = panelState.currentSource == "PvP"
-        and not (activeEnchants and #activeEnchants > 0)
-
-    -- Enchants
-    for i = 1, ns.MAX_ENCHANT_ROWS do panel.enchRows[i]:Hide() end
     panel.pvpFallback:Hide()
     local enchHeight = 0
     if activeEnchants and #activeEnchants > 0 then
-        local count = math.min(#activeEnchants, ns.MAX_ENCHANT_ROWS)
-        local yOff = 0
-        for i = 1, count do
-            local e = activeEnchants[i]
-            local row = panel.enchRows[i]
-            row.slotText:SetText(e.slot)
-            ns.SetRowIcon(row, e.best.itemId, e.best.spellId)
-            row.bestSub.text:SetText(ns.FormatItem(e.best, StripEnchantPrefix(ns.GetItemName(e.best))))
-            row.bestSub.itemId = e.best.itemId
-            row.bestSub.spellId = e.best.spellId
-            row.bestSub:Show()
-            local rowH = ns.ROW_HEIGHT
-            if e.alternate then
-                row.altSub.text:SetText(ns.FormatItem(e.alternate, StripEnchantPrefix(ns.GetItemName(e.alternate))))
-                row.altSub.itemId = e.alternate.itemId
-                row.altSub.spellId = e.alternate.spellId
-                row.altSub:Show()
-                rowH = ns.ROW_HEIGHT * 2
-            else
-                row.altSub:Hide()
-            end
-            row:ClearAllPoints()
-            row:SetPoint("TOPLEFT", 0, yOff)
-            row:SetPoint("RIGHT", 0, 0)
-            row:SetHeight(rowH)
-            yOff = yOff - rowH
-            row:Show()
-        end
-        enchHeight = math.abs(yOff)
+        local items = buildEnchantItems(activeEnchants)
+        enchHeight = renderSection(
+            "enchants",
+            panel.enchContent,
+            panel.enchIcons,
+            panel.enchRows,
+            panel.enchTableRows,
+            items,
+            nil
+        )
         panel.enchSection:Show()
     elseif pvpEnchantsMissing and args.showSourceDropdown then
-        local msg = activeGems
-            and (L["pvp.no_enchants"] or "No PvP enchants for this spec yet.")
-            or  (L["pvp.no_enchant_gem_data"] or "No PvP enchant/gem data for this spec yet.")
+        local msg = activeGems and (L["pvp.no_enchants"] or "No PvP enchants for this spec yet.")
+            or (L["pvp.no_enchant_gem_data"] or "No PvP enchant/gem data for this spec yet.")
         panel.pvpFallback:SetText(msg)
         panel.pvpFallback:ClearAllPoints()
         panel.pvpFallback:SetPoint("TOPLEFT", 4, -4)
         panel.pvpFallback:Show()
+        hideAll(panel.enchIcons)
+        hideAll(panel.enchRows)
         enchHeight = 20
         panel.enchSection:Show()
     else
+        hideAll(panel.enchIcons)
+        hideAll(panel.enchRows)
         panel.enchSection:Hide()
     end
 
-    -- Gems
-    for i = 1, ns.MAX_GEM_ROWS do panel.gemRows[i]:Hide() end
-    local gemCount = 0
+    local gemHeight = 0
     if activeGems then
-        local idx = 0
-        if activeGems.primary then
-            idx = idx + 1
-            local row = panel.gemRows[idx]
-            row.labelText:SetText(L["gem.primary"])
-            row.itemText:SetText(ns.FormatItem(activeGems.primary))
-            row.itemId = activeGems.primary.itemId
-            row.altItemId = nil; row.embItemId = nil
-            ns.SetRowIcon(row, activeGems.primary.itemId)
-            row:ClearAllPoints(); row:SetPoint("TOPLEFT", 0, 0); row:SetPoint("RIGHT", 0, 0)
-            row:Show()
+        local items = buildGemItems(activeGems)
+        if #items > 0 then
+            gemHeight =
+                renderSection("gems", panel.gemContent, panel.gemIcons, panel.gemRows, panel.gemTableRows, items, nil)
+            panel.gemSection:Show()
+        else
+            hideAll(panel.gemIcons)
+            hideAll(panel.gemRows)
+            panel.gemSection:Hide()
         end
-        if activeGems.secondary then
-            for _, gem in ipairs(activeGems.secondary) do
-                idx = idx + 1
-                if idx > ns.MAX_GEM_ROWS then break end
-                local row = panel.gemRows[idx]
-                row.labelText:SetText(L["gem.secondary"])
-                row.itemText:SetText(ns.FormatItem(gem))
-                row.itemId = gem.itemId
-                row.altItemId = nil; row.embItemId = nil
-                ns.SetRowIcon(row, gem.itemId)
-                row:ClearAllPoints()
-                row:SetPoint("TOPLEFT", 0, -(idx - 1) * ns.ROW_HEIGHT)
-                row:SetPoint("RIGHT", 0, 0)
-                row:Show()
-            end
-        end
-        gemCount = idx
-        if idx > 0 then panel.gemSection:Show() else panel.gemSection:Hide() end
     else
+        hideAll(panel.gemIcons)
+        hideAll(panel.gemRows)
         panel.gemSection:Hide()
     end
 
-    -- Consumables (Icy Veins)
-    for i = 1, ns.MAX_CONSUMABLE_ROWS do panel.consumRows[i]:Hide() end
-    local consumCount = 0
+    local consumHeight = 0
     if activeConsumables then
-        local idx = 0
-        for _, key in ipairs(ns.CONSUMABLE_ORDER) do
-            local item = activeConsumables[key]
-            if item then
-                idx = idx + 1
-                if idx > ns.MAX_CONSUMABLE_ROWS then break end
-                local row = panel.consumRows[idx]
-                row.labelText:SetText(ns.CONSUMABLE_LABELS[key] or key)
-                row.itemText:SetText(ns.FormatItem(item))
-                row.itemId = item.itemId
-                row.altItemId = nil; row.embItemId = nil
-                ns.SetRowIcon(row, item.itemId)
-                row:ClearAllPoints()
-                row:SetPoint("TOPLEFT", 0, -(idx - 1) * ns.ROW_HEIGHT)
-                row:SetPoint("RIGHT", 0, 0)
-                row:Show()
+        local items = buildConsumableItems(activeConsumables)
+        if #items > 0 then
+            consumHeight = renderSection(
+                "consumables",
+                panel.consumContent,
+                panel.consumIcons,
+                panel.consumRows,
+                panel.consumTableRows,
+                items,
+                nil
+            )
+            panel.consumSection:Show()
+            if panel.consumIvIcon then
+                local curSource = (ns.ActiveSource and ns.ActiveSource()) or "icyveins"
+                panel.consumIvIcon:SetShown(curSource ~= "icyveins")
             end
+        else
+            hideAll(panel.consumIcons)
+            hideAll(panel.consumRows)
+            panel.consumSection:Hide()
         end
-        consumCount = idx
-        if idx > 0 then panel.consumSection:Show() else panel.consumSection:Hide() end
     else
+        hideAll(panel.consumIcons)
+        hideAll(panel.consumRows)
         panel.consumSection:Hide()
     end
 
-    return enchHeight, gemCount, consumCount
+    ns.SetContentHeight(panel.enchContent, enchHeight)
+    ns.SetContentHeight(panel.gemContent, gemHeight)
+    ns.SetContentHeight(panel.consumContent, consumHeight)
+
+    return enchHeight, gemHeight, consumHeight
 end
 
--------------------------------------------------------------------------------
--- Compendium surface
--------------------------------------------------------------------------------
-
-local comp = {}
-local compState = { currentSource = "u.gg", lastSpecKey = nil }
-
--- Active source on the Compendium Enhancements section, as a registry key.
--- Shares ENH_SOURCE_KEYS with the docked panel so the two can't drift.
-function Enhancements.GetCompendiumSourceKey()
-    return ENH_SOURCE_KEYS[compState.currentSource] or "ugg"
-end
-
-local function MakeCompendiumEnchantSubRow(parent)
-    local sub = CreateFrame("Button", nil, parent)
-    sub:SetHeight(ns.ROW_HEIGHT)
-    sub:RegisterForClicks("LeftButtonUp")
-    local text = sub:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    text:SetPoint("LEFT", 0, 0); text:SetPoint("RIGHT", 0, 0)
-    text:SetJustifyH("LEFT"); text:SetWordWrap(false)
-    sub.text = text
-    sub:SetScript("OnEnter", function(self)
-        if self.itemId then
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetItemByID(self.itemId); GameTooltip:Show()
-        elseif self.spellId then
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetSpellByID(self.spellId); GameTooltip:Show()
-        end
-    end)
-    sub:SetScript("OnLeave", function() GameTooltip:Hide() end)
-    sub:SetScript("OnClick", function(self)
-        if not self.itemId then return end
-        local _, link = C_Item.GetItemInfo(self.itemId)
-        if not link then return end
-        if IsModifiedClick("CHATLINK") then ChatEdit_InsertLink(link)
-        elseif IsModifiedClick("DRESSUP") then DressUpItemLink(link) end
-    end)
-    sub:Hide()
-    return sub
-end
-
--- opts.parent + opts.headerFactory + opts.rowFactory + opts.refresh + opts.iconSize
 function Enhancements.InitCompendium(opts)
-    local iconSize = opts.iconSize or 16
-
-    -- Enchants section
     comp.enchSection = CreateFrame("Frame", nil, opts.parent)
     comp.enchHeader = opts.headerFactory(comp.enchSection, L["tab.enchants"], true)
     comp.enchContent = CreateFrame("Frame", nil, comp.enchSection)
-    comp.enchContent:SetPoint("TOPLEFT", comp.enchHeader, "BOTTOMLEFT", 0, -2)
+    comp.enchContent:SetPoint("TOPLEFT", comp.enchHeader, "BOTTOMLEFT", 0, 0)
     comp.enchContent:SetPoint("RIGHT", 0, 0)
 
-    comp.sourceDropdown = CreateFrame(
-        "DropdownButton", "ClassCodexCompEnhancementsSourceDD",
-        opts.parent, "WowStyle1DropdownTemplate"
-    )
-    comp.sourceDropdown:SetHeight(24); comp.sourceDropdown:Hide()
+    comp.sourceDropdown =
+        CreateFrame("DropdownButton", "ClassCodexCompEnhancementsSourceDD", opts.parent, "WowStyle1DropdownTemplate")
+    comp.sourceDropdown:SetHeight(24)
+    comp.sourceDropdown:Hide()
 
-    comp.enchRows = {}; comp.enchCollapsed = false
-    for i = 1, ns.MAX_ENCHANT_ROWS do
-        local row = CreateFrame("Frame", nil, comp.enchContent)
-        row:SetHeight(ns.ROW_HEIGHT)
-        ns.CreateRowIcon(row)
-        row.icon:ClearAllPoints(); row.icon:SetPoint("LEFT", row, "LEFT", 2, 0)
-        local slot = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        slot:SetPoint("LEFT", row.icon, "RIGHT", 4, 0)
-        slot:SetWidth(55); slot:SetJustifyH("LEFT"); slot:SetTextColor(0.6, 0.6, 0.6)
-        row.slot = slot
-        local bestSub = MakeCompendiumEnchantSubRow(row)
-        bestSub:SetPoint("TOPLEFT", row, "TOPLEFT", 2 + iconSize + 4 + 55 + 2, 0)
-        bestSub:SetPoint("RIGHT", row, "RIGHT", 0, 0)
-        row.bestSub = bestSub
-        local altSub = MakeCompendiumEnchantSubRow(row)
-        altSub:SetPoint("TOPLEFT", bestSub, "BOTTOMLEFT", 0, 0)
-        altSub:SetPoint("RIGHT", row, "RIGHT", 0, 0)
-        row.altSub = altSub
-        comp.enchRows[i] = row
-    end
+    comp.enchIcons = buildPool(comp.enchContent, MAX_ENCHANT_ICONS, makeGridIcon)
+    comp.enchRows = buildPool(comp.enchContent, MAX_ENCHANT_ICONS, makeListRow)
+    comp.enchTableRows = buildPool(comp.enchContent, MAX_ENCHANT_ICONS, ns.MakeTableRow)
+    comp.enchCollapsed = false
     comp.pvpFallback = comp.enchContent:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    comp.pvpFallback:SetTextColor(0.5, 0.5, 0.5); comp.pvpFallback:Hide()
+    comp.pvpFallback:SetTextColor(0.5, 0.5, 0.5)
+    comp.pvpFallback:Hide()
+    makeViewCog(comp.enchHeader, "enchants", "comp")
     comp.enchHeader:SetScript("OnClick", function()
         comp.enchCollapsed = not comp.enchCollapsed
         ns.SetCollapsed(comp.enchContent, comp.enchHeader, comp.enchCollapsed)
         if opts.refresh then opts.refresh() end
     end)
 
-    -- Gems
     comp.gemSection = CreateFrame("Frame", nil, opts.parent)
     comp.gemHeader = opts.headerFactory(comp.gemSection, L["tab.gems"], true)
     comp.gemContent = CreateFrame("Frame", nil, comp.gemSection)
-    comp.gemContent:SetPoint("TOPLEFT", comp.gemHeader, "BOTTOMLEFT", 0, -2)
+    comp.gemContent:SetPoint("TOPLEFT", comp.gemHeader, "BOTTOMLEFT", 0, 0)
     comp.gemContent:SetPoint("RIGHT", 0, 0)
-    comp.gemRows = {}; comp.gemCollapsed = false
-    for i = 1, ns.MAX_GEM_ROWS do
-        local row = opts.rowFactory(comp.gemContent)
-        ns.CreateRowIcon(row)
-        local label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        label:SetPoint("LEFT", row.icon, "RIGHT", 4, 0)
-        label:SetWidth(65); label:SetJustifyH("LEFT"); label:SetTextColor(0.6, 0.6, 0.6)
-        row.label = label
-        local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        name:SetPoint("LEFT", label, "RIGHT", 4, 0); name:SetPoint("RIGHT", 0, 0)
-        name:SetJustifyH("LEFT")
-        row.name = name
-        comp.gemRows[i] = row
-    end
+    comp.gemIcons = buildPool(comp.gemContent, MAX_GEM_ICONS, makeGridIcon)
+    comp.gemRows = buildPool(comp.gemContent, MAX_GEM_ICONS, makeListRow)
+    comp.gemTableRows = buildPool(comp.gemContent, MAX_GEM_ICONS, ns.MakeTableRow)
+    comp.gemCollapsed = false
+    makeViewCog(comp.gemHeader, "gems", "comp")
     comp.gemHeader:SetScript("OnClick", function()
         comp.gemCollapsed = not comp.gemCollapsed
         ns.SetCollapsed(comp.gemContent, comp.gemHeader, comp.gemCollapsed)
         if opts.refresh then opts.refresh() end
     end)
 
-    -- Consumables (non-collapsible)
     comp.consumSection = CreateFrame("Frame", nil, opts.parent)
     comp.consumHeader = opts.headerFactory(comp.consumSection, L["tab.consumables"], false)
     comp.consumContent = CreateFrame("Frame", nil, comp.consumSection)
-    comp.consumContent:SetPoint("TOPLEFT", comp.consumHeader, "BOTTOMLEFT", 0, -2)
+    comp.consumContent:SetPoint("TOPLEFT", comp.consumHeader, "BOTTOMLEFT", 0, 0)
     comp.consumContent:SetPoint("RIGHT", 0, 0)
-    comp.consumRows = {}; comp.consumCollapsed = false
-    for i = 1, ns.MAX_CONSUMABLE_ROWS do
-        local row = opts.rowFactory(comp.consumContent)
-        ns.CreateRowIcon(row)
-        local label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        label:SetPoint("LEFT", row.icon, "RIGHT", 4, 0)
-        label:SetWidth(90); label:SetJustifyH("LEFT"); label:SetTextColor(0.6, 0.6, 0.6)
-        row.label = label
-        local name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        name:SetPoint("LEFT", label, "RIGHT", 4, 0); name:SetPoint("RIGHT", 0, 0); name:SetJustifyH("LEFT")
-        row.name = name
-        comp.consumRows[i] = row
-    end
+    comp.consumIcons = buildPool(comp.consumContent, MAX_CONSUM_ICONS, makeGridIcon)
+    comp.consumRows = buildPool(comp.consumContent, MAX_CONSUM_ICONS, makeListRow)
+    comp.consumTableRows = buildPool(comp.consumContent, MAX_CONSUM_ICONS, ns.MakeTableRow)
+    comp.consumCollapsed = false
+    makeViewCog(comp.consumHeader, "consumables", "comp")
+
+    comp.consumIvIcon = ns.CreateSourceAttributionIcon(
+        comp.consumHeader,
+        "icyveins",
+        "Consumables",
+        "Data from Icy Veins",
+        function()
+            if ns.ResolveAttribution then
+                local _, url = ns.ResolveAttribution("crafting", selectedClass, selectedSpec)
+                return url
+            end
+        end
+    )
+    if comp.consumHeader.AddHeaderWidget then comp.consumHeader:AddHeaderWidget(comp.consumIvIcon) end
 
     return {
-        enchSection = comp.enchSection, enchHeader = comp.enchHeader, enchContent = comp.enchContent,
-        gemSection = comp.gemSection, gemHeader = comp.gemHeader, gemContent = comp.gemContent,
-        consumSection = comp.consumSection, consumHeader = comp.consumHeader, consumContent = comp.consumContent,
+        enchSection = comp.enchSection,
+        enchHeader = comp.enchHeader,
+        enchContent = comp.enchContent,
+        gemSection = comp.gemSection,
+        gemHeader = comp.gemHeader,
+        gemContent = comp.gemContent,
+        consumSection = comp.consumSection,
+        consumHeader = comp.consumHeader,
+        consumContent = comp.consumContent,
         sourceDropdown = comp.sourceDropdown,
     }
 end
 
 function Enhancements.GetCompendiumFrames()
     return {
-        enchSection = comp.enchSection, enchContent = comp.enchContent, enchCollapsed = comp.enchCollapsed,
-        gemSection = comp.gemSection, gemContent = comp.gemContent, gemCollapsed = comp.gemCollapsed,
-        consumSection = comp.consumSection, consumContent = comp.consumContent, consumCollapsed = comp.consumCollapsed,
+        enchSection = comp.enchSection,
+        enchContent = comp.enchContent,
+        enchCollapsed = comp.enchCollapsed,
+        gemSection = comp.gemSection,
+        gemContent = comp.gemContent,
+        gemCollapsed = comp.gemCollapsed,
+        consumSection = comp.consumSection,
+        consumContent = comp.consumContent,
+        consumCollapsed = comp.consumCollapsed,
         sourceDropdown = comp.sourceDropdown,
-        enchRows = comp.enchRows, gemRows = comp.gemRows, consumRows = comp.consumRows,
-        pvpFallback = comp.pvpFallback,
     }
 end
 
--- args = { uggEnchants, uggGems, whEnchants, whGems, archonEnchants, archonGems,
---          consumables, pvpEnchants, pvpGems,
---          specKey, sourceLabels, getDisplayName, refresh }
 function Enhancements.RenderCompendiumEnchantsGems(args)
+    if not comp.enchIcons then return end
     comp.pvpFallback:Hide()
-    if args.specKey ~= compState.lastSpecKey then
-        compState.currentSource = "u.gg"
-        compState.lastSpecKey = args.specKey
-    end
-    local hasPvP = args.pvpEnchants ~= nil or args.pvpGems ~= nil
-    local hasUgg = args.uggEnchants or args.uggGems
-    local hasWH = args.whEnchants or args.whGems
-    local hasArchon = args.archonEnchants or args.archonGems
-    if not hasUgg and not hasWH and not hasArchon and not hasPvP then return end
+    comp.sourceDropdown:Hide()
 
-    -- Fall off a source the current spec doesn't have, in the same preference
-    -- order the docked panel uses.
-    local available = { ["u.gg"] = hasUgg, ["Wowhead"] = hasWH, ["Archon"] = hasArchon, ["PvP"] = true }
-    if not available[compState.currentSource] then
-        compState.currentSource = (hasUgg and "u.gg") or (hasWH and "Wowhead")
-            or (hasArchon and "Archon") or "PvP"
-    end
-
-    -- A one-option dropdown is noise; PvP alone doesn't earn a picker.
-    local sourceOrder = {}
-    for _, src in ipairs({ "u.gg", "Wowhead", "Archon" }) do
-        if available[src] then sourceOrder[#sourceOrder + 1] = src end
-    end
-    local showSourceDropdown = #sourceOrder > 0
-    if showSourceDropdown then
-        sourceOrder[#sourceOrder + 1] = "PvP"
-        comp.sourceDropdown:SetupMenu(function(_, rootDescription)
-            for _, src in ipairs(sourceOrder) do
-                rootDescription:CreateRadio(
-                    (args.sourceLabels and args.sourceLabels[src]) or src,
-                    function() return compState.currentSource == src end,
-                    function()
-                        compState.currentSource = src
-                        if args.refresh then args.refresh() end
-                    end,
-                    src)
-            end
-        end)
-        comp.sourceDropdown:Show()
+    comp.enchHeight = 0
+    if args.enchants then
+        local items = buildEnchantItems(args.enchants)
+        if #items > 0 then
+            comp.enchHeight = renderSection(
+                "enchants",
+                comp.enchContent,
+                comp.enchIcons,
+                comp.enchRows,
+                comp.enchTableRows,
+                items,
+                "comp"
+            )
+            comp.enchSection:Show()
+        else
+            hideAll(comp.enchIcons)
+            hideAll(comp.enchRows)
+        end
     else
-        comp.sourceDropdown:Hide()
+        hideAll(comp.enchIcons)
+        hideAll(comp.enchRows)
     end
 
-    local activeEnchants, activeGems
-    if compState.currentSource == "PvP" then
-        activeEnchants = args.pvpEnchants; activeGems = args.pvpGems
-    elseif compState.currentSource == "Wowhead" then
-        activeEnchants = args.whEnchants; activeGems = args.whGems
-    elseif compState.currentSource == "Archon" then
-        activeEnchants = args.archonEnchants; activeGems = args.archonGems
+    comp.gemHeight = 0
+    if args.gems then
+        local items = buildGemItems(args.gems)
+        if #items > 0 then
+            comp.gemHeight =
+                renderSection("gems", comp.gemContent, comp.gemIcons, comp.gemRows, comp.gemTableRows, items, "comp")
+            comp.gemSection:Show()
+        else
+            hideAll(comp.gemIcons)
+            hideAll(comp.gemRows)
+        end
     else
-        activeEnchants = args.uggEnchants; activeGems = args.uggGems
-    end
-
-    local pvpEnchantsMissing = compState.currentSource == "PvP" and not activeEnchants
-    if pvpEnchantsMissing and showSourceDropdown then
-        for i = 1, ns.MAX_ENCHANT_ROWS do comp.enchRows[i]:Hide() end
-        local msg = activeGems
-            and (L["pvp.no_enchants"] or "No PvP enchants for this spec yet.")
-            or  (L["pvp.no_enchant_gem_data"] or "No PvP enchant/gem data for this spec yet.")
-        comp.pvpFallback:SetText(msg)
-        comp.pvpFallback:ClearAllPoints()
-        comp.pvpFallback:SetPoint("TOPLEFT", comp.enchContent, "TOPLEFT", 4, -4)
-        comp.pvpFallback:Show()
-        comp.enchContent:SetHeight(20)
-        comp.enchSection:Show()
-    end
-
-    if activeEnchants then
-        for i = 1, ns.MAX_ENCHANT_ROWS do comp.enchRows[i]:Hide() end
-        local count = math.min(#activeEnchants, ns.MAX_ENCHANT_ROWS)
-        local yOff = 0
-        local getName = args.getDisplayName or function(ref) return ResolveDisplayName(ref) end
-        for i = 1, count do
-            local e = activeEnchants[i]
-            local row = comp.enchRows[i]
-            row.slot:SetText(e.slot or "")
-            ns.SetRowIcon(row, e.best and e.best.itemId, e.best and e.best.spellId)
-            local bestName = StripEnchantPrefix(getName(e.best))
-            row.bestSub.text:SetText(ns.FormatItem(e.best, bestName))
-            row.bestSub.itemId = e.best and e.best.itemId
-            row.bestSub.spellId = e.best and e.best.spellId
-            row.bestSub:Show()
-            local rowH = ns.ROW_HEIGHT
-            if e.alternate then
-                local altName = StripEnchantPrefix(getName(e.alternate))
-                row.altSub.text:SetText(ns.FormatItem(e.alternate, altName))
-                row.altSub.itemId = e.alternate.itemId
-                row.altSub.spellId = e.alternate.spellId
-                row.altSub:Show()
-                rowH = ns.ROW_HEIGHT * 2
-            else
-                row.altSub:Hide()
-            end
-            row:ClearAllPoints()
-            row:SetPoint("TOPLEFT", comp.enchContent, "TOPLEFT", 0, yOff)
-            row:SetPoint("RIGHT", comp.enchContent, "RIGHT", 0, 0)
-            row:SetHeight(rowH)
-            yOff = yOff - rowH
-            row:Show()
-        end
-        comp.enchContent:SetHeight(math.abs(yOff))
-        comp.enchSection:Show()
-    end
-
-    if activeGems then
-        for i = 1, ns.MAX_GEM_ROWS do comp.gemRows[i]:Hide() end
-        local gIdx = 0
-        if activeGems.primary then
-            gIdx = gIdx + 1
-            local row = comp.gemRows[gIdx]
-            row.label:SetText(L["gem.primary"])
-            row.name:SetText(ns.FormatItem(activeGems.primary))
-            row.itemId = activeGems.primary.itemId
-            ns.SetRowIcon(row, activeGems.primary.itemId)
-            row:ClearAllPoints()
-            row:SetPoint("TOPLEFT", comp.gemContent, "TOPLEFT", 0, 0)
-            row:SetPoint("RIGHT", comp.gemContent, "RIGHT", 0, 0)
-            row:Show()
-        end
-        if activeGems.secondary then
-            for _, gem in ipairs(activeGems.secondary) do
-                gIdx = gIdx + 1
-                if gIdx > ns.MAX_GEM_ROWS then break end
-                local row = comp.gemRows[gIdx]
-                row.label:SetText(L["gem.secondary"])
-                row.name:SetText(ns.FormatItem(gem))
-                row.itemId = gem.itemId
-                ns.SetRowIcon(row, gem.itemId)
-                row:ClearAllPoints()
-                row:SetPoint("TOPLEFT", comp.gemContent, "TOPLEFT", 0, -(gIdx - 1) * ns.ROW_HEIGHT)
-                row:SetPoint("RIGHT", comp.gemContent, "RIGHT", 0, 0)
-                row:Show()
-            end
-        end
-        comp.gemContent:SetHeight(gIdx * ns.ROW_HEIGHT)
-        comp.gemSection:Show()
+        hideAll(comp.gemIcons)
+        hideAll(comp.gemRows)
     end
 end
 
--- args = { consumables, whConsumables, archonConsumables }
---
--- Consumables render in their own collapsible section but have no picker of
--- their own — they follow the enchants/gems dropdown, which is the only source
--- control on this tab. A source with no consumables of its own falls back to the
--- default set rather than blanking a section it doesn't own.
 function Enhancements.RenderCompendiumConsumables(args)
-    local consumables = args.consumables
-    if compState.currentSource == "Wowhead" then
-        consumables = args.whConsumables or consumables
-    elseif compState.currentSource == "Archon" then
-        consumables = args.archonConsumables or consumables
+    comp.consumHeight = 0
+    if not comp.consumIcons then return end
+    if not args.consumables then
+        hideAll(comp.consumIcons)
+        hideAll(comp.consumRows)
+        return
     end
-    if not consumables then return end
-    for i = 1, ns.MAX_CONSUMABLE_ROWS do comp.consumRows[i]:Hide() end
-    local idx = 0
-    for _, key in ipairs(ns.CONSUMABLE_ORDER) do
-        local c = consumables[key]
-        if c then
-            idx = idx + 1
-            if idx > ns.MAX_CONSUMABLE_ROWS then break end
-            local row = comp.consumRows[idx]
-            row.label:SetText(ns.CONSUMABLE_LABELS[key] or key)
-            row.name:SetText(ns.FormatItem(c))
-            row.itemId = c.itemId
-            ns.SetRowIcon(row, c.itemId)
-            row:ClearAllPoints()
-            row:SetPoint("TOPLEFT", comp.consumContent, "TOPLEFT", 0, -(idx - 1) * ns.ROW_HEIGHT)
-            row:SetPoint("RIGHT", comp.consumContent, "RIGHT", 0, 0)
-            row:Show()
-        end
+    local items = buildConsumableItems(args.consumables)
+    if comp.consumIvIcon then
+        local curSource = args.source or "icyveins"
+        comp.consumIvIcon:SetShown(#items > 0 and curSource ~= "icyveins")
     end
-    comp.consumContent:SetHeight(idx * ns.ROW_HEIGHT)
-    comp.consumSection:Show()
+    if #items > 0 then
+        comp.consumHeight = renderSection(
+            "consumables",
+            comp.consumContent,
+            comp.consumIcons,
+            comp.consumRows,
+            comp.consumTableRows,
+            items,
+            "comp"
+        )
+        comp.consumSection:Show()
+    else
+        hideAll(comp.consumIcons)
+        hideAll(comp.consumRows)
+    end
 end
 
 function Enhancements.GetCompendiumEnchantHeight()
-    local h = 0
-    for i = 1, ns.MAX_ENCHANT_ROWS do
-        if comp.enchRows[i]:IsShown() then h = h + comp.enchRows[i]:GetHeight() end
-    end
-    if comp.pvpFallback:IsShown() then h = h + 20 end
-    return h
+    return comp.enchHeight or 0
 end
 
 function Enhancements.GetCompendiumGemHeight()
-    local h = 0
-    for i = 1, ns.MAX_GEM_ROWS do
-        if comp.gemRows[i]:IsShown() then h = h + ns.ROW_HEIGHT end
-    end
-    return h
+    return comp.gemHeight or 0
 end
 
 function Enhancements.GetCompendiumConsumHeight()
-    local h = 0
-    for i = 1, ns.MAX_CONSUMABLE_ROWS do
-        if comp.consumRows[i]:IsShown() then h = h + ns.ROW_HEIGHT end
-    end
-    return h
+    return comp.consumHeight or 0
 end
