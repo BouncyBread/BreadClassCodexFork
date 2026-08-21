@@ -2,7 +2,7 @@
 ## Title: Bread Codex
 ## Notes: |cff8888ffBread Codex|r - stat priorities, talent builds, rotation guides, and gearing recommendations for your current spec.
 ## Author: jfstn
-## Version: 1.0.3-bread-2026-08-21
+## Version: @project-version@
 ## SavedVariables: ClassCodexDB
 ## SavedVariablesPerCharacter: ClassCodexCharDB
 ## X-Fork-Of: Class Codex by jfstn - https://www.icy-veins.com/download
