@@ -5,9 +5,9 @@
 ## Version: 1.0.3-bread-2026-08-21
 ## SavedVariables: ClassCodexDB
 ## SavedVariablesPerCharacter: ClassCodexCharDB
-## X-Curse-Project-ID: 1480030
-## X-Wago-ID: rNkynwKa
-## X-Website: https://www.icy-veins.com/download
+## X-Fork-Of: Class Codex by jfstn - https://www.icy-veins.com/download
+## X-Wago-ID: aNDMng6o
+## X-Website: https://github.com/BouncyBread/BreadClassCodexFork
 ## IconTexture: Interface\AddOns\BreadClassCodex\Media\icon
 ## AddonCompartmentFunc: ClassCodex_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: ClassCodex_OnAddonCompartmentEnter
