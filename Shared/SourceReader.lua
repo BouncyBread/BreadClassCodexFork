@@ -436,6 +436,32 @@ local function wowheadZone(ctx, label)
 end
 ns.WowheadZoneFor = wowheadZone
 
+
+-- Both builders walk the data with pairs(), whose order Lua does not define, so
+-- without an explicit sort the build list silently reshuffles between reloads
+-- and the overview rows land in the middle of the bosses. Order: overviews
+-- first, then encounters by name, then the source's own pick ahead of its
+-- alternatives, then by popularity.
+local function sortBuilds(out)
+    local order = {}
+    for i, b in ipairs(out) do order[b] = i end
+    table.sort(out, function(x, y)
+        local xa, ya = x.encounterLabel == nil, y.encounterLabel == nil
+        if xa ~= ya then return xa end
+        local xe, ye = x.encounterLabel or "", y.encounterLabel or ""
+        if xe ~= ye then return xe < ye end
+        if (x.recommended and 1 or 0) ~= (y.recommended and 1 or 0) then
+            return (x.recommended and 1 or 0) > (y.recommended and 1 or 0)
+        end
+        local xp, yp = x.pickrate or -1, y.pickrate or -1
+        if xp ~= yp then return xp > yp end
+        -- Stable tiebreak: table.sort is not a stable sort, and equal keys
+        -- would otherwise reorder run to run for the same reason.
+        return (order[x] or 0) < (order[y] or 0)
+    end)
+    return out
+end
+
 local function wowheadTalentBuilds(class, spec)
     local out = {}
     -- Raw, not merged: this source IS the fill source, so a merged view would
@@ -470,7 +496,7 @@ local function wowheadTalentBuilds(class, spec)
             end
         end
     end
-    return out
+    return sortBuilds(out)
 end
 
 -- Archon raid contexts come in two shapes that look alike: "raid:heroic" is a
@@ -583,7 +609,7 @@ local function archonTalentBuilds(class, spec)
             end
         end
     end
-    return out
+    return sortBuilds(out)
 end
 
 function ns.GetTalentBuilds(class, spec, source)
