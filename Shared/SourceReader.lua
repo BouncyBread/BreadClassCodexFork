@@ -380,13 +380,29 @@ end
 -- a Wowhead label. Both emit the same entry shape uggTalentBuilds does.
 -------------------------------------------------------------------------------
 
--- Wowhead splits raid by target count and pluralises delves; map to the
--- zoneKind vocabulary Sections/Talents.lua filters on (mplus/raid/pvp).
-local WH_ZONE = {
-    mplus = "mplus", ["raid-st"] = "raid", ["raid-cleave"] = "raid",
-    raid = "raid", delves = "mplus", delve = "mplus", pvp = "pvp",
-}
-local WH_ART = { delves = "delve", delve = "delve" }
+-- Wowhead has NO per-encounter data — unlike Archon, none of its contexts name
+-- a dungeon or boss. They are slugified BUILD NAMES: "Raid Cleave" -> cleave,
+-- "Raid (Standard)" -> standard-raid, "Raid Multitarget" -> mt-raid.
+--
+-- So classify from the human label AND the slug, because neither alone is
+-- reliable: `cleave` and `council` are raid builds whose slug says nothing, and
+-- `st-raid`'s label is just "Single Target". A slug-prefix table got 6 of the
+-- 21 real contexts wrong, filing raid builds under Mythic+.
+--
+-- Genuinely ambiguous rows ("Single Target", "Single Target/Cleave") return nil,
+-- which Sections/Talents.lua treats as "show under every content filter" —
+-- better than guessing and hiding a build from the tab it belongs to.
+local function wowheadZone(ctx, label)
+    local hay = ((label or "") .. " " .. (ctx or "")):lower()
+    if hay:find("pvp", 1, true) then return "pvp" end
+    if hay:find("raid", 1, true) then return "raid" end
+    if hay:find("delve", 1, true) then return "mplus", "delve" end
+    if hay:find("m+", 1, true) or hay:find("mythic", 1, true)
+        or hay:find("mplus", 1, true) then return "mplus" end
+    if hay:find("open world", 1, true) or hay:find("open-world", 1, true) then return "mplus" end
+    return nil
+end
+ns.WowheadZoneFor = wowheadZone
 
 local function wowheadTalentBuilds(class, spec)
     local out = {}
@@ -404,14 +420,15 @@ local function wowheadTalentBuilds(class, spec)
                             -- ships "Raid - Virtue" / "Raid - Faith"); collapsing
                             -- to the context would merge distinct rows.
                             local label = b.label or ctx
+                            local zone, art = wowheadZone(ctx, b.label)
                             local best = type(b.recommended) == "string" and b.recommended or nil
                             out[#out + 1] = {
                                 label = best and (label .. " (" .. best .. ")") or label,
                                 hero = hero ~= "all" and hero or nil,
                                 exportString = b.export,
                                 recommended = b.recommended ~= nil and b.recommended ~= false,
-                                zoneKind = WH_ZONE[ctx] or WH_ZONE[(ctx:match("^([^:-]+)")) or ""] or "mplus",
-                                artKind = WH_ART[ctx],
+                                zoneKind = zone,
+                                artKind = art,
                                 contextId = ctx .. "\0" .. hero,
                                 provider = "Wowhead",
                             }
