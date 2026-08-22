@@ -387,7 +387,7 @@ panel:HookScript("OnHide", function()
     if ns.HideSaveAsLoadoutPopup then ns.HideSaveAsLoadoutPopup() end
 end)
 
-if panel.SetTitle then panel:SetTitle("Class Codex") end
+if panel.SetTitle then panel:SetTitle("Bread Codex") end
 
 local titleFS = panel.TitleContainer and panel.TitleContainer.TitleText
 if titleFS then
@@ -2046,7 +2046,7 @@ function ns:UpdatePanel()
         end
     end
 
-    if panel.SetTitle then panel:SetTitle("Class Codex") end
+    if panel.SetTitle then panel:SetTitle("Bread Codex") end
 
     local contentOpts = GetGenericContentOptions()
     local sourceKeys = ns.QuerySources("gear", classToken, specKey) or {}
@@ -2076,7 +2076,7 @@ function ns:UpdatePanel()
     subheaderFrame._wantShown = showBanner
     subheaderFrame:SetShown(showBanner)
     if showBanner then
-        if panel.SetTitle then panel:SetTitle("Class Codex") end
+        if panel.SetTitle then panel:SetTitle("Bread Codex") end
         local cc = ns.Context.contentType()
         if type(cc) == "string" and cc:sub(1, 4) == "pvp:" then cc = "pvp" end
         local ver = (C_AddOns and C_AddOns.GetAddOnMetadata and C_AddOns.GetAddOnMetadata(addonName, "Version"))
@@ -2459,7 +2459,7 @@ function ns:LayoutPanel()
     local paged = true
 
     local emptyPanel = (GetSpecData() == nil)
-    if emptyPanel and panel.SetTitle then panel:SetTitle("Class Codex") end
+    if emptyPanel and panel.SetTitle then panel:SetTitle("Bread Codex") end
 
     if isMinimized then
         HidePanelEmptyState()
@@ -2999,7 +2999,7 @@ local function SetupWidgetButton()
     widgetBtn:SetScript("OnEnter", function(self)
         AnimateBright(1)
         StartTrail()
-        ns.Tooltip.Open(self, "ANCHOR_RIGHT").Title("Class Codex").Body(L["character_pane.click_to_toggle"])
+        ns.Tooltip.Open(self, "ANCHOR_RIGHT").Title("Bread Codex").Body(L["character_pane.click_to_toggle"])
         if IsLocked() then
             ns.Tooltip.Body(L["character_pane.position_locked"])
         else
@@ -3080,7 +3080,7 @@ local function SetupWidgetButton()
                 end)
             end
         end)
-        if not ok then print("|cffff0000Class Codex:|r Panel error: " .. tostring(err)) end
+        if not ok then print("|cffff0000Bread Codex:|r Panel error: " .. tostring(err)) end
     end
 
     local function OnAnyHostHide()
@@ -3140,7 +3140,7 @@ function ClassCodex_OnAddonCompartmentEnter(_, menuButtonFrame)
     local ver = C_AddOns.GetAddOnMetadata(addonName, "Version") or ""
     ns.Tooltip
         .Open(menuButtonFrame, "ANCHOR_RIGHT")
-        .Intro("Class Codex v" .. ver)
+        .Intro("Bread Codex v" .. ver)
         .Body("Click to open Compendium")
         .Show()
 end
@@ -3958,7 +3958,7 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
                 end,
                 OnTooltipShow = function(tip)
                     local ver = C_AddOns.GetAddOnMetadata(addonName, "Version") or ""
-                    tip:AddLine("Class Codex v" .. ver, 1, 1, 1)
+                    tip:AddLine("Bread Codex v" .. ver, 1, 1, 1)
                     tip:AddLine("Left-click to open Compendium", 1, 0.82, 0)
                     tip:AddLine("Right-click to open Settings", 1, 0.82, 0)
                 end,
@@ -4002,9 +4002,9 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
         end
         if ClassCodexDB and ClassCodexDB.showLoginMessage then
             local ver = C_AddOns.GetAddOnMetadata(addonName, "Version") or ""
-            print("|cff00ccffClass Codex|r v" .. ver .. " " .. ns.FixSlash(L["chat.loaded"]))
+            print("|cff00ccffBread Codex|r v" .. ver .. " " .. ns.FixSlash(L["chat.loaded"]))
         end
-        if ns.ccContested then print("|cff00ccffClass Codex:|r " .. L["chat.slash_conflict"]) end
+        if ns.ccContested then print("|cff00ccffBread Codex:|r " .. L["chat.slash_conflict"]) end
 
         if isFloating and ClassCodexCharDB and ClassCodexCharDB.panelOpen then
             ns:UpdatePanel()
@@ -4025,7 +4025,7 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
             perSpec.heroTalent = nil
             local newHero = GetActiveHeroTalentName()
             if oldHero and oldHero ~= newHero then
-                print("|cff00ccffClass Codex:|r " .. L["chat.switched_to"]:format(newHero or "auto-detect"))
+                print("|cff00ccffBread Codex:|r " .. L["chat.switched_to"]:format(newHero or "auto-detect"))
             end
         end
         currentHeroTalent = nil
@@ -4083,7 +4083,7 @@ SlashCmdList["CLASSCODEX"] = function(msg)
         if ns.OpenCompendium then
             ns:OpenCompendium()
         else
-            print("|cff00ccffClass Codex:|r " .. L["chat.compendium_not_available"])
+            print("|cff00ccffBread Codex:|r " .. L["chat.compendium_not_available"])
         end
     elseif msg == "reset" then
         ClassCodexCharDB.floating = false
@@ -4094,15 +4094,15 @@ SlashCmdList["CLASSCODEX"] = function(msg)
         isMinimized = false
         DockPanel()
         minimizeBtn:SetNormalTexture("Interface\\Buttons\\UI-Panel-CollapseButton-Up")
-        print("|cff00ccffClass Codex:|r " .. L["chat.mode_reset"])
+        print("|cff00ccffBread Codex:|r " .. L["chat.mode_reset"])
         if panel:IsShown() then ns:UpdatePanel() end
     elseif msg == "help" then
         local sc = ns.FixSlash("/cc")
-        print("|cff00ccffClass Codex|r commands:")
+        print("|cff00ccffBread Codex|r commands:")
         print("  " .. sc)
         print("  " .. sc .. " compendium")
         print("  " .. sc .. " reset")
     else
-        print("|cff00ccffClass Codex:|r " .. ns.FixSlash(L["chat.unknown_command"]))
+        print("|cff00ccffBread Codex:|r " .. ns.FixSlash(L["chat.unknown_command"]))
     end
 end

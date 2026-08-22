@@ -12,7 +12,7 @@ local BIT_WIDTH_SPEC_ID = 16
 local BIT_WIDTH_RANKS_PURCHASED = 6
 
 local function Msg(text)
-    print("|cff00ccffClass Codex:|r " .. text)
+    print("|cff00ccffBread Codex:|r " .. text)
 end
 
 local function GetSpecID()
@@ -297,7 +297,12 @@ local function ResetAndPurchaseDeferred(configID, treeID, entryInfo, onComplete)
     step()
 end
 
-local CC_NAME = "Class Codex"
+local CC_NAME = "Bread Codex"
+-- Loadouts created before the rename (and any created by upstream Class Codex)
+-- are still ours to reuse. Without this they read as user loadouts, so the
+-- addon never reclaims its own slot and keeps creating new ones until the
+-- player runs out — "No free loadout slots".
+local LEGACY_CC_NAMES = { "Class Codex", "Bread Class Codex" }
 local pendingApply = nil
 local pendingApplySeq = 0
 
@@ -328,7 +333,12 @@ end
 local function IsCCSlotName(name)
     if type(name) ~= "string" then return false end
     if name == CC_NAME then return true end
-    return name:sub(1, #CC_NAME + 2) == CC_NAME .. ": "
+    if name:sub(1, #CC_NAME + 2) == CC_NAME .. ": " then return true end
+    for _, legacy in ipairs(LEGACY_CC_NAMES) do
+        if name == legacy then return true end
+        if name:sub(1, #legacy + 2) == legacy .. ": " then return true end
+    end
+    return false
 end
 
 ns.IsCCSlotName = IsCCSlotName
@@ -601,7 +611,7 @@ function ns.ApplyTalentExportString(exportString, buildLabel, isContinuation)
 
     if not isContinuation and C_Traits.ConfigHasStagedChanges and C_Traits.ConfigHasStagedChanges(activeConfigID) then
         return Fail(
-            "You have unsaved talent changes. Open the talents pane and click Apply Changes (or right-click the loadout name to discard) before applying a Class Codex build."
+            "You have unsaved talent changes. Open the talents pane and click Apply Changes (or right-click the loadout name to discard) before applying a Bread Codex build."
         )
     end
 
@@ -646,7 +656,7 @@ function ns.ApplyTalentExportString(exportString, buildLabel, isContinuation)
     end
     if not ccConfigID then
         if C_ClassTalents.CanCreateNewConfig and not C_ClassTalents.CanCreateNewConfig() then
-            return Fail("No free loadout slots — delete one to use Class Codex builds")
+            return Fail("No free loadout slots — delete one to use Bread Codex builds")
         end
         C_ClassTalents.RequestNewConfig(CC_NAME)
         SetPendingApply({ exportString = exportString, buildLabel = buildLabel })
@@ -666,7 +676,7 @@ function ns.ApplyTalentExportString(exportString, buildLabel, isContinuation)
         elseif result == Enum.LoadConfigResult.Error then
             ClearStoredConfigID(specID)
             return Fail(
-                "Could not load Class Codex loadout. Open the talents pane and click Apply Changes, then try again."
+                "Could not load Bread Codex loadout. Open the talents pane and click Apply Changes, then try again."
             )
         end
     end
@@ -803,7 +813,7 @@ function ns.SaveTalentBuildAsNewLoadout(exportString, buildLabel, userName)
     if not userName or userName == "" then return nil, "Loadout name is required" end
 
     if IsCCSlotName(userName) then
-        return nil, '"' .. CC_NAME .. '" is reserved for Class Codex — pick a different name.'
+        return nil, '"' .. CC_NAME .. '" is reserved for Bread Codex — pick a different name.'
     end
     if InCombatLockdown and InCombatLockdown() then return nil, "Cannot change talents in combat." end
     if not C_ClassTalents.ImportLoadout then return nil, "This game version doesn't support saving loadouts." end

@@ -16,9 +16,9 @@ function ns.RegisterSettings()
         local aboutCanvas = ns.CreateSettingsAboutCanvas and ns.CreateSettingsAboutCanvas()
         local category
         if aboutCanvas then
-            category = Settings.RegisterCanvasLayoutCategory(aboutCanvas, "Class Codex")
+            category = Settings.RegisterCanvasLayoutCategory(aboutCanvas, "Bread Codex")
         else
-            category = Settings.RegisterVerticalLayoutCategory("Class Codex")
+            category = Settings.RegisterVerticalLayoutCategory("Bread Codex")
         end
 
         local function group(name)
@@ -551,6 +551,6 @@ function ns.RegisterSettings()
         end
     end
     if not ok then
-        print("|cffff0000Class Codex:|r " .. L["chat.settings_registration_failed"]:format(tostring(err)))
+        print("|cffff0000Bread Codex:|r " .. L["chat.settings_registration_failed"]:format(tostring(err)))
     end
 end

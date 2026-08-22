@@ -536,9 +536,29 @@ local function archonTalentBuilds(class, spec)
                             -- list does `pickrate > 0`, so hand it a number or
                             -- it errors comparing string with number.
                             local pick = tonumber(tostring(b.popularity or ""):match("([%d%.]+)") or "")
-                            local label = b.label or encLabel or "Build"
+                            -- Archon's own b.label is a RANK ("Recommended Class
+                            -- Tree", "Alternative Class Tree #1"), not an
+                            -- identity — leading with it made every row in the
+                            -- list read identically and left the dungeon or boss
+                            -- visible only in the icon. Lead with the encounter,
+                            -- which is what actually distinguishes these rows.
+                            local label = encLabel
+                            if not label then
+                                label = (zoneKind == "raid" and "Raid")
+                                    or (zoneKind == "pvp" and "PvP")
+                                    or "Mythic+"
+                            end
                             if diffLabel and diffLabel ~= "" then
                                 label = label .. " (" .. titleCase(diffLabel) .. ")"
+                            end
+                            -- Keep the rank wording only for alternatives, so
+                            -- they stay distinguishable if they ever surface
+                            -- alongside the recommended pick.
+                            local isPick = type(b.label) == "string"
+                                and b.label:find("Recommended", 1, true) ~= nil
+                            if not isPick and type(b.label) == "string" and b.label ~= "" then
+                                local rank = b.label:match("#(%d+)")
+                                label = label .. (rank and (" · alt " .. rank) or (" · " .. b.label))
                             end
                             out[#out + 1] = {
                                 label = label,
@@ -547,8 +567,7 @@ local function archonTalentBuilds(class, spec)
                                 -- Archon's own "Recommended Class Tree" is often
                                 -- not the most-played build, so flag its pick
                                 -- explicitly rather than assuming rank 1.
-                                recommended = type(b.label) == "string"
-                                    and b.label:find("Recommended", 1, true) ~= nil,
+                                recommended = isPick,
                                 pickrate = pick,
                                 zoneKind = zoneKind,
                                 -- difficulty deliberately left nil: Archon raid

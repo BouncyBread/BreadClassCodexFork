@@ -3,7 +3,7 @@ local _, ns = ...
 local DATA = IcyVeinsData
 if not DATA then
     function ns:OpenCompendium()
-        print("|cff00ccffClass Codex:|r " .. ns.L["chat.compendium_data_not_loaded"])
+        print("|cff00ccffBread Codex:|r " .. ns.L["chat.compendium_data_not_loaded"])
     end
     return
 end
@@ -292,7 +292,7 @@ local function InitFrame()
     else
         UI.frame:SetPoint("CENTER")
     end
-    UI.frame:SetTitle("Class Codex Compendium")
+    UI.frame:SetTitle("Bread Codex Compendium")
     UI.frame:SetPortraitToAsset("Interface\\Icons\\INV_Misc_Book_09")
     ButtonFrameTemplate_HideButtonBar(UI.frame)
 

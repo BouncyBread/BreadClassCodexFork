@@ -770,7 +770,7 @@ local function CleanItemText(text)
     return text ~= "" and text or nil
 end
 
-local AUCTIONATOR_LIST_NAME = "Class Codex"
+local AUCTIONATOR_LIST_NAME = "Bread Codex"
 
 -- Append `item:ID` (Auctionator's exact-item search term) to our shopping
 -- list in Auctionator's SavedVariables. No public API exists for list edits,
@@ -840,7 +840,7 @@ local function AddToAuctionatorList(itemId, name)
     end)
     if ok and added then
         print(
-            "|cff00ccffClass Codex:|r "
+            "|cff00ccffBread Codex:|r "
                 .. (
                     (L and L["item.menu.ah_listed"])
                     or ('Added to your Auctionator "%s" shopping list.'):format(AUCTIONATOR_LIST_NAME)
@@ -848,7 +848,7 @@ local function AddToAuctionatorList(itemId, name)
         )
     else
         print(
-            "|cff00ccffClass Codex:|r "
+            "|cff00ccffBread Codex:|r "
                 .. ((L and L["item.menu.ah_list_fail"]) or "Could not update the Auctionator shopping list.")
         )
     end

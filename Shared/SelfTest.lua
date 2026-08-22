@@ -1,6 +1,6 @@
 local _, ns = ...
 
-local PREFIX = "|cff00ccffClass Codex|r "
+local PREFIX = "|cff00ccffBread Codex|r "
 local function green(s)
     return "|cff40ff40" .. s .. "|r"
 end

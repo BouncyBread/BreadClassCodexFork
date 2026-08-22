@@ -24,7 +24,7 @@ function ns.CreateSettingsAboutCanvas()
     titleIcon:SetTexture("Interface\\AddOns\\BreadClassCodex\\Media\\icon")
 
     local title = content:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetText("Class Codex  · v" .. version)
+    title:SetText("Bread Codex  · v" .. version)
     title:SetTextColor(1, 0.82, 0)
 
     local dataLabel = content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")

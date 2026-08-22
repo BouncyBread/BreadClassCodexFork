@@ -843,7 +843,7 @@ local function CreateDock()
         if fullName and fullName ~= "" then
             ns.Tooltip.Title(fullName)
         else
-            ns.Tooltip.Title("Class Codex")
+            ns.Tooltip.Title("Bread Codex")
         end
 
         local isCCLoadout = fullName and ns.IsCCSlotName and ns.IsCCSlotName(fullName)

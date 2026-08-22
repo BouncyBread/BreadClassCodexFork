@@ -100,7 +100,7 @@ local function buildCards(parent)
         }),
         ns.AboutLinkRow(parent, {
             icon = "Interface\\AddOns\\BreadClassCodex\\Media\\discord",
-            label = "Class Codex Discord",
+            label = "Bread Codex Discord",
             tip = L["settings.role.discord"],
             color = DISCORD,
             alpha = 0.75,

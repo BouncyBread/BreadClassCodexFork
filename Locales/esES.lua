@@ -69,7 +69,7 @@ L["talent.build"] = "Build"
 
 L["empty.select_class_spec"] = "Selecciona una clase y especialización arriba."
 L["empty.no_data"] = "No hay datos disponibles para esta especialización."
-L["empty.no_spec"] = "Elige una especialización para ver tu Class Codex."
+L["empty.no_spec"] = "Elige una especialización para ver tu Bread Codex."
 L["empty.spec_leveling"] = "Guía de subida de %s"
 L["empty.no_builds_details"] = "No hay builds disponibles — consulta U.GG para más detalles."
 L["empty.no_builds_for"] = "No hay builds para %s — consulta U.GG."
@@ -138,7 +138,7 @@ L["settings.tooltip.page_hard_stops"] =
     "Lock scrolling to the current section — the mouse wheel stops at each section instead of sliding into the next. Use the side tabs to change sections."
 L["settings.label.panel_width"] = "Anchura del panel"
 L["settings.tooltip.panel_width"] =
-    "Anchura del panel de Class Codex en píxeles. Se aplica a los modos fijo y flotante."
+    "Anchura del panel de Bread Codex en píxeles. Se aplica a los modos fijo y flotante."
 L["settings.label.gear_source"] = "Mostrar la fuente del objeto"
 L["settings.hint.gear_source_no_icons"] = "Aparece en las vistas de tabla y lista."
 L["settings.tooltip.gear_source"] =
@@ -178,7 +178,7 @@ L["settings.tooltip.highlight_owned"] =
 L["settings.tooltip.minimap_button"] =
     "Muestra un botón en el minimapa para acceso rápido. Clic izquierdo abre el compendio, clic derecho abre los ajustes."
 L["settings.tooltip.login_message"] =
-    "Muestra el mensaje 'Class Codex cargado — escribe /cc para abrir' en el chat al iniciar sesión o recargar."
+    "Muestra el mensaje 'Bread Codex cargado — escribe /cc para abrir' en el chat al iniciar sesión o recargar."
 L["settings.tooltip.pin_talent_source"] =
     "Bloquea el panel de talentos en la fuente que has seleccionado manualmente. Si está desactivado, la fuente sigue lo que haces: U.GG en mazmorras y bandas, JcJ en arenas y campos de batalla, Icy Veins en el resto."
 L["settings.tooltip.float_show_stat_priority"] = "Muestra la sección de prioridad de atributos en el panel flotante."
@@ -202,7 +202,7 @@ L["settings.tooltip.dock_show_bis_gear"] = "Muestra la sección de mejor equipo 
 
 L["chat.loaded"] = "cargado — escribe |cff00ccff/cc|r para abrir"
 L["chat.slash_conflict"] =
-    "Otro addon está usando |cff00ccff/cc|r — escribe |cff00ccff/classcodex|r para abrir Class Codex."
+    "Otro addon está usando |cff00ccff/cc|r — escribe |cff00ccff/classcodex|r para abrir Bread Codex."
 L["chat.switched_to"] = "Cambiado a %s (detectado)"
 L["chat.mode_docked"] = "Fijado"
 L["chat.mode_floating"] = "Flotante"
@@ -248,7 +248,7 @@ L["context.raid_mythic"] = "Jefes de banda (Mítico)"
 L["settings.header.loadout_dock"] = "Dique de configuraciones"
 L["settings.label.show_loadout_dock"] = "Mostrar dique de configuraciones"
 L["settings.tooltip.show_loadout_dock"] =
-    "Widget flotante que muestra el nombre de la configuración de talentos activa. Haz clic para cambiar a cualquier configuración guardada de Blizzard o recomendación de Class Codex."
+    "Widget flotante que muestra el nombre de la configuración de talentos activa. Haz clic para cambiar a cualquier configuración guardada de Blizzard o recomendación de Bread Codex."
 L["loadout_dock.click_to_switch"] = "Haz clic para cambiar de configuración."
 L["loadout_dock.right_click_options"] = "Clic derecho para opciones."
 L["loadout_dock.cannot_switch_combat"] = "No se puede cambiar de configuración en combate."
@@ -314,15 +314,15 @@ L["pvp.no_enchant_gem_data"] = "Aún no hay datos de encantamiento/gema JcJ para
 L["pvp.no_stat_priority"] = "Aún no hay prioridad de atributos JcJ para esta especialización."
 
 L["settings.header.talent_pane"] = "Panel de talentos"
-L["settings.label.talent_pane_show"] = "Mostrar Class Codex en el panel de talentos"
+L["settings.label.talent_pane_show"] = "Mostrar Bread Codex en el panel de talentos"
 L["settings.tooltip.talent_pane_show"] =
-    "Muestra el selector de builds de Class Codex en el panel de talentos de Blizzard. Desactivar para ocultarlo por completo."
+    "Muestra el selector de builds de Bread Codex en el panel de talentos de Blizzard. Desactivar para ocultarlo por completo."
 L["settings.header.unit_menus"] = "Menús de unidad"
 L["settings.label.unit_menu_enabled"] = "Añadir 'Ver talentos' al menú clic derecho de unidades"
 L["settings.tooltip.unit_menu_enabled"] =
     "Añade 'Ver talentos' al menú de clic derecho de marcos de banda, grupo y unidad. Desactivar si ves errores 'AddOn intentó llamar a una función protegida' tras hacer clic derecho — es un bug conocido de Blizzard."
 L["chat.blizzard_bug_notice"] =
-    "|cff66ccff[Class Codex]|r El error '%s' que acabas de ver es un bug conocido de Blizzard, no un bug de Class Codex. Desactiva 'Añadir Ver talentos al menú clic derecho de unidades' en los ajustes para detenerlo."
+    "|cff66ccff[Bread Codex]|r El error '%s' que acabas de ver es un bug conocido de Blizzard, no un bug de Bread Codex. Desactiva 'Añadir Ver talentos al menú clic derecho de unidades' en los ajustes para detenerlo."
 L["settings.header.character_pane_button"] = "Botón del panel del personaje"
 L["character_pane.click_to_toggle"] = "Haz clic para mostrar/ocultar el panel"
 L["settings.label.lock_button_position"] = "Bloquear posición del botón"
@@ -342,11 +342,11 @@ L["footer.yesterday"] = "Ayer"
 L["footer.days_ago"] = "Hace %d días"
 L["tab.settings"] = "Settings"
 L["tab.about"] = "About"
-L["about.header"] = "About Class Codex"
+L["about.header"] = "About Bread Codex"
 L["about.version"] = "Addon Version"
 L["about.data_update"] = "Data Updated"
 L["about.more"] = "Explore & Customize"
-L["about.website_page"] = "Class Codex Page"
+L["about.website_page"] = "Bread Codex Page"
 L["about.compendium"] = "Compendium"
 L["about.loadout_dock"] = "Loadout Dock"
 L["about.loadout_dock_tip"] = "Show a movable bar with your talent loadouts."
@@ -354,12 +354,12 @@ L["about.talent_highlight"] = "Talent Highlight"
 L["about.talent_highlight_tip"] = "Open your talent tree to see the recommended talents highlighted."
 L["about.toggle_hint"] = "Click to enable or disable."
 L["about.all_settings"] = "All Settings"
-L["about.discord"] = "Class Codex Discord"
+L["about.discord"] = "Bread Codex Discord"
 L["about.support_iv"] = "Support with Icy Veins Premium"
 L["about.compendium_tip"] = "Browse gear, talents and more for every class and spec."
-L["about.settings_tip"] = "Open the full Class Codex options."
+L["about.settings_tip"] = "Open the full Bread Codex options."
 L["about.discord_tip"] = "Bugs, feedback and theorycrafting."
-L["about.support_iv_tip"] = "Support Class Codex by going Premium on Icy Veins."
+L["about.support_iv_tip"] = "Support Bread Codex by going Premium on Icy Veins."
 L["tab.supporters"] = "Supporters"
 L["settings.open_compendium"] = "Open Compendium"
 L["settings.header.display"] = "Display"
@@ -378,7 +378,7 @@ L["settings.tooltip.window"] = "Dock the panel to your character sheet, or let i
 L["settings.tooltip.width"] = "How wide the docked panel is."
 L["settings.tooltip.rearrange"] = "Drag the side tabs up or down to reorder them."
 L["settings.tooltip.reset_order"] = "Restore the default tab order."
-L["settings.tooltip.advanced"] = "Open the full Class Codex options window."
+L["settings.tooltip.advanced"] = "Open the full Bread Codex options window."
 L["settings.tooltip.compendium"] = "Browse gear, talents and more for every class and spec."
 L["settings.tooltip.omnium"] = "Show or hide the Omnium Folio in the Compendium."
 L["settings.tooltip.section_visibility"] = "Show or hide this tab in the panel."
@@ -428,7 +428,7 @@ L["loadout_dock.hero_active"] = "Active spec's"
 L["loadout_dock.hero_title"] = "Hero talent"
 L["loadout_dock.pvp_all_brackets"] = "All Brackets"
 L["loadout_dock.show_pvp"] = "Show PvP builds"
-L["loadout_dock.theme_codex"] = "Class Codex"
+L["loadout_dock.theme_codex"] = "Bread Codex"
 L["loadout_dock.theme_compact"] = "Compact"
 L["loadout_dock.theme_minimalist"] = "Minimalist"
 L["loadout_dock.theme_title"] = "Theme"
@@ -437,7 +437,7 @@ L["settings.label.dock_max_width"] = "Max dock width"
 L["settings.label.dock_pick_color"] = "Custom background color"
 L["settings.label.raid_difficulty"] = "Raid difficulty"
 L["settings.tooltip.dock_background"] =
-    "Dock background color at full opacity: your class color, or a custom color. Class Codex theme only."
+    "Dock background color at full opacity: your class color, or a custom color. Bread Codex theme only."
 L["settings.tooltip.dock_build_filter"] =
     "Which recommended builds appear in the dock's loadout menu: everything, only builds for your current hero talent, or the recommended picks only."
 L["settings.tooltip.dock_hero_filter"] =
@@ -448,7 +448,7 @@ L["settings.tooltip.dock_pick_color"] =
     "Open the color picker for the dock background. Choosing a color switches the background to Custom."
 L["settings.tooltip.dock_show_pvp"] = "Include the U.GG arena and battleground builds in the dock's loadout menu."
 L["settings.tooltip.dock_theme"] =
-    "Class Codex: selector styling — gradient background, border and ringed icons. Compact: same, without background or border. Minimalist: label only."
+    "Bread Codex: selector styling — gradient background, border and ringed icons. Compact: same, without background or border. Minimalist: label only."
 L["settings.tooltip.raid_difficulty"] =
     "Which raid difficulty's builds to show — drives the loadout dock's raid section and the talents page."
 L["settings.value.dock_bg_class"] = "Class color"
@@ -459,7 +459,7 @@ L["settings.value.mythic"] = "Mythic"
 
 -- Untranslated: enUS fallback (TODO)
 L["item.menu.search_ah"] = "Add to Auctionator List"
-L["item.menu.ah_listed"] = 'Added to your Auctionator "Class Codex" shopping list.'
+L["item.menu.ah_listed"] = 'Added to your Auctionator "Bread Codex" shopping list.'
 L["item.menu.ah_list_fail"] = "Could not update the Auctionator shopping list."
 
 L["item.menu.copy_name"] = "Copy name"

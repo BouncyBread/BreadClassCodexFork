@@ -440,7 +440,7 @@ local function OnApplyClicked()
     local build = previewedBuild
     local ok, err = ns.ApplyTalentExportString(build.exportString, BuildLoadoutLabel(build))
     if not ok then
-        print("|cff00ccffClass Codex:|r " .. (err or "Failed to apply talents"))
+        print("|cff00ccffBread Codex:|r " .. (err or "Failed to apply talents"))
         return
     end
 
@@ -1213,7 +1213,7 @@ local function EnsureContainer()
         StartTrail()
         ns.Tooltip
             .Open(self, "ANCHOR_RIGHT")
-            .Head("Class Codex Talent Highlight", "title")
+            .Head("Bread Codex Talent Highlight", "title")
             .Line("Compare your talents and pull the latest builds from our sources.", "body")
             .Show()
     end)

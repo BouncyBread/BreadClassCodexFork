@@ -288,7 +288,7 @@ local function render(inst, args)
                     -- PvP builds carry their recommended honor talents; apply
                     -- them alongside the tree on success.
                     if ok and d.honor and ns.ApplyPvpHonorTalents then ns.ApplyPvpHonorTalents(d.honor) end
-                    if not ok and err then print("|cff00ccffClass Codex:|r " .. err) end
+                    if not ok and err then print("|cff00ccffBread Codex:|r " .. err) end
                     if self and self.tex then
                         self.tex:SetVertexColor(ok and 0.3 or 1, ok and 1 or 0.3, 0.3)
                         C_Timer.After(1.2, function()

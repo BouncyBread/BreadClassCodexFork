@@ -69,7 +69,7 @@ L["talent.build"] = "构建"
 
 L["empty.select_class_spec"] = "请在上方选择职业和专精。"
 L["empty.no_data"] = "该专精暂无数据。"
-L["empty.no_spec"] = "选择一个专精以查看你的 Class Codex。"
+L["empty.no_spec"] = "选择一个专精以查看你的 Bread Codex。"
 L["empty.spec_leveling"] = "%s 升级指南"
 L["empty.no_builds_details"] = "暂无可用构建 - 请查看U.GG了解详情。"
 L["empty.no_builds_for"] = "%s暂无构建 - 请查看U.GG。"
@@ -136,7 +136,7 @@ L["settings.label.page_hard_stops"] = "Hard section boundaries"
 L["settings.tooltip.page_hard_stops"] =
     "Lock scrolling to the current section — the mouse wheel stops at each section instead of sliding into the next. Use the side tabs to change sections."
 L["settings.label.panel_width"] = "面板宽度"
-L["settings.tooltip.panel_width"] = "Class Codex 面板的宽度（像素）。同时适用于停靠和浮动模式。"
+L["settings.tooltip.panel_width"] = "Bread Codex 面板的宽度（像素）。同时适用于停靠和浮动模式。"
 L["settings.label.gear_source"] = "显示物品来源"
 L["settings.hint.gear_source_no_icons"] = "显示在表格和列表视图中。"
 L["settings.tooltip.gear_source"] =
@@ -174,7 +174,7 @@ L["settings.tooltip.highlight_owned"] =
 L["settings.tooltip.minimap_button"] =
     "显示小地图按钮以快速访问。左键点击打开图鉴，右键点击打开设置。"
 L["settings.tooltip.login_message"] =
-    "登录或重载界面时，在聊天框中显示 'Class Codex 已加载 — 输入 /cc 打开' 消息。"
+    "登录或重载界面时，在聊天框中显示 'Bread Codex 已加载 — 输入 /cc 打开' 消息。"
 L["settings.tooltip.pin_talent_source"] =
     "将天赋面板锁定到你手动选择的来源。关闭后，来源会跟随你的当前活动——地下城和团队副本使用 U.GG，竞技场和战场使用 PvP，其他情况使用 Icy Veins。"
 L["settings.tooltip.float_show_stat_priority"] = "浮动面板中显示属性优先级部分。"
@@ -198,7 +198,7 @@ L["settings.tooltip.dock_show_bis_gear"] = "停靠面板中显示最佳装备部
 
 L["chat.loaded"] = "已加载 — 输入 |cff00ccff/cc|r 打开"
 L["chat.slash_conflict"] =
-    "另一个插件正在使用 |cff00ccff/cc|r — 输入 |cff00ccff/classcodex|r 打开 Class Codex。"
+    "另一个插件正在使用 |cff00ccff/cc|r — 输入 |cff00ccff/classcodex|r 打开 Bread Codex。"
 L["chat.switched_to"] = "已切换至%s（自动检测）"
 L["chat.mode_docked"] = "已停靠"
 L["chat.mode_floating"] = "浮动"
@@ -243,7 +243,7 @@ L["context.raid_mythic"] = "团本头目(史诗)"
 L["settings.header.loadout_dock"] = "配置坞"
 L["settings.label.show_loadout_dock"] = "显示配置坞"
 L["settings.tooltip.show_loadout_dock"] =
-    "显示当前天赋配置名称的浮动小部件。点击可切换到任何已保存的暴雪配置或 Class Codex 推荐配置。"
+    "显示当前天赋配置名称的浮动小部件。点击可切换到任何已保存的暴雪配置或 Bread Codex 推荐配置。"
 L["loadout_dock.click_to_switch"] = "点击切换配置。"
 L["loadout_dock.right_click_options"] = "右键查看选项。"
 L["loadout_dock.cannot_switch_combat"] = "战斗中无法切换配置。"
@@ -303,15 +303,15 @@ L["pvp.no_enchant_gem_data"] = "暂无该专精的 PvP 附魔/宝石数据。"
 L["pvp.no_stat_priority"] = "暂无该专精的 PvP 属性优先级。"
 
 L["settings.header.talent_pane"] = "天赋面板"
-L["settings.label.talent_pane_show"] = "在天赋窗口显示 Class Codex"
+L["settings.label.talent_pane_show"] = "在天赋窗口显示 Bread Codex"
 L["settings.tooltip.talent_pane_show"] =
-    "在暴雪天赋窗口显示 Class Codex 构筑选择器。关闭以完全隐藏。"
+    "在暴雪天赋窗口显示 Bread Codex 构筑选择器。关闭以完全隐藏。"
 L["settings.header.unit_menus"] = "单位菜单"
 L["settings.label.unit_menu_enabled"] = "在右键单位菜单中添加“查看天赋”"
 L["settings.tooltip.unit_menu_enabled"] =
     "在团队、小队和单位框体的右键菜单中添加“查看天赋”。若右键后看到“插件尝试调用受保护函数”错误，请关闭——这是已知的暴雪问题。"
 L["chat.blizzard_bug_notice"] =
-    "|cff66ccff[Class Codex]|r 你刚才看到的 '%s' 错误是已知的暴雪问题，并非 Class Codex 的错误。请在 Class Codex 设置中关闭“在右键单位菜单中添加查看天赋”。"
+    "|cff66ccff[Bread Codex]|r 你刚才看到的 '%s' 错误是已知的暴雪问题，并非 Bread Codex 的错误。请在 Bread Codex 设置中关闭“在右键单位菜单中添加查看天赋”。"
 L["settings.header.character_pane_button"] = "角色面板按钮"
 L["character_pane.click_to_toggle"] = "点击切换面板"
 L["settings.label.lock_button_position"] = "锁定按钮位置"
@@ -328,11 +328,11 @@ L["footer.yesterday"] = "昨天"
 L["footer.days_ago"] = "%d 天前"
 L["tab.settings"] = "Settings"
 L["tab.about"] = "About"
-L["about.header"] = "About Class Codex"
+L["about.header"] = "About Bread Codex"
 L["about.version"] = "Addon Version"
 L["about.data_update"] = "Data Updated"
 L["about.more"] = "Explore & Customize"
-L["about.website_page"] = "Class Codex Page"
+L["about.website_page"] = "Bread Codex Page"
 L["about.compendium"] = "Compendium"
 L["about.loadout_dock"] = "Loadout Dock"
 L["about.loadout_dock_tip"] = "Show a movable bar with your talent loadouts."
@@ -340,12 +340,12 @@ L["about.talent_highlight"] = "Talent Highlight"
 L["about.talent_highlight_tip"] = "Open your talent tree to see the recommended talents highlighted."
 L["about.toggle_hint"] = "Click to enable or disable."
 L["about.all_settings"] = "All Settings"
-L["about.discord"] = "Class Codex Discord"
+L["about.discord"] = "Bread Codex Discord"
 L["about.support_iv"] = "Support with Icy Veins Premium"
 L["about.compendium_tip"] = "Browse gear, talents and more for every class and spec."
-L["about.settings_tip"] = "Open the full Class Codex options."
+L["about.settings_tip"] = "Open the full Bread Codex options."
 L["about.discord_tip"] = "Bugs, feedback and theorycrafting."
-L["about.support_iv_tip"] = "Support Class Codex by going Premium on Icy Veins."
+L["about.support_iv_tip"] = "Support Bread Codex by going Premium on Icy Veins."
 L["tab.supporters"] = "Supporters"
 L["settings.open_compendium"] = "Open Compendium"
 L["settings.header.display"] = "Display"
@@ -364,7 +364,7 @@ L["settings.tooltip.window"] = "Dock the panel to your character sheet, or let i
 L["settings.tooltip.width"] = "How wide the docked panel is."
 L["settings.tooltip.rearrange"] = "Drag the side tabs up or down to reorder them."
 L["settings.tooltip.reset_order"] = "Restore the default tab order."
-L["settings.tooltip.advanced"] = "Open the full Class Codex options window."
+L["settings.tooltip.advanced"] = "Open the full Bread Codex options window."
 L["settings.tooltip.compendium"] = "Browse gear, talents and more for every class and spec."
 L["settings.tooltip.omnium"] = "Show or hide the Omnium Folio in the Compendium."
 L["settings.tooltip.section_visibility"] = "Show or hide this tab in the panel."
@@ -413,7 +413,7 @@ L["loadout_dock.hero_active"] = "Active spec's"
 L["loadout_dock.hero_title"] = "Hero talent"
 L["loadout_dock.pvp_all_brackets"] = "All Brackets"
 L["loadout_dock.show_pvp"] = "Show PvP builds"
-L["loadout_dock.theme_codex"] = "Class Codex"
+L["loadout_dock.theme_codex"] = "Bread Codex"
 L["loadout_dock.theme_compact"] = "Compact"
 L["loadout_dock.theme_minimalist"] = "Minimalist"
 L["loadout_dock.theme_title"] = "Theme"
@@ -422,7 +422,7 @@ L["settings.label.dock_max_width"] = "Max dock width"
 L["settings.label.dock_pick_color"] = "Custom background color"
 L["settings.label.raid_difficulty"] = "Raid difficulty"
 L["settings.tooltip.dock_background"] =
-    "Dock background color at full opacity: your class color, or a custom color. Class Codex theme only."
+    "Dock background color at full opacity: your class color, or a custom color. Bread Codex theme only."
 L["settings.tooltip.dock_build_filter"] =
     "Which recommended builds appear in the dock's loadout menu: everything, only builds for your current hero talent, or the recommended picks only."
 L["settings.tooltip.dock_hero_filter"] =
@@ -433,7 +433,7 @@ L["settings.tooltip.dock_pick_color"] =
     "Open the color picker for the dock background. Choosing a color switches the background to Custom."
 L["settings.tooltip.dock_show_pvp"] = "Include the U.GG arena and battleground builds in the dock's loadout menu."
 L["settings.tooltip.dock_theme"] =
-    "Class Codex: selector styling — gradient background, border and ringed icons. Compact: same, without background or border. Minimalist: label only."
+    "Bread Codex: selector styling — gradient background, border and ringed icons. Compact: same, without background or border. Minimalist: label only."
 L["settings.tooltip.raid_difficulty"] =
     "Which raid difficulty's builds to show — drives the loadout dock's raid section and the talents page."
 L["settings.value.dock_bg_class"] = "Class color"
@@ -444,7 +444,7 @@ L["settings.value.mythic"] = "Mythic"
 
 -- Untranslated: enUS fallback (TODO)
 L["item.menu.search_ah"] = "Add to Auctionator List"
-L["item.menu.ah_listed"] = 'Added to your Auctionator "Class Codex" shopping list.'
+L["item.menu.ah_listed"] = 'Added to your Auctionator "Bread Codex" shopping list.'
 L["item.menu.ah_list_fail"] = "Could not update the Auctionator shopping list."
 
 L["item.menu.copy_name"] = "Copy name"
