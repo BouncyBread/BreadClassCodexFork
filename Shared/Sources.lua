@@ -280,6 +280,17 @@ function ns.SourceLink(source, surface, class, spec)
     local def = SURFACES[surface]
     if not def then return nil, nil end
     if source == "ugg" and def.ugg then return uggPageUrl(class, spec, def.ugg), def.label end
+    -- Locally scraped sources publish their own page URLs in sd.links; without
+    -- this they fell into the Icy Veins branch below, which hardcodes
+    -- srcUrl(..., "icyveins", ...) and so returned an icy-veins.com link for
+    -- Wowhead and Archon content.
+    if source == "wowhead" or source == "archongg" then
+        local own = srcUrl(class, spec, source, def.iv and def.iv.data or surface)
+            or srcUrl(class, spec, source, surface)
+        if own then return ns.WithReferral(own), def.label end
+        local home = ns.SOURCES[source] and ns.SOURCES[source].homepage
+        if home then return ns.WithReferral(home), def.label end
+    end
     local iv = def.iv
     if iv and iv.data then
         local dataUrl = srcUrl(class, spec, "icyveins", iv.data)
@@ -350,8 +361,28 @@ end
 -- Per-spec source prefs win when set; otherwise header links track the source
 -- actually rendering the content (the caller's active source override, e.g.
 -- the compendium's own source selector, defaulting to the global one).
-local function surfaceSource(surface, ps, active)
+-- Which data category backs each attribution surface. Used to decide whether
+-- the active source actually SUPPLIED what is on screen, or whether the legacy
+-- borrow rules below picked it up from Icy Veins / u.gg instead.
+local SURFACE_CATEGORY = {
+    trinkets = "trinkets", talents = "talents", bis = "gear",
+    crafting = "crafting", enhancements = "enchants", stats = "statPriority",
+}
+
+local function surfaceSource(surface, ps, active, class, spec)
     active = active or (ns.ActiveSource and ns.ActiveSource()) or "ugg"
+    -- Everything below this point collapses to "ugg" or "icyveins", which was
+    -- correct when those were the only two sources: it made every surface
+    -- borrow from whichever of the pair had the data. With Wowhead and Archon
+    -- registered it mis-credits them — Wowhead trinkets were tagged Icy Veins,
+    -- Wowhead talents tagged U.GG. So when the active source genuinely carries
+    -- this surface's category for this spec, attribute it and stop; only fall
+    -- through to the borrow rules when it does not.
+    local cat = SURFACE_CATEGORY[surface]
+    if cat and class and spec and ns.SOURCES[active]
+        and ns.RawSourceSpec and (ns.RawSourceSpec(active, class, spec) or {})[cat] then
+        return active
+    end
     if surface == "trinkets" then
         if ps and ps.trinketSource then return isUggSource(ps.trinketSource) and "ugg" or "icyveins" end
         return isUggSource(active) and "ugg" or "icyveins"
@@ -378,7 +409,7 @@ end
 function ns.ResolveAttribution(surface, class, specKey, sourceOverride)
     local ps = perSpec(specKey)
     local spec = specKey and (specKey:match("-(.+)") or specKey) or nil
-    local source = surfaceSource(surface, ps, sourceOverride)
+    local source = surfaceSource(surface, ps, sourceOverride, class, spec)
     local url, label = ns.SourceLink(source, surface, class, spec)
     if not url then return nil end
     return source, url, label

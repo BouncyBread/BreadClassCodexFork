@@ -643,6 +643,20 @@ local function IcyVeinsBuildEntries()
     return list
 end
 
+-- Sources this pane can actually RENDER, which is not the same as the sources
+-- that exist. Unlike Sections/Talents.lua, this pane never calls
+-- ns.GetTalentBuilds: BuildEntries below is a two-way icyveins-or-else-u.gg
+-- branch, and so are HeroOptionsForSelector, ResolvePreviewFromState and
+-- BuildCardParts, all of which reach into u.gg-shaped context records
+-- (ns.GetUggSpecData, ns.GroupUggContexts, ns.GetUggEncounterLabel).
+--
+-- Offering Wowhead or Archon here would therefore render U.GG's builds under
+-- their name and save a loadout labelled "U.GG - ...". They ARE available on
+-- the main panel's Talents tab, which does go through ns.GetTalentBuilds.
+--
+-- When this pane is ported to ns.GetTalentBuilds, add the keys here.
+local PANE_CAN_RENDER = { icyveins = true, ugg = true }
+
 local function BuildEntries()
     if selectedSource == "icyveins" then return IcyVeinsBuildEntries() end
     return UggBuildEntries()
@@ -851,8 +865,9 @@ local function ContextMenuBuilder(_, root)
     local srcClass, srcSpec = CurrentClassSpec()
     local sourceKeys = {}
     for _, k in ipairs((ns.Sources and ns.Sources()) or { "icyveins", "ugg" }) do
-        if not (srcClass and srcSpec) or not ns.SourceHas
-            or ns.SourceHas(k, srcClass, srcSpec, "talents") then
+        if PANE_CAN_RENDER[k]
+            and (not (srcClass and srcSpec) or not ns.SourceHas
+                 or ns.SourceHas(k, srcClass, srcSpec, "talents")) then
             sourceKeys[#sourceKeys + 1] = k
         end
     end

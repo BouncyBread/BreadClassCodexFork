@@ -380,6 +380,38 @@ end
 -- a Wowhead label. Both emit the same entry shape uggTalentBuilds does.
 -------------------------------------------------------------------------------
 
+-- Hero talent keys in the scraped data are SLUGS ("herald-of-the-sun",
+-- "sanlayn"), but Sections/Talents.lua filters with `b.hero == activeHero`
+-- where activeHero is a DISPLAY name from C_Traits ("Herald of the Sun",
+-- "San'layn"), and ns.HERO_TALENT_ATLAS is keyed the same way. Emitting the raw
+-- slug meant every Wowhead/Archon row was silently dropped whenever a specific
+-- hero was active — which is the default, since ClassCodex.lua falls back to
+-- heroOptions[1].
+--
+-- Derivation cannot do this: "sanlayn" -> "San'layn" and "fel-scarred" ->
+-- "Fel-Scarred" defeat any title-casing rule. Instead index the addon's own
+-- atlas by a normalised key; that round-trips for all 41 hero names. Built
+-- lazily because Core/ClassCodex.lua (which sets the atlas) loads after this
+-- file, though the builders only ever run well after both are loaded.
+local heroDisplayByNorm
+
+local function normHero(s)
+    return s and (s:lower():gsub("[^%w]", "")) or nil
+end
+
+local function heroDisplayName(slug)
+    if not slug or slug == "all" then return nil end
+    if not heroDisplayByNorm then
+        heroDisplayByNorm = {}
+        for display in pairs(ns.HERO_TALENT_ATLAS or {}) do
+            local k = normHero(display)
+            if k then heroDisplayByNorm[k] = display end
+        end
+    end
+    return heroDisplayByNorm[normHero(slug)] or slug
+end
+ns.HeroDisplayName = heroDisplayName
+
 -- Wowhead has NO per-encounter data — unlike Archon, none of its contexts name
 -- a dungeon or boss. They are slugified BUILD NAMES: "Raid Cleave" -> cleave,
 -- "Raid (Standard)" -> standard-raid, "Raid Multitarget" -> mt-raid.
@@ -424,7 +456,7 @@ local function wowheadTalentBuilds(class, spec)
                             local best = type(b.recommended) == "string" and b.recommended or nil
                             out[#out + 1] = {
                                 label = best and (label .. " (" .. best .. ")") or label,
-                                hero = hero ~= "all" and hero or nil,
+                                hero = heroDisplayName(hero),
                                 exportString = b.export,
                                 recommended = b.recommended ~= nil and b.recommended ~= false,
                                 zoneKind = zone,
@@ -441,10 +473,29 @@ local function wowheadTalentBuilds(class, spec)
     return out
 end
 
+-- Archon raid contexts come in two shapes that look alike: "raid:heroic" is a
+-- whole-difficulty aggregate, "raid:heroic:the-twin-fangs" is one boss. Without
+-- this set the aggregate parses as a boss named "Heroic".
+local ARCHON_DIFFICULTY = { lfr = true, normal = true, heroic = true, mythic = true }
+
+-- Small words stay lowercase unless they lead: Archon's slugs render as
+-- "Altar of Fangs", not "Altar Of Fangs". Cosmetic only — the art lookup in
+-- DungeonArt.lua normalises with s:lower():gsub("[^%w]", "") before matching,
+-- so capitalisation never affects whether an icon resolves.
+local TITLE_SMALL = {
+    of = true, the = true, and_ = true, ["and"] = true, in_ = true, ["in"] = true,
+    ["at"] = true, ["to"] = true, ["a"] = true, ["an"] = true, ["for"] = true, ["on"] = true,
+}
+
 local function titleCase(slug)
     local words = {}
     for w in tostring(slug):gmatch("[^-]+") do
-        words[#words + 1] = w:sub(1, 1):upper() .. w:sub(2)
+        local lower = w:lower()
+        if #words > 0 and TITLE_SMALL[lower] then
+            words[#words + 1] = lower
+        else
+            words[#words + 1] = w:sub(1, 1):upper() .. w:sub(2)
+        end
     end
     return table.concat(words, " ")
 end
@@ -462,7 +513,18 @@ local function archonTalentBuilds(class, spec)
                     local zoneKind = (zone == "raid") and "raid" or (zone == "pvp" and "pvp" or "mplus")
                     local diffLabel, encounter
                     if zone == "raid" then
-                        if seg3 ~= "" then diffLabel, encounter = seg2, seg3 else encounter = seg2 end
+                        if seg3 ~= "" then
+                            -- raid:heroic:the-twin-fangs
+                            diffLabel, encounter = seg2, seg3
+                        elseif ARCHON_DIFFICULTY[seg2:lower()] then
+                            -- raid:heroic — a whole-difficulty aggregate, NOT a
+                            -- boss called "Heroic". Reading it as an encounter
+                            -- put a fake boss in the list and asked the art
+                            -- lookup for a boss named Heroic.
+                            diffLabel, encounter = seg2, nil
+                        else
+                            encounter = seg2
+                        end
                     else
                         encounter = seg2
                     end
@@ -480,7 +542,7 @@ local function archonTalentBuilds(class, spec)
                             end
                             out[#out + 1] = {
                                 label = label,
-                                hero = hero ~= "all" and hero or nil,
+                                hero = heroDisplayName(hero),
                                 exportString = b.export,
                                 -- Archon's own "Recommended Class Tree" is often
                                 -- not the most-played build, so flag its pick
