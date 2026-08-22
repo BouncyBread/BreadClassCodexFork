@@ -409,6 +409,8 @@ local function BuildLoadoutLabel(build)
         source = "U.GG"
     elseif build._pvpSource then
         source = "PvP"
+    elseif build._genericSource then
+        source = build._genericSource
     end
 
     local hero = build.heroTalent or "All"
@@ -643,22 +645,87 @@ local function IcyVeinsBuildEntries()
     return list
 end
 
--- Sources this pane can actually RENDER, which is not the same as the sources
--- that exist. Unlike Sections/Talents.lua, this pane never calls
--- ns.GetTalentBuilds: BuildEntries below is a two-way icyveins-or-else-u.gg
--- branch, and so are HeroOptionsForSelector, ResolvePreviewFromState and
--- BuildCardParts, all of which reach into u.gg-shaped context records
--- (ns.GetUggSpecData, ns.GroupUggContexts, ns.GetUggEncounterLabel).
+-- Icy Veins and u.gg have bespoke paths through this pane, reaching into their
+-- own record shapes (ns.GetUggSpecData / ns.GroupUggContexts for one,
+-- ns:GetIcyVeinsTalentSpecData for the other). Every OTHER source goes through
+-- the generic path below, which reads ns.GetTalentBuilds — the same accessor
+-- the main panel's Talents tab uses — and adapts its entries to the shape this
+-- pane consumes.
 --
--- Offering Wowhead or Archon here would therefore render U.GG's builds under
--- their name and save a loadout labelled "U.GG - ...". They ARE available on
--- the main panel's Talents tab, which does go through ns.GetTalentBuilds.
---
--- When this pane is ported to ns.GetTalentBuilds, add the keys here.
-local PANE_CAN_RENDER = { icyveins = true, ugg = true }
+-- Before this existed, BuildEntries was `icyveins or else u.gg`, so any other
+-- selected source silently rendered U.GG's builds under its name and saved a
+-- loadout labelled "U.GG - ...".
+local BESPOKE_SOURCE = { icyveins = true, ugg = true }
+
+-- Map the pane's scope state onto the zoneKind vocabulary ns.GetTalentBuilds
+-- emits. Raid difficulty is not applied here: Wowhead carries no difficulty at
+-- all and Archon's raid data is Heroic-only, so filtering on it would empty the
+-- list rather than narrow it.
+local function ZoneKindFromState()
+    local scope = ScopeFromState()
+    if scope == "mplus" then return "mplus" end
+    if scope == "pvp" then return "pvp" end
+    return "raid"
+end
+
+local function GenericBuilds()
+    local class, spec = CurrentClassSpec()
+    if not (class and spec and ns.GetTalentBuilds) then return {} end
+    return ns.GetTalentBuilds(class, spec, selectedSource) or {}
+end
+
+local function GenericBuildEntries()
+    local wantZone = ZoneKindFromState()
+    local list, seen = {}, {}
+    for i, b in ipairs(GenericBuilds()) do
+        -- nil zoneKind means "unclassified", which shows under every scope
+        -- rather than being hidden from the one it belongs to.
+        local zoneOk = (not b.zoneKind) or b.zoneKind == wantZone
+        local heroOk = selectedUggHero == HERO_ALL or not b.hero or b.hero == selectedUggHero
+        if zoneOk and heroOk and b.exportString and b.exportString ~= "" then
+            local key = tostring(b.contextId or b.label or i) .. "\0" .. tostring(b.hero or "")
+            if not seen[key] then
+                seen[key] = true
+                list[#list + 1] = {
+                    key = key,
+                    -- A synthetic context standing in for u.gg's record. The
+                    -- _generic flag keeps BuildCardParts away from
+                    -- ns.GetUggEncounterLabel, which expects a real u.gg ctx.
+                    ctx = {
+                        _generic = true,
+                        zoneType = b.zoneKind or wantZone,
+                        encounterLabel = b.encounterLabel,
+                        difficultyLabel = b.difficulty,
+                    },
+                    build = {
+                        heroTalent = b.hero or HERO_ALL,
+                        exportString = b.exportString,
+                        honor = b.honor,
+                    },
+                    label = b.label or b.encounterLabel or "Build",
+                }
+            end
+        end
+    end
+    return list
+end
+
+local function GenericBuildRecord(entry)
+    local src = ns.SOURCES and ns.SOURCES[selectedSource]
+    return {
+        heroTalent = entry.build.heroTalent or "All",
+        context = entry.label or "Build",
+        buildLabel = entry.ctx and entry.ctx.difficultyLabel or nil,
+        exportString = entry.build.exportString,
+        recommended = false,
+        _genericSource = src and src.name or selectedSource,
+        _pvpHonorTalents = entry.build.honor,
+    }
+end
 
 local function BuildEntries()
     if selectedSource == "icyveins" then return IcyVeinsBuildEntries() end
+    if not BESPOKE_SOURCE[selectedSource] then return GenericBuildEntries() end
     return UggBuildEntries()
 end
 
@@ -668,6 +735,14 @@ local function HeroOptionsForSelector()
     if selectedSource == "icyveins" then
         for _, b in ipairs(IcyVeinsTalents() or {}) do
             local h = b.heroTalent
+            if h and h ~= HERO_ALL and not seen[h] then
+                seen[h] = true
+                opts[#opts + 1] = h
+            end
+        end
+    elseif not BESPOKE_SOURCE[selectedSource] then
+        for _, b in ipairs(GenericBuilds()) do
+            local h = b.hero
             if h and h ~= HERO_ALL and not seen[h] then
                 seen[h] = true
                 opts[#opts + 1] = h
@@ -697,7 +772,8 @@ local function ResolvePreviewFromState()
             break
         end
     end
-    if not chosen and selectedUggHero == HERO_ALL and selectedSource ~= "icyveins" then
+    if not chosen and selectedUggHero == HERO_ALL and BESPOKE_SOURCE[selectedSource]
+        and selectedSource ~= "icyveins" then
         local autoKey = ns.GetActiveUggContext and ns.GetActiveUggContext()
         if autoKey then
             for _, e in ipairs(entries) do
@@ -714,6 +790,8 @@ local function ResolvePreviewFromState()
     local build
     if selectedSource == "icyveins" then
         build = IcyVeinsBuildRecord(chosen.build)
+    elseif not BESPOKE_SOURCE[selectedSource] then
+        build = GenericBuildRecord(chosen)
     else
         build = UggBuildRecord(chosen.ctx, chosen.build)
         build._uggContextKey = chosen.key
@@ -734,8 +812,11 @@ local function BuildCardParts(entry)
         tintKey = title
     else
         local ctx = entry.ctx
-        title = (ns.GetUggEncounterLabel and ns.GetUggEncounterLabel(ctx)) or ctx.encounterLabel or "Build"
-        local label = (ns.GetUggEncounterLabel and ns.GetUggEncounterLabel(ctx)) or ctx.encounterLabel
+        local generic = ctx and ctx._generic
+        title = generic and (entry.label or "Build")
+            or (ns.GetUggEncounterLabel and ns.GetUggEncounterLabel(ctx)) or ctx.encounterLabel or "Build"
+        local label = generic and ctx.encounterLabel
+            or (ns.GetUggEncounterLabel and ns.GetUggEncounterLabel(ctx)) or ctx.encounterLabel
         if ctx.zoneType == "raid" then
             tintKey = (ns.GetCurrentRaidName and ns.GetCurrentRaidName()) or "raid"
             if label and ns.GetBossArtByName then
@@ -865,9 +946,8 @@ local function ContextMenuBuilder(_, root)
     local srcClass, srcSpec = CurrentClassSpec()
     local sourceKeys = {}
     for _, k in ipairs((ns.Sources and ns.Sources()) or { "icyveins", "ugg" }) do
-        if PANE_CAN_RENDER[k]
-            and (not (srcClass and srcSpec) or not ns.SourceHas
-                 or ns.SourceHas(k, srcClass, srcSpec, "talents")) then
+        if not (srcClass and srcSpec) or not ns.SourceHas
+            or ns.SourceHas(k, srcClass, srcSpec, "talents") then
             sourceKeys[#sourceKeys + 1] = k
         end
     end
