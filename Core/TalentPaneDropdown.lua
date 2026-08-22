@@ -843,7 +843,21 @@ end
 
 local function ContextMenuBuilder(_, root)
     root:CreateTitle("Source")
-    for _, key in ipairs({ "icyveins", "ugg" }) do
+    -- Was a hardcoded { "icyveins", "ugg" }. Registering a source in
+    -- ns.SOURCES and ns.Sources() is not enough on its own — this menu built
+    -- its own list and ignored both, so Wowhead/Archon never appeared here.
+    -- Filter to sources that actually carry talents for the current spec, so a
+    -- source with no data for it does not offer an empty pick.
+    local srcClass, srcSpec = CurrentClassSpec()
+    local sourceKeys = {}
+    for _, k in ipairs((ns.Sources and ns.Sources()) or { "icyveins", "ugg" }) do
+        if not (srcClass and srcSpec) or not ns.SourceHas
+            or ns.SourceHas(k, srcClass, srcSpec, "talents") then
+            sourceKeys[#sourceKeys + 1] = k
+        end
+    end
+    if #sourceKeys == 0 then sourceKeys = { "icyveins", "ugg" } end
+    for _, key in ipairs(sourceKeys) do
         root:CreateRadio(ns.SourceLabelText(key), function()
             return selectedSource == key
         end, function()
