@@ -229,18 +229,21 @@ function ns.SourceHas(source, class, spec, category)
     return sd ~= nil and sd[category] ~= nil
 end
 
-local DEFAULT_PRIORITY = { "icyveins", "ugg" }
+local DEFAULT_PRIORITY = { "icyveins", "ugg", "wowhead", "archongg" }
 
---- The user-selectable sources. The locally scraped sources are deliberately
---- NOT listed: they are fill sources, merged into the base by ns.SourceSpec,
---- not separate views the player picks between. Listing them would also expose
---- a real bug — ns.GetTalentBuilds falls through to the u.gg builder for any
---- unrecognised source, so a "Wowhead" pick would quietly render u.gg's builds.
+--- The user-selectable sources, in picker order.
+---
+--- Wowhead and Archon are BOTH pickable sources here AND fill sources for the
+--- bases above — the two roles are independent. Picking them shows their own
+--- data (see wowheadTalentBuilds / archonTalentBuilds in SourceReader.lua);
+--- leaving them unpicked still lets ns.SourceSpec fill gaps in Icy Veins/u.gg.
+---
+--- They may only be listed while SourceReader has a builder for each: ns.
+--- GetTalentBuilds falls through to the u.gg builder for any source it does not
+--- recognise, so an unbuilt source renders u.gg's builds under its own name.
 function ns.Sources()
     local order, seen = {}, {}
     if not ClassCodexSource then return order end
-    local isFill = {}
-    for _, s in ipairs(FILL_SOURCES) do isFill[s] = true end
     for _, s in ipairs(DEFAULT_PRIORITY) do
         if ClassCodexSource[s] then
             order[#order + 1] = s
@@ -248,7 +251,7 @@ function ns.Sources()
         end
     end
     for s in pairs(ClassCodexSource) do
-        if not seen[s] and not isFill[s] then order[#order + 1] = s end
+        if not seen[s] then order[#order + 1] = s end
     end
     return order
 end

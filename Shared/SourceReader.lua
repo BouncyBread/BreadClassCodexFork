@@ -371,6 +371,123 @@ local function uggTalentBuilds(class, spec)
     return out
 end
 
+
+-------------------------------------------------------------------------------
+-- Bread Codex: talent builds from the locally scraped sources.
+--
+-- ns.GetTalentBuilds falls through to the u.gg builder for any source it does
+-- not recognise, so without these a "Wowhead" pick renders u.gg's builds under
+-- a Wowhead label. Both emit the same entry shape uggTalentBuilds does.
+-------------------------------------------------------------------------------
+
+-- Wowhead splits raid by target count and pluralises delves; map to the
+-- zoneKind vocabulary Sections/Talents.lua filters on (mplus/raid/pvp).
+local WH_ZONE = {
+    mplus = "mplus", ["raid-st"] = "raid", ["raid-cleave"] = "raid",
+    raid = "raid", delves = "mplus", delve = "mplus", pvp = "pvp",
+}
+local WH_ART = { delves = "delve", delve = "delve" }
+
+local function wowheadTalentBuilds(class, spec)
+    local out = {}
+    -- Raw, not merged: this source IS the fill source, so a merged view would
+    -- fold the base's builds back in and double them up.
+    local sd = ns.RawSourceSpec and ns.RawSourceSpec("wowhead", class, spec)
+    if not (sd and sd.talents) then return out end
+    for hero, byCtx in pairs(sd.talents) do
+        if type(byCtx) == "table" then
+            for ctx, list in pairs(byCtx) do
+                if type(list) == "table" then
+                    for _, b in ipairs(list) do
+                        if type(b) == "table" and b.export and b.export ~= "" then
+                            -- Keep the page's verbatim Build Name (Holy Paladin
+                            -- ships "Raid - Virtue" / "Raid - Faith"); collapsing
+                            -- to the context would merge distinct rows.
+                            local label = b.label or ctx
+                            local best = type(b.recommended) == "string" and b.recommended or nil
+                            out[#out + 1] = {
+                                label = best and (label .. " (" .. best .. ")") or label,
+                                hero = hero ~= "all" and hero or nil,
+                                exportString = b.export,
+                                recommended = b.recommended ~= nil and b.recommended ~= false,
+                                zoneKind = WH_ZONE[ctx] or WH_ZONE[(ctx:match("^([^:-]+)")) or ""] or "mplus",
+                                artKind = WH_ART[ctx],
+                                contextId = ctx .. "\0" .. hero,
+                                provider = "Wowhead",
+                            }
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return out
+end
+
+local function titleCase(slug)
+    local words = {}
+    for w in tostring(slug):gmatch("[^-]+") do
+        words[#words + 1] = w:sub(1, 1):upper() .. w:sub(2)
+    end
+    return table.concat(words, " ")
+end
+
+local function archonTalentBuilds(class, spec)
+    local out = {}
+    local sd = ns.RawSourceSpec and ns.RawSourceSpec("archongg", class, spec)
+    if not (sd and sd.talents) then return out end
+    for hero, byCtx in pairs(sd.talents) do
+        if type(byCtx) == "table" then
+            for ctx, list in pairs(byCtx) do
+                if type(list) == "table" then
+                    -- "mplus", "mplus:altar-of-fangs", "raid:heroic:the-twin-fangs"
+                    local zone, seg2, seg3 = ctx:match("^([^:]+):?([^:]*):?(.*)$")
+                    local zoneKind = (zone == "raid") and "raid" or (zone == "pvp" and "pvp" or "mplus")
+                    local diffLabel, encounter
+                    if zone == "raid" then
+                        if seg3 ~= "" then diffLabel, encounter = seg2, seg3 else encounter = seg2 end
+                    else
+                        encounter = seg2
+                    end
+                    if encounter == "" then encounter = nil end
+                    local encLabel = encounter and titleCase(encounter) or nil
+                    for _, b in ipairs(list) do
+                        if type(b) == "table" and b.export and b.export ~= "" then
+                            -- popularity ships as a string ("52.4%"); the build
+                            -- list does `pickrate > 0`, so hand it a number or
+                            -- it errors comparing string with number.
+                            local pick = tonumber(tostring(b.popularity or ""):match("([%d%.]+)") or "")
+                            local label = b.label or encLabel or "Build"
+                            if diffLabel and diffLabel ~= "" then
+                                label = label .. " (" .. titleCase(diffLabel) .. ")"
+                            end
+                            out[#out + 1] = {
+                                label = label,
+                                hero = hero ~= "all" and hero or nil,
+                                exportString = b.export,
+                                -- Archon's own "Recommended Class Tree" is often
+                                -- not the most-played build, so flag its pick
+                                -- explicitly rather than assuming rank 1.
+                                recommended = type(b.label) == "string"
+                                    and b.label:find("Recommended", 1, true) ~= nil,
+                                pickrate = pick,
+                                zoneKind = zoneKind,
+                                -- difficulty deliberately left nil: Archon raid
+                                -- data is Heroic, and the pane defaults to
+                                -- Mythic, which would filter every row away.
+                                encounterLabel = encLabel,
+                                contextId = ctx .. "\0" .. hero,
+                                provider = "Archon",
+                            }
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return out
+end
+
 function ns.GetTalentBuilds(class, spec, source)
     if source == "icyveins" then
         local builds = icyVeinsTalentBuilds(class, spec)
@@ -390,6 +507,8 @@ function ns.GetTalentBuilds(class, spec, source)
         end
         return builds
     end
+    if source == "wowhead" then return wowheadTalentBuilds(class, spec) end
+    if source == "archongg" then return archonTalentBuilds(class, spec) end
     return uggTalentBuilds(class, spec)
 end
 
