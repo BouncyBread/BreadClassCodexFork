@@ -82,6 +82,16 @@ function T.Show()
     return T
 end
 
+--- Style a Menu element tooltip (the `tip` a SetTooltip callback receives)
+--- with this component's palette — menu tips are separate frames, so the
+--- colors are applied explicitly rather than through the GameTooltip
+--- wrappers above. One look for every tooltip in the addon.
+function T.MenuTip(tip, title, body)
+    if not tip then return end
+    if title and GameTooltip_SetTitle then GameTooltip_SetTitle(tip, title) end
+    if body then tip:AddLine(body, C.body[1], C.body[2], C.body[3], true) end
+end
+
 function T.Hide()
     GameTooltip:Hide()
     return T

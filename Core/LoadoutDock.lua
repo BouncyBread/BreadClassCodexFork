@@ -686,13 +686,18 @@ local function BuildLoadoutMenu(_, root)
 
             for _, def in ipairs(groupDefs) do
                 local sub = nil
+                local overviewShown = false
                 if def.overview and buildIncluded(entryBuild(def.overview), true) then
                     sub = root:CreateButton(def.header)
                     uggApply(sub, def.overview, def.overviewLabel, true)
+                    overviewShown = true
                 end
+                local listedAny = false
                 for _, e in ipairs(def.list or {}) do
                     if buildIncluded(entryBuild(e), true) then
                         sub = sub or root:CreateButton(def.header)
+                        if e.separatorBefore or (overviewShown and not listedAny) then sub:CreateDivider() end
+                        listedAny = true
                         uggApply(sub, e)
                     end
                 end

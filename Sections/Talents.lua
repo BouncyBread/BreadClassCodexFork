@@ -49,9 +49,10 @@ local function buildCardList(args)
             end
 
             if keep then
-                local icon, portrait, tintKey, portraitPending
+                local icon, portrait, tintKind, tintKey, portraitPending
                 if b.zoneKind == "raid" then
-                    tintKey = (ns.GetCurrentRaidName and ns.GetCurrentRaidName()) or "raid"
+                    tintKind = b.raidGroup
+                    if not tintKind then tintKey = (ns.GetCurrentRaidName and ns.GetCurrentRaidName()) or "raid" end
                     if b.encounterLabel then
                         local ba = ns.GetBossArtByName and ns.GetBossArtByName(b.encounterLabel)
                         if ba then
@@ -85,6 +86,7 @@ local function buildCardList(args)
                     icon = icon,
                     portrait = portrait,
                     portraitPending = portraitPending,
+                    tintKind = tintKind,
                     tintKey = tintKey,
                     leveling = b.leveling,
                     tags = b.tags,
@@ -252,7 +254,9 @@ local function render(inst, args)
         local heroAtlas = d.heroTalent and ns.HERO_TALENT_ATLAS and ns.HERO_TALENT_ATLAS[d.heroTalent]
         card:SetHeroIcon(heroAtlas, d.heroTalent)
 
-        if d.tintKey and ns.TintFromKey then
+        if d.tintKind and ns.GetRaidGroupTint then
+            card:SetBackgroundColor(ns.GetRaidGroupTint(d.tintKind))
+        elseif d.tintKey and ns.TintFromKey then
             card:SetBackgroundColor(ns.TintFromKey(d.tintKey))
         else
             card:SetBackgroundColor(nil)
@@ -364,9 +368,9 @@ local function makeCog(inst, refresh)
             end)
             if rec and rec.SetTooltip then
                 rec:SetTooltip(function(tip)
-                    GameTooltip_SetTitle(tip, "Recommended")
-                    GameTooltip_AddNormalLine(
+                    ns.Tooltip.MenuTip(
                         tip,
+                        "Recommended",
                         "Show the build most players run for each boss or dungeon, from any hero talent. Off shows your current hero talent's build."
                     )
                 end)

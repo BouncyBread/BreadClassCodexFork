@@ -699,8 +699,22 @@ local function LookupData(class, spec, ctxKey)
             embellishments[#embellishments + 1] = { itemId = id, pop = pop }
         end
     end
+    if #embellishments == 0 and not (dataCtx and dataCtx:sub(1, 3) == "pvp") then
+        for _, fctx in ipairs({ "mplus", "raid", "all" }) do
+            if fctx ~= dataCtx then
+                local fc = ns.ResolveCategory(sd.crafting, "all", fctx)
+                if fc and fc.embellishments and #fc.embellishments > 0 then
+                    for _, ce in ipairs(fc.embellishments) do
+                        local id, pop = entry(ce)
+                        embellishments[#embellishments + 1] = { itemId = id, pop = pop }
+                    end
+                    break
+                end
+            end
+        end
+    end
     if #crafts == 0 and #embellishments == 0 then return nil end
-    if Crafting.GetSortPopular("crafts") or Crafting.GetSortPopular("embs") then
+    if source == "ugg" and (Crafting.GetSortPopular("crafts") or Crafting.GetSortPopular("embs")) then
         -- "Show most popular only" (per sub-section): entries above 50% pick
         -- rate; when fewer than two clear the bar, the top two by popularity
         -- stay so the list is never uselessly empty.

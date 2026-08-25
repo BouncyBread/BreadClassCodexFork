@@ -354,19 +354,94 @@ local function ViewingOwnHero(currentHeroTalent)
     return active:lower() == currentHeroTalent:lower()
 end
 
-local function ShouldShowStep(stepText, currentHeroTalent)
-    local ownHero = ViewingOwnHero(currentHeroTalent)
-    local reqId = stepText:match("^%?{(%d+)}:")
-    if reqId then return (not ownHero) or PlayerKnowsSpell(tonumber(reqId)) end
-    local negId = stepText:match("^%?!{(%d+)}:")
-    if negId then return (not ownHero) or (not PlayerKnowsSpell(tonumber(negId))) end
+-- A step is hidden when the player lacks the ability it tells them to press.
+-- That only holds when the step's first spell reference IS that ability: it
+-- either opens the step ("{185438}") or follows a directive verb ("Cast {30451}
+-- as your filler."). A spell named first for any other reason — a proc to spend
+-- ("Spend procs of {51128} on {49020}"), a buff to track, an example racial
+-- ("any stat racial you might have (eg: {33697}/{274738}/{26297})") — is not
+-- what the step asks you to cast, and gating on it silently deleted whole steps
+-- from the list for everyone who happened not to know that incidental spell.
+local ShouldShowStep
+do
+    local STEP_ACTION_VERBS = {
+        cast = true,
+        casts = true,
+        casting = true,
+        recast = true,
+        hardcast = true,
+        precast = true,
+        ["pre-cast"] = true,
+        preplace = true,
+        ["pre-place"] = true,
+        use = true,
+        uses = true,
+        using = true,
+        press = true,
+        apply = true,
+        reapply = true,
+        refresh = true,
+        channel = true,
+        open = true,
+        start = true,
+        finish = true,
+    }
+    -- Words that may sit between the verb and the reference ("Cast 2x {X}",
+    -- "Use your {X}", "Finish with {X}").
+    local STEP_ACTION_FILLER = {
+        a = true,
+        an = true,
+        the = true,
+        your = true,
+        with = true,
+        another = true,
+        second = true,
+        third = true,
+        additional = true,
+        up = true,
+        off = true,
+    }
 
-    local exprParen = stepText:match("^%?(%b()):")
-    if exprParen then return EvalConditionExpr(exprParen:sub(2, -2), currentHeroTalent, ownHero) end
+    local function LeadsWithAction(text, refStart)
+        if refStart <= 1 then return true end
+        local words = {}
+        for w in text:sub(1, refStart - 1):lower():gmatch("[%w'%-]+") do
+            words[#words + 1] = w
+        end
+        -- Nothing but punctuation ahead of the reference: it still leads the step.
+        if #words == 0 then return true end
+        for i = #words, math.max(1, #words - 3), -1 do
+            local w = words[i]
+            if STEP_ACTION_VERBS[w] then return true end
+            if not (STEP_ACTION_FILLER[w] or w:match("^%d+x?$")) then return false end
+        end
+        return false
+    end
 
-    local primaryId = ns.StripConditionPrefix(stepText):match("{(%d+)}")
-    if primaryId and ownHero and not PlayerKnowsSpell(tonumber(primaryId)) then return false end
-    return true
+    function ShouldShowStep(stepText, currentHeroTalent, heroTagged)
+        local ownHero = ViewingOwnHero(currentHeroTalent)
+        local reqId = stepText:match("^%?{(%d+)}:")
+        if reqId then return (not ownHero) or PlayerKnowsSpell(tonumber(reqId)) end
+        local negId = stepText:match("^%?!{(%d+)}:")
+        if negId then return (not ownHero) or (not PlayerKnowsSpell(tonumber(negId))) end
+
+        local exprParen = stepText:match("^%?(%b()):")
+        if exprParen then return EvalConditionExpr(exprParen:sub(2, -2), currentHeroTalent, ownHero) end
+
+        if heroTagged then return true end
+
+        local stripped = ns.StripConditionPrefix(stepText)
+        local refStart, _, primaryId = stripped:find("{(%d+)}")
+        if
+            primaryId
+            and ownHero
+            and LeadsWithAction(stripped, refStart)
+            and not PlayerKnowsSpell(tonumber(primaryId))
+        then
+            return false
+        end
+        return true
+    end
 end
 
 local StripConditionPrefix = ns.StripConditionPrefix
@@ -1212,6 +1287,15 @@ local PVP_BANNER = {
     Alliance = "Interface\\Icons\\Achievement_PVP_A_A",
 }
 
+-- Stat-priority variant icons for the tooltip footer's priority line — used
+-- when the display style is icons (or both), mirroring the hero/content parts.
+local VARIANT_ICON = {
+    Damage = "Interface\\Icons\\Ability_Warrior_SavageBlow",
+    AoE = "Interface\\Icons\\Spell_Nature_Cyclone",
+    Defensive = "Interface\\Icons\\Ability_Warrior_DefensiveStance",
+    ["Single Target"] = "Interface\\Icons\\Ability_Hunter_SniperShot",
+}
+
 function ns.ContentTypeIcon(value)
     if value == "pvp" then return PVP_BANNER[UnitFactionGroup("player") or ""] or PVP_BANNER.Alliance end
     return CONTEXT_ICON[value]
@@ -1458,6 +1542,51 @@ local function CreateSourceButton(name, parent, badgeSize)
         end)
     end
 
+    -- Reopen with the menu's top-left pinned where the open menu is now, so a
+    -- pick that adds sections grows the menu downward in place instead of
+    -- growing upward from a bottom-anchored cursor anchor or jumping elsewhere.
+    function btn:ReopenGrowDown()
+        local owner = self
+        -- The menu closes before the deferred reopen, so its top-left must be
+        -- captured now, from the still-open menu.
+        local anchor, maxHeight
+        local ok, menu = pcall(function()
+            local mgr = Menu.GetManager()
+            return mgr and mgr.GetOpenMenu and mgr:GetOpenMenu() or nil
+        end)
+        if ok and menu then
+            local left, top = menu:GetLeft(), menu:GetTop()
+            local pscale = UIParent:GetScale() or 1
+            if pscale <= 0 then pscale = 1 end
+            local mscale = menu:GetEffectiveScale() or pscale
+            if left and top then
+                local x = left * mscale / pscale
+                local y = top * mscale / pscale
+                anchor = AnchorUtil.CreateAnchor("TOPLEFT", UIParent, "BOTTOMLEFT", x, y)
+                maxHeight = y
+            end
+        end
+        if not anchor then
+            -- Menu not reachable: fall back to dropping down from the button.
+            local bottom = owner:GetBottom()
+            if bottom then
+                local pscale = UIParent:GetScale() or 1
+                if pscale <= 0 then pscale = 1 end
+                local escale = owner:GetEffectiveScale() or 1
+                anchor = AnchorUtil.CreateAnchor("TOPLEFT", owner, "BOTTOMLEFT", 0, -4)
+                maxHeight = math.max(120, (bottom - 4) * escale / pscale)
+            end
+        end
+        C_Timer.After(0, function()
+            if not owner:IsVisible() then return end
+            if anchor then
+                owner._menuAnchor = anchor
+                owner._menuMaxHeight = maxHeight
+            end
+            owner:OpenMenu(true)
+        end)
+    end
+
     local function BuildGenericMenu(owner, cfg, root)
         -- Always read the live context: selection handlers rebuild it via SetContext,
         -- and MenuResponse.Refresh must show the fresh state without reopening the menu.
@@ -1673,9 +1802,6 @@ tabTitleText:SetPoint("LEFT", 2, 0)
 tabTitleText:SetTextColor(1, 0.82, 0)
 tabTitle:Hide()
 
-local statInfoBtn = ns.CreateStatInfoButton(tabTitle)
-statInfoBtn:SetPoint("RIGHT", -2, 0)
-
 ns.SECTION_HEADER_HEIGHT = SECTION_HEADER_HEIGHT
 ns.ROW_HEIGHT = ROW_HEIGHT
 ns.CONTENT_INSET = CONTENT_INSET
@@ -1689,10 +1815,10 @@ ns.GetPanelWidth = GetPanelWidth
 local statSection, statHeader, statContent = ns.Sections.Stats.InitPanel({
     parent = contentFrame,
     header = CreateSectionHeader,
+    refresh = function()
+        ns:UpdatePanel()
+    end,
 })
-
-statInfoBtn:Show()
-statHeader:AddHeaderWidget(statInfoBtn)
 
 ns.MakeCollapsible(statSection, statHeader, statContent, {
     stateKey = "stats",
@@ -2008,7 +2134,15 @@ end)
 local cachedRanks = nil
 local cachedRanksHero = nil
 local cachedRanksCtx = nil
+local cachedRanksVariant = nil
 local cachedBreakpoints = nil
+
+--- Resets the item-tooltip rank badges' resolution (hero/variant selection
+--- changed) — the badges re-resolve on the next tooltip.
+function ns.InvalidateStatRankCache()
+    cachedRanks = nil
+    cachedBreakpoints = nil
+end
 
 function ns:UpdatePanel()
     cachedRanks = nil
@@ -2113,11 +2247,14 @@ function ns:UpdatePanel()
 
     local priorityHero = (currentHeroTalent and ns.HeroSlugFromDisplay and ns.HeroSlugFromDisplay(currentHeroTalent))
         or nil
-    local priorityStats = ns.GetStatPriority
-        and ns.GetStatPriority(classToken, specKey, ns.Context.contentType(), nil, priorityHero)
     lastStatRowCount = ns.Sections.Stats.RenderPanel({
         contextOptions = {},
-        priorityStats = priorityStats,
+        classToken = classToken,
+        specKey = specKey, -- raw data key
+        prefKey = GetSpecKey(), -- per-spec pref key ("CLASS-spec")
+        source = ns.ActiveSource and ns.ActiveSource(),
+        heroSlug = priorityHero,
+        contentType = ns.Context.contentType(),
         rankColors = RANK_COLORS,
     })
 
@@ -2227,7 +2364,8 @@ function ns:UpdatePanel()
     local statCollapsed = statSection.IsCollapsed and statSection.IsCollapsed() or false
     statSection:SetShown(havePriority)
     if statContent then statContent:SetShown(havePriority and not statCollapsed) end
-    statHeader.label:SetText(L["section.stat_priority"] or "Stat Priority")
+    -- The header label is renderPriority's to own (plain or "· <variant>");
+    -- resetting it here clobbered the variant suffix and its cog hotspot.
     statTargets.section:SetShown(havePriority and haveTargets and not statCollapsed)
 
     if ClassCodexDB then
@@ -3517,9 +3655,20 @@ local function GetCachedRanks()
     local ctx = (ns.Context and ns.Context.contentType()) or "mplus"
     if cachedRanks and cachedRanksHero == hero and cachedRanksCtx == ctx then return cachedRanks end
     local classToken, specKey = GetClassAndSpec()
-    local tiers = ns.GetStatPriority and ns.GetStatPriority(classToken, specKey, ctx)
+    -- The badges follow the pane's selections: the pinned hero talent (the
+    -- pane's own spec, so the pref key is the player's) and the saved stat
+    -- priority variant. No pin ("All") resolves through the active hero.
+    local heroSlug = (hero ~= "All" and ns.HeroSlugFromDisplay) and ns.HeroSlugFromDisplay(hero) or nil
+    local prefKey = (classToken and specKey) and (classToken .. "-" .. specKey) or nil
+    local tiers, hitCtx, variant
+    if ns.Sections.Stats and ns.Sections.Stats.ResolveViewPriority then
+        tiers, hitCtx, variant = ns.Sections.Stats.ResolveViewPriority(classToken, specKey, ctx, nil, heroSlug, prefKey)
+    else
+        tiers = ns.GetStatPriority and ns.GetStatPriority(classToken, specKey, ctx, nil, heroSlug)
+    end
     cachedRanksHero = hero
     cachedRanksCtx = ctx
+    cachedRanksVariant = variant
     cachedBreakpoints = nil
     if not tiers then
         cachedRanks = nil
@@ -3531,7 +3680,11 @@ local function GetCachedRanks()
             cachedRanks[stat] = i
         end
     end
-    if ns.GetStatBreakpoints then cachedBreakpoints = ns.GetStatBreakpoints(classToken, specKey, ctx) end
+    -- Breakpoints derive from the same priority the badges ranked (the context
+    -- it actually resolved through — a variant's, when one is active).
+    if ns.GetStatBreakpoints then
+        cachedBreakpoints = ns.GetStatBreakpoints(classToken, specKey, hitCtx or ctx, nil, heroSlug)
+    end
     return cachedRanks
 end
 
@@ -3662,13 +3815,27 @@ local function OnTooltipItem(tooltip, tooltipData)
         local mode = ClassCodexDB.tooltipFooterMode
         if mode == nil then mode = 2 end
         if mode > 0 then
+            -- Both sides resolve through the same variant-aware picker the
+            -- badges use, so the comparison reflects the actual ranked order.
             local function PriorityKey(heroDisplay, ctx)
                 local classToken, specKey = GetClassAndSpec()
                 if not classToken then return nil end
                 local heroSlug = (heroDisplay and heroDisplay ~= "All" and ns.HeroSlugFromDisplay)
                         and ns.HeroSlugFromDisplay(heroDisplay)
                     or "all"
-                local tiers = ns.GetStatPriority and ns.GetStatPriority(classToken, specKey, ctx, nil, heroSlug)
+                local tiers
+                if ns.Sections.Stats and ns.Sections.Stats.ResolveViewPriority then
+                    tiers = ns.Sections.Stats.ResolveViewPriority(
+                        classToken,
+                        specKey,
+                        ctx,
+                        nil,
+                        heroSlug,
+                        classToken .. "-" .. specKey
+                    )
+                else
+                    tiers = ns.GetStatPriority and ns.GetStatPriority(classToken, specKey, ctx, nil, heroSlug)
+                end
                 if not tiers then return nil end
                 local parts = {}
                 for _, tier in ipairs(tiers) do
@@ -3716,6 +3883,19 @@ local function OnTooltipItem(tooltip, tooltipData)
                 local ctxPart = ""
                 if showIcon and ctex then ctxPart = "|T" .. ctex .. ":14:14|t" end
                 if showLabel or ctxPart == "" then ctxPart = ctxPart .. (ctxPart ~= "" and " " or "") .. ctxLabel end
+                -- A non-default variant ("Damage", "AoE") changes the ranks, so
+                -- it rides along in the footer — as an icon in icons mode,
+                -- matching the hero and content parts, with the label falling
+                -- back in when no icon exists.
+                if cachedRanksVariant and cachedRanksVariant ~= "General" then
+                    local vtex = VARIANT_ICON[cachedRanksVariant]
+                    if showIcon and vtex then
+                        ctxPart = ctxPart .. " |T" .. vtex .. ":14:14|t"
+                        if showLabel then ctxPart = ctxPart .. " " .. cachedRanksVariant end
+                    else
+                        ctxPart = ctxPart .. " · " .. cachedRanksVariant
+                    end
+                end
                 tooltip:AddLine(" ")
                 tooltip:AddDoubleLine(L["tooltip.stat_priority_footer"], heroPart .. " " .. ctxPart, 1, 0.8, 0, 1, 1, 1)
             end

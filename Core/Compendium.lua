@@ -463,10 +463,10 @@ local function InitFrame()
     UI.statSection, UI.statHeader, UI.statContent = ns.Sections.Stats.InitCompendium({
         parent = UI.scrollChild,
         headerFactory = CreateSectionHeader,
+        refresh = function()
+            ns:UpdateCompendium()
+        end,
     })
-    if ns.CreateStatInfoButton and UI.statHeader.AddHeaderWidget then
-        UI.statHeader:AddHeaderWidget(ns.CreateStatInfoButton(UI.statHeader))
-    end
 
     UI.talentSection, UI.talentHeader, UI.talentContent = ns.Sections.Talents.InitCompendium({
         parent = UI.scrollChild,
@@ -815,11 +815,14 @@ function ns:UpdateCompendium()
 end
 
 local function RenderStatPrioritySection(specData, heroTalent)
-    local tiers = ns.GetStatPriority
-        and ns.GetStatPriority(selectedClass, selectedSpec, compContent, compSource, ns.HeroSlugFromDisplay(heroTalent))
     ns.Sections.Stats.RenderCompendium({
         contextOptions = {},
-        priorityStats = tiers,
+        classToken = selectedClass,
+        specKey = selectedSpec, -- raw data key
+        prefKey = (selectedClass or "") .. "-" .. (selectedSpec or ""), -- per-spec pref key
+        source = compSource,
+        heroSlug = ns.HeroSlugFromDisplay and ns.HeroSlugFromDisplay(heroTalent) or nil,
+        contentType = compContent,
     })
 end
 
@@ -1223,7 +1226,15 @@ function ns:BuildCompendiumLayout(content, viewportH)
             if key == "about" then
                 pt.link:SetLink(ns.WEBSITE_URL, L["about.website_page"])
             elseif surface and ns.ResolveAttribution and selectedClass and selectedSpec then
-                pt.link:SetSource(ns.ResolveAttribution(surface, selectedClass, selectedSpec, compSource))
+                pt.link:SetSource(
+                    ns.ResolveAttribution(
+                        surface,
+                        selectedClass,
+                        selectedSpec,
+                        compSource,
+                        compContent == "pvp" and "pvp" or "pve"
+                    )
+                )
             else
                 pt.link:SetSource(nil)
             end

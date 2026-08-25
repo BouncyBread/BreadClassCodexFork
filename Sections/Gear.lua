@@ -175,8 +175,9 @@ local function makeCog(inst, ctx)
             end)
             if srcCheck and srcCheck.SetTooltip then
                 srcCheck:SetTooltip(function(tip)
-                    GameTooltip_AddNormalLine(
+                    ns.Tooltip.MenuTip(
                         tip,
+                        L["settings.label.gear_source"] or "Show Item Source",
                         L["settings.hint.gear_source_no_icons"] or "Appears in the table and list views."
                     )
                 end)

@@ -587,11 +587,18 @@ local function UggBuildEntries()
     if not groups then return {} end
     local scope = ScopeFromState()
     local list = {}
-    local function add(entry)
+    local function add(entry, isOverview)
         if not (entry and entry.ctx) then return end
         local b = SelectBuildForHero(entry.ctx, selectedUggHero)
         if not b then return end
-        list[#list + 1] = { key = entry.contextKey, ctx = entry.ctx, build = b, label = EnrichUggLabel(entry.ctx, b) }
+        list[#list + 1] = {
+            key = entry.contextKey,
+            ctx = entry.ctx,
+            build = b,
+            label = EnrichUggLabel(entry.ctx, b),
+            isOverview = isOverview or entry.isOverview or nil,
+            separatorBefore = entry.separatorBefore or nil,
+        }
     end
     if scope == "mplus" then
         add(groups.mplusOverview)
@@ -740,6 +747,12 @@ local function HeroOptionsForSelector()
                 opts[#opts + 1] = h
             end
         end
+        -- Same predictable alphabetical order as the u.gg list.
+        table.sort(opts, function(a, b)
+            if a == HERO_ALL then return true end
+            if b == HERO_ALL then return false end
+            return a < b
+        end)
     elseif not BESPOKE_SOURCE[selectedSource] then
         for _, b in ipairs(GenericBuilds()) do
             local h = b.hero
@@ -806,7 +819,7 @@ local function BuildCardParts(entry)
         and heroTalent ~= HERO_ALL
         and ns.HERO_TALENT_ATLAS
         and ns.HERO_TALENT_ATLAS[heroTalent]
-    local title, portrait, icon, tintKey, portraitPending
+    local title, portrait, icon, tintKind, tintKey, portraitPending
     if selectedSource == "icyveins" then
         title = entry.build.buildLabel or entry.build.context or "Build"
         tintKey = title
@@ -818,7 +831,7 @@ local function BuildCardParts(entry)
         local label = generic and ctx.encounterLabel
             or (ns.GetUggEncounterLabel and ns.GetUggEncounterLabel(ctx)) or ctx.encounterLabel
         if ctx.zoneType == "raid" then
-            tintKey = (ns.GetCurrentRaidName and ns.GetCurrentRaidName()) or "raid"
+            tintKind = (ns.GetUggRaidGroupKind and ns.GetUggRaidGroupKind(ctx)) or nil
             if label and ns.GetBossArtByName then
                 local ba = ns.GetBossArtByName(label)
                 if ba then
@@ -846,6 +859,7 @@ local function BuildCardParts(entry)
         portrait = portrait,
         portraitPending = portraitPending,
         icon = icon,
+        tintKind = tintKind,
         tintKey = tintKey,
         recommended = (selectedUggHero == HERO_ALL),
     }
@@ -879,7 +893,9 @@ RefreshBuildCard = function()
     end
     if not iconSet then buildCard:SetIcon(GENERIC_BUILD_ICON) end
 
-    if parts.tintKey and ns.TintFromKey then
+    if parts.tintKind and ns.GetRaidGroupTint then
+        buildCard:SetBackgroundColor(ns.GetRaidGroupTint(parts.tintKind))
+    elseif parts.tintKey and ns.TintFromKey then
         buildCard:SetBackgroundColor(ns.TintFromKey(parts.tintKey))
     else
         buildCard:SetBackgroundColor(nil)
@@ -900,7 +916,10 @@ end
 
 local function BuildPickerMenu(_, root)
     root:CreateTitle((ns.L and ns.L["loadout_dock.pick_a_build"]) or "Pick a build")
+    local lastWasOverview = false
     for _, e in ipairs(BuildEntries()) do
+        if (lastWasOverview and not e.isOverview) or e.separatorBefore then root:CreateDivider() end
+        lastWasOverview = e.isOverview or false
         root:CreateRadio(e.label, function()
             return e.key == selectedBuildKey
         end, function()
@@ -936,7 +955,11 @@ local function OnHeroPicked(v)
     if RefreshAll then RefreshAll() end
 end
 
-local function ContextMenuBuilder(_, root)
+local function DifficultySectionVisible()
+    return selectedContent == "raid" and selectedSource ~= "icyveins"
+end
+
+local function ContextMenuBuilder(owner, root)
     root:CreateTitle("Source")
     -- Was a hardcoded { "icyveins", "ugg" }. Registering a source in
     -- ns.SOURCES and ns.Sources() is not enough on its own — this menu built
@@ -956,7 +979,14 @@ local function ContextMenuBuilder(_, root)
         root:CreateRadio(ns.SourceLabelText(key), function()
             return selectedSource == key
         end, function()
+            local difficultyWasVisible = DifficultySectionVisible()
             OnSourcePicked(key)
+            if DifficultySectionVisible() ~= difficultyWasVisible and owner and owner.ReopenGrowDown then
+                -- Keep the menu open (no blink); the deferred reopen replaces
+                -- it in place with the Difficulty section added/removed.
+                owner:ReopenGrowDown()
+                return MenuResponse.Refresh
+            end
             return MenuResponse.Refresh
         end)
     end
@@ -970,7 +1000,16 @@ local function ContextMenuBuilder(_, root)
             root:CreateRadio(label, function()
                 return selectedContent == o.value
             end, function()
+                local difficultyWasVisible = DifficultySectionVisible()
                 OnContentPicked(o.value)
+                -- MenuResponse.Refresh only re-evaluates radio states; it does
+                -- not rebuild the menu, so a content pick that toggles the
+                -- raid Difficulty section must reopen the menu to show it.
+                -- The menu stays open until the reopen replaces it, so the
+                -- swap doesn't blink.
+                if DifficultySectionVisible() ~= difficultyWasVisible and owner and owner.ReopenGrowDown then
+                    owner:ReopenGrowDown()
+                end
                 return MenuResponse.Refresh
             end)
         end
@@ -985,7 +1024,7 @@ local function ContextMenuBuilder(_, root)
             return MenuResponse.Refresh
         end)
     end
-    if selectedContent == "raid" and selectedSource ~= "icyveins" then
+    if DifficultySectionVisible() then
         root:CreateDivider()
         root:CreateTitle((ns.L and ns.L["talent_pane.difficulty"]) or "Difficulty")
         root:CreateRadio(PLAYER_DIFFICULTY2 or "Heroic", function()

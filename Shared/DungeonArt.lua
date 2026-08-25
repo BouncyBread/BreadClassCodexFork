@@ -35,6 +35,14 @@ function ns.TintFromKey(key)
     return hslToRgb((sum % 360) / 360, 0.55, 0.52)
 end
 
+local RAID_GROUP_HUE = { main = 120, overview = 180, other = 240 }
+
+function ns.GetRaidGroupTint(kind)
+    local h = kind and RAID_GROUP_HUE[kind]
+    if not h then return nil end
+    return hslToRgb(h / 360, 0.55, 0.52)
+end
+
 local currentRaidName
 function ns.GetCurrentRaidName()
     if currentRaidName ~= nil then return currentRaidName or nil end

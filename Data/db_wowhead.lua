@@ -18,7 +18,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 268259, slot = "Belt", source = "The Coiled Altar" },
               { itemId = 271878, slot = "Legs", source = "Ula'tek" },
               { itemId = 273777, slot = "Boots", source = "Altar of Fangs" },
-              { itemId = 240949, slot = "Ring (Polished Ammolite)", source = "Crafting" },
+              { itemId = 240949, slot = "Ring (Prismatic Focusing Iris)", source = "Crafting" },
               { itemId = 268249, slot = "Ring", source = "Vashnik the Malignant" },
               { itemId = 251194, slot = "Ring", source = "Blinding Vale" },
               { itemId = 270175, slot = "Trinket", source = "Ula'tek" },
@@ -54,10 +54,10 @@ ClassCodexSource["wowhead"] = {
         talents = {
           deathbringer = {
             raid = {
-              { export = "CoPAAAAAAAAAAAAAAAAAAAAAAwYWGzMmxMjhZZmZmmZxYmxMmBAAAAmZmZmZmZYGjZAYMzMzAAAMmtBGwSw2wEYYBwMMAAMzAYYA", label = "Raid" },
+              { export = "CoPAAAAAAAAAAAAAAAAAAAAAAwYWGzMmxMjhZZmZmmZxYmxMmBAAAAmZmZmZmZYGjZAYMzMzAAAMmtBGwSwywEYYBwMMAAMzAYYA", label = "Raid" },
             },
             mplus = {
-              { export = "CoPAAAAAAAAAAAAAAAAAAAAAAwMzyMzMmxMzMMLzMz0MLGjxMGAAAAwMmZmZmZYGDAYmZmZGAAgxsNwAWC2GmADLAmxMAAMzAYYA", label = "Mythic+", recommended = "Best" },
+              { export = "CoPAAAAAAAAAAAAAAAAAAAAAAwMzyMzMmxMzMMLzMz0MLGjxMGAAAAwMmZmZmZYGDAYmZmZGAAgxsNwAWCWGmADLAmxMAAMzAYYA", label = "Mythic+", recommended = "Best" },
             },
             delves = {
               { export = "CoPAAAAAAAAAAAAAAAAAAAAAAwYWmZmxMmZmhZZmZmmZxYmxMGAAAAwMzMzMzMDzYMAYMzMzAAAMmtBGwSwywEYYBghZAAMzAMYA", label = "Delves", recommended = "Best" },
@@ -440,8 +440,8 @@ ClassCodexSource["wowhead"] = {
         enchants = {
           all = {
             all = {
-              ["Main Hand"] = { { itemId = 244031 } },
-              ["Off Hand"] = { { itemId = 244031 } },
+              ["Main Hand"] = { { itemId = 273071 } },
+              ["Off Hand"] = { { itemId = 273071 } },
               Helm = { { itemId = 244007 } },
               Chest = { { itemId = 243977 } },
               Shoulders = { { itemId = 243991 } },
@@ -503,7 +503,6 @@ ClassCodexSource["wowhead"] = {
             all = {
               { itemId = 270173, tier = "S", source = "The Coiled Altar", contexts = { "raid" } },
               { itemId = 270175, tier = "A", source = "Ula'tek", contexts = { "raid" } },
-              { itemId = 250259, tier = "B", source = "Ziekket", contexts = { "mplus" } },
               { itemId = 270168, tier = "B", source = "Ula'tek", contexts = { "raid" } },
               { itemId = 270166, tier = "B", source = "Shrouded Venom", contexts = { "raid" } },
               { itemId = 270165, tier = "B", source = "Breath of Ula'tek", contexts = { "raid" } },
@@ -517,6 +516,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 250228, tier = "C", source = "Xathuux the Annihilator", contexts = { "mplus" } },
               { itemId = 246304, tier = "C", source = "Crafting", contexts = { "crafting" } },
               { itemId = 193757, tier = "C", source = "Melidrussa Chillworn", contexts = { "mplus" } },
+              { itemId = 250259, tier = "D", source = "Ziekket", contexts = { "mplus" } },
               { itemId = 251785, tier = "D", source = "Delves / Mythic+", contexts = { "delves" } },
               { itemId = 274493, tier = "D", source = "Delves", contexts = { "delves" } },
               { itemId = 250215, tier = "D", source = "Zaen Bladesorrow", contexts = { "mplus" } },
@@ -535,7 +535,7 @@ ClassCodexSource["wowhead"] = {
         talents = {
           ["fel-scarred"] = {
             raid = {
-              { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYmZGzMzmxMzMmZmMmZAAAAAAAzyDMmtZYmBzMWmZMDzMGzyALzmZMMbaaMzMG2AAAAAAAAYmBDAAAAD", label = "Raid" },
+              { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYmZGzMzmxMzMmZmMmZAAAAAAAzyDMmtZYmBzMWmZMDzMGzyALziZMMbaaMzMG2AAAAAAAAYmBDAAAAD", label = "Raid", recommended = "Best" },
             },
             mplus = {
               { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYmZGzMz2MmZmxYmMmZAAAAAAAzixsNDzMwMWmZmZYmBzyALzmZMMLaaMzMmxGAAAwAAAAYmBDAAAAD", label = "Mythic+", recommended = "Best" },
@@ -546,7 +546,7 @@ ClassCodexSource["wowhead"] = {
           },
           ["aldrachi-reaver"] = {
             raid = {
-              { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYgZmZ2MmZmxMzkxMDAAAAAAYWegxsNDzMz2MzYZmxMWmZYmlZ2mBDjlNmkxMjhFAAAAAAAwMDwAAAAwA", label = "Raid", recommended = "Best" },
+              { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYgZmZ2MmZmxMzkxMDAAAAAAYWegxsNDzMz2MzYZmxMWmZYmlZ2mBDjlNmkxMjhFAAAAAAAwMDwAAAAwA", label = "Raid" },
             },
             mplus = {
               { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYGMzMz2MmZmxYmMmZAAAAAAAzixsNDzMz2MzYZmxMMzwMLzsNDGGbbMJjZGzYBAAAAAAAMzAMAAAAM", label = "Mythic+" },
@@ -646,8 +646,6 @@ ClassCodexSource["wowhead"] = {
               { itemId = 270168, tier = "A", source = "Ula'tek", contexts = { "raid" } },
               { itemId = 250245, tier = "A", source = "Atroxus", contexts = { "mplus" } },
               { itemId = 250228, tier = "A", source = "Xathuux the Annihilator", contexts = { "mplus" } },
-              { itemId = 250244, tier = "A", source = "Sentinel of Winter", contexts = { "mplus" } },
-              { itemId = 270174, tier = "A", source = "Sszorak", contexts = { "raid" } },
               { itemId = 159617, tier = "B", source = "The Golden Serpent", contexts = { "mplus" } },
               { itemId = 250225, tier = "B", source = "Taz'Rah", contexts = { "mplus" } },
               { itemId = 250215, tier = "B", source = "Zaen Bladesorrow", contexts = { "mplus" } },
@@ -656,6 +654,8 @@ ClassCodexSource["wowhead"] = {
               { itemId = 270166, tier = "B", source = "Shrouded Venom", contexts = { "raid" } },
               { itemId = 250462, tier = "B", source = "Cragpine", contexts = { "delves" } },
               { itemId = 246304, tier = "B", source = "Crafting", contexts = { "crafting" } },
+              { itemId = 250244, tier = "B", source = "Sentinel of Winter", contexts = { "mplus" } },
+              { itemId = 270174, tier = "B", source = "Sszorak", contexts = { "raid" } },
               { itemId = 270160, tier = "C", source = "Mor'zahi", contexts = { "raid" } },
               { itemId = 250243, tier = "C", source = "Kystia Manaheart", contexts = { "mplus" } },
               { itemId = 193757, tier = "C", source = "Melidrussa Chillworn", contexts = { "mplus" } },
@@ -1575,7 +1575,7 @@ ClassCodexSource["wowhead"] = {
         talents = {
           ["pack-leader"] = {
             raid = {
-              { export = "C0PAAAAAAAAAAAAAAAAAAAAAAAMmxwCsAzwQDbAAYGGzsMzwMmZMDzMGzMMzYGzwMzYGzghmBAAAAMDAAAzMzMAzsRYYWAbDAD", label = "Raid", recommended = "Best" },
+              { export = "C0PAAAAAAAAAAAAAAAAAAAAAAAMmxwCsAzwQDbAAYGGzsMzwMmZYYmxYmxMzYGzwMzYGzghmBAAAAMDAAAzMzMAzsRYYWAbDAD", label = "Raid", recommended = "Best" },
             },
             mplus = {
               { export = "C0PAAAAAAAAAAAAAAAAAAAAAAAMmxwCsBzwQDbAAYGPwMzsMzwMzMjZGMzYmhZGzMzYbmZYMDLDNDAAAAAAAAmHYMzAmZjAmFw2AwA", label = "Mythic+", recommended = "Best" },
@@ -1613,7 +1613,7 @@ ClassCodexSource["wowhead"] = {
         enchants = {
           all = {
             all = {
-              Weapon = { { itemId = 244031 } },
+              Weapon = { { itemId = 273072 } },
               Head = { { itemId = 244007 } },
               Shoulders = { { itemId = 243991 } },
               Chest = { { itemId = 243977 } },
@@ -1634,7 +1634,7 @@ ClassCodexSource["wowhead"] = {
           all = {
             all = {
               flask = { 241322 },
-              potions = { 241308, 241288 },
+              potions = { 241308, 241288, 271887 },
               healthPotion = { 271884 },
               augmentRune = { 259085 },
               weaponBuff = { 243734 },
@@ -1695,13 +1695,13 @@ ClassCodexSource["wowhead"] = {
         talents = {
           sentinel = {
             ["single-target"] = {
-              { export = "C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGzYZAMD2AAAAAAAAAzYGzssNjZmxM4BMNjBjtlZmZmZmZmZhZWGMDAAYMzMGAz0GDDwGzsNjB", label = "Single Target", recommended = "Best" },
+              { export = "C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGzYZAMD2AAAAAAAAAzYmZmFzYmZMDGTzYwYbZmZmZmZmZWwsMYGAAwYmZMAmptNYA2YmtZMA", label = "Single Target", recommended = "Best" },
             },
             ["raid-aoe-cleave"] = {
-              { export = "C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGzYZAMD2AAAAAAAAAzYGzssNjZmxM4BMNjBz2mZmZmZmZmZhZWGmBAAYMzMGAz0GDDwGzsNjB", label = "Raid AoE/Cleave", recommended = "Best" },
+              { export = "C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGzYZAMD2AAAAAAAAAzYmZmFzYmZMDGTzYwstZmZmZmZmZWwsMMDAAwYmZMAmptNYA2YmtZMA", label = "Raid AoE/Cleave", recommended = "Best" },
             },
             mplus = {
-              { export = "C4PAAAAAAAAAAAAAAAAAAAAAAwGMwMGzYZAMD2AAAAAAAAAzYmZGbzYmZMDLjpZMYW2WmZmZmZmZmFmZZYGAAAPwYMAMTbgBYjZ2mxA", label = "Mythic+", recommended = "Best" },
+              { export = "C4PAAAAAAAAAAAAAAAAAAAAAAwGMwMGzYZAMD2AAAAAAAAAzYmZGbzYmZMDLjpZMYW22mZmZmZmZmFmZZYGAAAPwYMAMTbgBYjZ2mxA", label = "Mythic+", recommended = "Best" },
             },
             delves = {
               { export = "C4PAAAAAAAAAAAAAAAAAAAAAAwGMwMGzYZAMD2AAAAAAAAAzYmZGMmZGzMMmGGMLbLzMzMzMzMzCmthZAAAmZMGAmpNsMDwGzsNjB", label = "Delves", recommended = "Best" },
@@ -1709,7 +1709,7 @@ ClassCodexSource["wowhead"] = {
           },
           ["dark-ranger"] = {
             ["single-target"] = {
-              { export = "C4PAAAAAAAAAAAAAAAAAAAAAAYzsMwAmgZYbAzCAAAAAAAAYGzYmltZMzMmBPgpZMYstMzMzMzMzMLMzygBAAYMzMmZmBEGGgNmZbGD", label = "Single Target" },
+              { export = "C4PAAAAAAAAAAAAAAAAAAAAAAYzsMwAmgZYbAzCAAAAAAAAYGzMzsYGzMjZwYaGDGbLzMzMzMzMzCmlBDAAwYmZMzMDIbwAsxMbzYA", label = "Single Target" },
             },
             mplus = {
               { export = "C4PAAAAAAAAAAAAAAAAAAAAAAYzsMwAmgZYbAzCAAAAAAAAYGzMzYbGzMjZYZMNjBzymZMzMzMzMLMzywMAAAegxYmZmBEwAsxMbzYA", label = "Mythic+" },
@@ -1729,7 +1729,7 @@ ClassCodexSource["wowhead"] = {
                 "Cast {260243} on cooldown.",
                 "Inside {288613}, cast {19434} without a {260240} proc when {466932} is available, or when {19434} is close to capping at 2 charges.",
                 "Cast {288613} on cooldown, saving your final use of the fight until {204089} reaches 30 stacks.",
-                "Cast {257044} on cooldown, and clip its last tick with {466932}.",
+                "Cast {257044} on cooldown.",
                 "Cast {392060} on cooldown.",
                 "Cast {185358} to spend {260240}.",
                 "Cast {19434} on cooldown.",
@@ -1742,7 +1742,7 @@ ClassCodexSource["wowhead"] = {
         enchants = {
           all = {
             all = {
-              Weapon = { { itemId = 243971 } },
+              Weapon = { { itemId = 273072 } },
               Helm = { { itemId = 243951 } },
               Shoulders = { { itemId = 244021 } },
               Chest = { { itemId = 243977 } },
@@ -1790,7 +1790,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 244581, slot = "Belt", source = "Crafting" },
               { itemId = 268237, slot = "Legs", source = "Tier Set|The Coiled Altar" },
               { itemId = 268233, slot = "Boots", source = "Sszorak" },
-              { itemId = 273792, slot = "Ring", source = "The Coiled Altar" },
+              { itemId = 273792, slot = "Ring", source = "Altar of Fangs" },
               { itemId = 252258, slot = "Ring", source = "Voidscar Arena" },
               { itemId = 270175, slot = "Trinket", source = "Ula'tek" },
               { itemId = 270173, slot = "Trinket", source = "The Coiled Altar" },
@@ -1867,7 +1867,7 @@ ClassCodexSource["wowhead"] = {
         enchants = {
           all = {
             all = {
-              Weapon = { { itemId = 244031 } },
+              Weapon = { { itemId = 273072 } },
               Head = { { itemId = 244007 } },
               Shoulders = { { itemId = 243991 } },
               Chest = { { itemId = 243977 } },
@@ -2043,7 +2043,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 271092, slot = "Weapon", source = "Ula'tek" },
               { itemId = 245769, slot = "Offhand", source = "Crafting" },
               { itemId = 271564, slot = "Head", source = "Tier Set" },
-              { itemId = 251142, slot = "Neck", source = "Murder Row" },
+              { itemId = 268265, slot = "Neck", source = "Ula'tek" },
               { itemId = 271562, slot = "Shoulders", source = "Tier Set" },
               { itemId = 268253, slot = "Cloak", source = "The Coiled Altar" },
               { itemId = 271567, slot = "Chest", source = "Tier Set" },
@@ -2228,7 +2228,7 @@ ClassCodexSource["wowhead"] = {
         talents = {
           spellslinger = {
             ["raid-st"] = {
-              { export = "CAEAAAAAAAAAAAAAAAAAAAAAAYGGLzMzsMmZmYmZGzMzMziZmZMjZAAAgZmZWWmZaDAAAAAA2AYbZMzMDmthxMsAAAwMbAzEGwMYYA", label = "Raid ST", recommended = "Best ST" },
+              { export = "CAEAAAAAAAAAAAAAAAAAAAAAAYGGLzMzsMmZmYmZGjZMziZmZmZMDAAAMzMzyyMTbAAAAAAwGAbLjZmZgtZMzMsAAAwMbAzEGwADD", label = "Raid ST", recommended = "Best ST" },
             },
             ["raid-cleave"] = {
               { export = "CAEAAAAAAAAAAAAAAAAAAAAAAYGGLzMzsMmZmYmZGzMzMziZmZMjZAAAgZmZWWmZaDAAAAAA2AYbZMzMDmthxMsAAAwMbAzEGwMYYA", label = "Raid Cleave", recommended = "Best Spread Cleave" },
@@ -2746,11 +2746,11 @@ ClassCodexSource["wowhead"] = {
               { itemId = 270167, tier = "A", source = "Nymrissa Wavecaller", contexts = { "raid" } },
               { itemId = 250215, tier = "A", source = "Zaen Bladesorrow", contexts = { "mplus" } },
               { itemId = 250214, tier = "A", source = "Lightwarden Ruia", contexts = { "mplus" } },
+              { itemId = 270169, tier = "A", source = "Hex Lord Malacrass", contexts = { "raid" } },
               { itemId = 273796, tier = "B", source = "Rav'i", contexts = { "mplus" } },
               { itemId = 248583, tier = "B", source = "Delves", contexts = { "delves" } },
               { itemId = 251792, tier = "B", source = "Delves", contexts = { "delves" } },
               { itemId = 273649, tier = "B", source = "King Dazar", contexts = { "mplus" } },
-              { itemId = 270169, tier = "B", source = "Hex Lord Malacrass", contexts = { "raid" } },
               { itemId = 250248, tier = "B", source = "The Hoardmonger", contexts = { "mplus" } },
               { itemId = 241340, tier = "B", source = "Crafting", contexts = { "crafting" } },
               { itemId = 245829, tier = "B", source = "Crafting", contexts = { "crafting" } },
@@ -3246,7 +3246,7 @@ ClassCodexSource["wowhead"] = {
         talents = {
           archon = {
             raid = {
-              { export = "CEQAAAAAAAAAAAAAAAAAAAAAAwYAAAAAAAgZmlxMjZmZYmZYZGmBAAAwwsMDzMzMYGzAYmaAgZWMTmFDAMGsZmZ2A0MMjxwMz2yAMDMA", label = "Raid", recommended = "Best" },
+              { export = "CEQAAAAAAAAAAAAAAAAAAAAAAwYAAAAAAAgZmlxMjZmZYmZYZGmBAAAwwsMDzMzMYGzAYmaAgZWMTmFDAMGsZmZ2A0MMjxwMz2yAMDMA", label = "Raid" },
             },
             mplus = {
               { export = "CEQAAAAAAAAAAAAAAAAAAAAAAwYAAAAAAAMmxsMYMzMDzMDLzMzMAAAAGzsMDmZmBjZGDYmCAMzmZysZAgxgNzM2A0MmZMGmZ2WGgBMA", label = "Mythic+" },
@@ -3257,10 +3257,10 @@ ClassCodexSource["wowhead"] = {
           },
           oracle = {
             raid = {
-              { export = "CEQAAAAAAAAAAAAAAAAAAAAAAwYAAAAAAAGjZmlZmZMzYYmxYZmxMAAAAGmlZGzMzMMzYGAzUDgZWwQYMbDwYgFGzCgMMPgxwMDwMzMwA", label = "Raid" },
+              { export = "CEQAAAAAAAAAAAAAAAAAAAAAAADAAAAAAYBmZWGzMmZMMDzsMzYGAAAAzYWmBzMzwMMDgZqBwMbYIMmlBYMwiZmZBQzYMGDzMAzMzAD", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "CEQAAAAAAAAAAAAAAAAAAAAAAwYAAAAAAAMzMmlxMjZGDzALzMzMAAAAGzsMDmZmx2MmZAMTBwMLYIMmtBYMwiZmBgmxMjxgZAmZGwA", label = "Mythic+", recommended = "Best" },
+              { export = "CEQAAAAAAAAAAAAAAAAAAAAAAADAAAAAAgZmxsMmZMzYYGYZmZmBAAAwYmlZwMzM2mxMDgZKAmZDDhxsMAjBWMzMLAaGzMGDmBYmZAD", label = "Mythic+", recommended = "Best" },
             },
           },
         },
@@ -3333,7 +3333,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 268255, slot = "Boots", source = "The Coiled Altar" },
               { itemId = 252258, slot = "Ring", source = "Voidscar Arena" },
               { itemId = 268249, slot = "Ring", source = "Vashnik the Malignant" },
-              { itemId = 270164, slot = "Trinket", source = "The Lost Explorers" },
+              { itemId = 270167, slot = "Trinket", source = "Nymrissa Wavecaller" },
               { itemId = 250215, slot = "Trinket", source = "Murder Row" },
             },
           },
@@ -3343,8 +3343,8 @@ ClassCodexSource["wowhead"] = {
             all = {
               { itemId = 250215, tier = "A", source = "Murder Row", contexts = { "mplus" } },
               { itemId = 273796, tier = "A", source = "Rav'i", contexts = { "mplus" } },
-              { itemId = 270164, tier = "A", source = "The Lost Explorers", contexts = { "raid" } },
               { itemId = 270167, tier = "A", source = "Nymrissa Wavecaller", contexts = { "raid" } },
+              { itemId = 270164, tier = "A", source = "Mor'zahi", contexts = { "raid" } },
               { itemId = 270169, tier = "B", source = "Hex Lord Malacrass", contexts = { "raid" } },
               { itemId = 250214, tier = "B", source = "Lightwarden Ruia", contexts = { "mplus" } },
               { itemId = 248583, tier = "C", source = "Delves", contexts = { "delves" } },
@@ -3474,16 +3474,17 @@ ClassCodexSource["wowhead"] = {
             all = {
               { itemId = 270175, tier = "S", source = "Ula'tek", contexts = { "raid" } },
               { itemId = 270168, tier = "S", source = "Ula'tek", contexts = { "raid" } },
-              { itemId = 270173, tier = "A", source = "Hex Lord Malacrass", contexts = { "raid" } },
-              { itemId = 250259, tier = "A", source = "Ziekket", contexts = { "mplus" } },
-              { itemId = 270164, tier = "A", source = "Mor'zahi", contexts = { "raid" } },
+              { itemId = 193701, tier = "A", source = "Echo of Doragosa", contexts = { "mplus" } },
               { itemId = 270165, tier = "A", source = "Breath of Ula'tek", contexts = { "raid" } },
+              { itemId = 270173, tier = "A", source = "Hex Lord Malacrass", contexts = { "raid" } },
+              { itemId = 270164, tier = "A", source = "Mor'zahi", contexts = { "raid" } },
               { itemId = 159617, tier = "B", source = "The Golden Serpent", contexts = { "mplus" } },
+              { itemId = 250215, tier = "B", source = "Zaen Bladesorrow", contexts = { "mplus" } },
               { itemId = 250228, tier = "B", source = "Xathuux the Annihilator", contexts = { "mplus" } },
               { itemId = 273796, tier = "B", source = "Rav'i", contexts = { "mplus" } },
               { itemId = 250225, tier = "B", source = "Taz'Rah", contexts = { "mplus" } },
               { itemId = 270166, tier = "B", source = "Shrouded Venom", contexts = { "raid" } },
-              { itemId = 250215, tier = "C", source = "Zaen Bladesorrow", contexts = { "mplus" } },
+              { itemId = 250259, tier = "B", source = "Ziekket", contexts = { "mplus" } },
               { itemId = 193757, tier = "C", source = "Melidrussa Chillworn", contexts = { "mplus" } },
               { itemId = 273797, tier = "C", source = "Zul'jan", contexts = { "mplus" } },
               { itemId = 250214, tier = "C", source = "Lightwarden Ruia", contexts = { "mplus" } },
@@ -3513,10 +3514,10 @@ ClassCodexSource["wowhead"] = {
               { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAsZWGYALBLDTghFwMDwMjB", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAsZWGYALBLDTghFwMDwMjB", label = "Mythic+", recommended = "Best" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxMmZMGgNzyADYJYZYCMsAmZAmZ8BA", label = "Mythic+", recommended = "Best" },
             },
             delves = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAsZWGYALBLDTghFwMDwMjB", label = "Delves", recommended = "Best" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxMmZMGgNzyADYJYZYCMsAmZAmZ8BA", label = "Delves", recommended = "Best" },
             },
           },
           fatebound = {
@@ -3527,10 +3528,10 @@ ClassCodexSource["wowhead"] = {
               { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAYgFYGjGzGIbDYDAMzMzYA", label = "Raid" },
             },
             mplus = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAYgFYGjGzGIbDYDAMzMzYA", label = "Mythic+" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxMmZMGADsAzY0Y2AZbAbAgZmZGfA", label = "Mythic+" },
             },
             delves = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAYgFYGjGzGIbDYDAMzMzYA", label = "Delves" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxMmZMGADsAzY0Y2AZbAbAgZmZGfA", label = "Delves" },
             },
           },
         },
@@ -3680,7 +3681,7 @@ ClassCodexSource["wowhead"] = {
               steps = {
                 "Cast {315508} on cooldown if at stage 1 or less.",
                 "Cast {381989} if you have a stage 3 or higher {315508} active.",
-                "Cast {1277933} whenever {315341}, {13750}, {51690}, and {271877} are on cooldown.",
+                "Cast {1277933} whenever {315341}, {13750}, and {51690} are on cooldown.",
                 "Cast {13750} on cooldown at 2 or fewer combo points, followed by {51690}.",
                 "Cast {2098} with the 4-set bonus active.",
                 "Cast {271877} on cooldown.",
@@ -3745,8 +3746,8 @@ ClassCodexSource["wowhead"] = {
               { itemId = 271511, slot = "Gloves", source = "Tier Set - Sszorak" },
               { itemId = 268256, slot = "Belt", source = "The Coiled Altar" },
               { itemId = 271509, slot = "Legs", source = "The Coiled Altar" },
-              { itemId = 271512, slot = "Boots", source = "Catalyst" },
-              { itemId = 251194, slot = "Ring", source = "Voidscar Arena" },
+              { itemId = 159304, slot = "Boots", source = "King's Rest" },
+              { itemId = 251194, slot = "Ring", source = "Blinding Vale" },
               { itemId = 162544, slot = "Ring", source = "Temple of Sethraliss" },
               { itemId = 270173, slot = "Trinket", source = "The Coiled Altar" },
               { itemId = 270175, slot = "Trinket", source = "Ula'tek" },
@@ -3759,13 +3760,13 @@ ClassCodexSource["wowhead"] = {
               { itemId = 270175, tier = "S", source = "Ula'tek", contexts = { "raid" } },
               { itemId = 270173, tier = "S", source = "The Coiled Altar", contexts = { "raid" } },
               { itemId = 270164, tier = "A", source = "Mor'zahi", contexts = { "raid" } },
-              { itemId = 250259, tier = "A", source = "Ziekket", contexts = { "mplus" } },
               { itemId = 270165, tier = "A", source = "Breath of Ula'tek", contexts = { "raid" } },
+              { itemId = 273797, tier = "A", source = "Zul'jan", contexts = { "mplus" } },
               { itemId = 250215, tier = "A", source = "Zaen Bladesorrow", contexts = { "mplus" } },
               { itemId = 250214, tier = "B", source = "Lightwarden Ruia", contexts = { "mplus" } },
               { itemId = 270166, tier = "B", source = "Shrouded Venom", contexts = { "raid" } },
+              { itemId = 250259, tier = "B", source = "Ziekket", contexts = { "mplus" } },
               { itemId = 159617, tier = "B", source = "The Golden Serpent", contexts = { "mplus" } },
-              { itemId = 273797, tier = "B", source = "Zul'jan", contexts = { "mplus" } },
               { itemId = 251785, tier = "B", source = "Delves / Mythic+", contexts = { "mplus" } },
               { itemId = 270168, tier = "B", source = "Ula'tek", contexts = { "raid" } },
               { itemId = 273796, tier = "C", source = "Rav'i", contexts = { "mplus" } },
@@ -3827,8 +3828,8 @@ ClassCodexSource["wowhead"] = {
         enchants = {
           all = {
             all = {
-              ["Weapon - Main Hand"] = { { itemId = 244031 } },
-              ["Weapon - Off Hand"] = { { itemId = 244031 } },
+              ["Weapon - Main Hand"] = { { itemId = 273072 } },
+              ["Weapon - Off Hand"] = { { itemId = 273072 } },
               Head = { { itemId = 244007 } },
               Shoulders = { { itemId = 243991 } },
               Chest = { { itemId = 243977 } },
@@ -3928,7 +3929,7 @@ ClassCodexSource["wowhead"] = {
               { export = "CYQAAAAAAAAAAAAAAAAAAAAAAAAAAAzMbLzMmZmZZbZMMjBAAAAsYmNYADY2YCZWAgZZmZGjtFTYmZZsMzMzYYZWmxiZGmZZAADAMzYYYA", label = "Raid" },
             },
             mplus = {
-              { export = "CYQAAAAAAAAAAAAAAAAAAAAAAAAAAAzMbLzMGjZZZZMmhBAAAAsYmNYADY2YCZWAgZZmZGjtFTbMzYsMzMzYYZWMWmZGzMLAAzAgZGDDD", label = "Mythic+" },
+              { export = "CYQAAAAAAAAAAAAAAAAAAAAAAAAAAAzMLLzMzMzMbbLDmxMDAAAAA2MjhNYBmRDN2AgZZmZGjtFTYmxYZmZmZmxiFjFjhZWAAGAzMwwwA", label = "Mythic+" },
             },
             delves = {
               { export = "CYQAAAAAAAAAAAAAAAAAAAAAAAAAAAzMLLzMzMzMbbLDmxMDAAAAA2MjhNYBmRDN2AgZZmZGjtFTYmxYZmZmZmxiFjFjhZWAAGAzMwwwA", label = "Delves" },
@@ -3995,11 +3996,11 @@ ClassCodexSource["wowhead"] = {
               { itemId = 268231, slot = "Shoulders", source = "Catalyst &ndash; The Coiled Altar" },
               { itemId = 271876, slot = "Chest", source = "Catalyst &ndash; Ula'tek" },
               { itemId = 244584, slot = "Wrist", source = "Leatherworking" },
-              { itemId = 268254, slot = "Belt", source = "Vashnik the Malignant" },
+              { itemId = 268254, slot = "Belt", source = "Vashnik" },
               { itemId = 268237, slot = "Legs", source = "Catalyst &ndash; The Coiled Altar" },
-              { itemId = 268233, slot = "Boots", source = "Sszorak" },
-              { itemId = 268249, slot = "Ring 1", source = "Vashnik the Malignant" },
-              { itemId = 252258, slot = "Ring 2", source = "Voidscar Arena" },
+              { itemId = 268258, slot = "Boots", source = "The Lost Explorers" },
+              { itemId = 273792, slot = "Ring 1", source = "Altar of Fangs" },
+              { itemId = 268252, slot = "Ring 2", source = "Sszorak" },
             },
           },
         },
@@ -4011,18 +4012,18 @@ ClassCodexSource["wowhead"] = {
               { itemId = 270164, tier = "S", source = "Mor'zahi", contexts = { "raid" } },
               { itemId = 273796, tier = "A", source = "Rav'i", contexts = { "mplus" } },
               { itemId = 270165, tier = "A", source = "Breath of Ula'tek", contexts = { "raid" } },
-              { itemId = 250215, tier = "A", source = "Zaen Bladesorrow", contexts = { "mplus" } },
+              { itemId = 250225, tier = "A", source = "Taz'Rah", contexts = { "mplus" } },
               { itemId = 250228, tier = "A", source = "Xathuux the Annihilator", contexts = { "mplus" } },
+              { itemId = 250215, tier = "B", source = "Zaen Bladesorrow", contexts = { "mplus" } },
               { itemId = 250214, tier = "B", source = "Lightwarden Ruia", contexts = { "mplus" } },
-              { itemId = 250259, tier = "B", source = "Ziekket", contexts = { "mplus" } },
               { itemId = 159617, tier = "B", source = "The Golden Serpent", contexts = { "mplus" } },
-              { itemId = 250225, tier = "B", source = "Taz'Rah", contexts = { "mplus" } },
               { itemId = 248583, tier = "B", source = "Delves", contexts = { "delves" } },
               { itemId = 251792, tier = "B", source = "Delves", contexts = { "delves" } },
-              { itemId = 270166, tier = "C", source = "Shrouded Venom", contexts = { "raid" } },
+              { itemId = 270166, tier = "B", source = "Shrouded Venom", contexts = { "raid" } },
+              { itemId = 270168, tier = "C", source = "Ula'tek", contexts = { "raid" } },
               { itemId = 265657, tier = "C", source = "Delves", contexts = { "delves" } },
               { itemId = 274493, tier = "C", source = "Delves", contexts = { "delves" } },
-              { itemId = 270168, tier = "C", source = "Ula'tek", contexts = { "raid" } },
+              { itemId = 250259, tier = "C", source = "Ziekket", contexts = { "mplus" } },
               { itemId = 158374, tier = "C", source = "Galvazzt", contexts = { "mplus" } },
               { itemId = 273797, tier = "C", source = "Zul'jan", contexts = { "mplus" } },
               { itemId = 251785, tier = "D", source = "Delves / Mythic+", contexts = { "delves" } },
@@ -4043,6 +4044,9 @@ ClassCodexSource["wowhead"] = {
             raid = {
               { export = "CcQAAAAAAAAAAAAAAAAAAAAAAMzMzgZmZmZmhZmZAAAAAAAAA2AsZGDLkFYGGawCAzyMmZGLLzAzMbsMzMzwwYGAgZYMzYmJwMDGMGA", label = "Single Target", recommended = "Best" },
             },
+            cleave = {
+              { export = "CcQAAAAAAAAAAAAAAAAAAAAAAMzMzgZmZmZmhZmZAAAAAAAAA2AsZGDbkFYGGawCAzyMmZGLLzAzMbsMzMzwwYGAgZYMzYmJwMDGMGA", label = "Raid Cleave", recommended = "Best" },
+            },
             mplus = {
               { export = "CcQAAAAAAAAAAAAAAAAAAAAAAMzMzgZmZmZmhZmZAAAAAAAAA2AsZGDbkFYGGawCAzyMmxYZxYjZmtxyMzMzgFmBAYGGzMMTgZGMYMA", label = "Mythic+/AoE", recommended = "Best" },
             },
@@ -4053,6 +4057,9 @@ ClassCodexSource["wowhead"] = {
           totemic = {
             raid = {
               { export = "CcQAAAAAAAAAAAAAAAAAAAAAAMzMzMzMzMzMzMzMzYGAAAAAAAAAsAbwMW0YbAMTwGAzyMmZGLLzAzMbsMzMzwwYGAADwYmJmZAgxA", label = "Single Target" },
+            },
+            cleave = {
+              { export = "CcQAAAAAAAAAAAAAAAAAAAAAAMzMzMzMzMzMzMzMzYGAAAAAAAAAsAbwMW0YbAMTwGAzyMmZGLLzAzMbsMzMzwwYGAAgxYmJmZAgxA", label = "Single Target" },
             },
             mplus = {
               { export = "CcQAAAAAAAAAAAAAAAAAAAAAAMzMzMjZmZmZmZmZGzAAAAAAAAAgFYDmxiGbDgZC2AYWmxMGLLGbMzsNWm5BmZGsMmBAAYMmRMzAMYMA", label = "Mythic+/AoE" },
@@ -4082,8 +4089,8 @@ ClassCodexSource["wowhead"] = {
         enchants = {
           all = {
             all = {
-              ["Main Hand"] = { { itemId = 244031 } },
-              ["Off Hand"] = { { itemId = 243973 } },
+              ["Main Hand"] = { { itemId = 273072 } },
+              ["Off Hand"] = { { itemId = 273072 } },
               Helm = { { itemId = 244007 } },
               Shoulders = { { itemId = 243991 } },
               Bracers = { { itemId = 275707 } },
@@ -4098,8 +4105,8 @@ ClassCodexSource["wowhead"] = {
         consumables = {
           all = {
             all = {
-              flask = { 241324 },
-              potions = { 241288 },
+              flask = { 241322 },
+              potions = { 271887 },
               healthPotion = { 271884 },
               augmentRune = { 259085 },
               food = { 255845, 242275 },
@@ -4239,7 +4246,7 @@ ClassCodexSource["wowhead"] = {
           all = {
             all = {
               { itemId = 271092, slot = "Weapon", source = "Ula'tek" },
-              { itemId = 245769, slot = "Offhand", source = "Crafting" },
+              { itemId = 273779, slot = "Offhand", source = "The Writhing Coil" },
               { itemId = 271874, slot = "Head", source = "Ula'tek" },
               { itemId = 268265, slot = "Neck", source = "Ula'tek" },
               { itemId = 271544, slot = "Shoulders", source = "The Lost Explorers" },
@@ -4383,7 +4390,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 268252, slot = "Ring", source = "Sszorak" },
               { itemId = 158366, slot = "Ring", source = "Galvazzt" },
               { itemId = 270164, slot = "Trinket", source = "The Lost Explorers" },
-              { itemId = 250215, slot = "Trinket", source = "Zaen Bladesorrow" },
+              { itemId = 273796, slot = "Trinket", source = "Rav'i" },
             },
           },
         },
@@ -4391,13 +4398,13 @@ ClassCodexSource["wowhead"] = {
           all = {
             all = {
               { itemId = 270164, tier = "S", source = "The Lost Explorers", contexts = { "raid" } },
-              { itemId = 250215, tier = "S", source = "Zaen Bladesorrow", contexts = { "mplus" } },
-              { itemId = 270167, tier = "S", source = "Nymrissa Wavecaller", contexts = { "raid" } },
-              { itemId = 273796, tier = "A", source = "Rav'i", contexts = { "mplus" } },
+              { itemId = 273796, tier = "S", source = "Rav'i", contexts = { "mplus" } },
+              { itemId = 270167, tier = "A", source = "Nymrissa Wavecaller", contexts = { "raid" } },
+              { itemId = 250215, tier = "A", source = "Zaen Bladesorrow", contexts = { "mplus" } },
               { itemId = 250214, tier = "A", source = "Lightwarden Ruia", contexts = { "mplus" } },
               { itemId = 270170, tier = "A", source = "Vexhul", contexts = { "raid" } },
               { itemId = 250259, tier = "A", source = "Ziekket", contexts = { "mplus" } },
-              { itemId = 273649, tier = "A", source = "King Dazar", contexts = { "mplus" } },
+              { itemId = 273649, tier = "B", source = "King Dazar", contexts = { "mplus" } },
               { itemId = 250224, tier = "B", source = "Charonus", contexts = { "mplus" } },
               { itemId = 270169, tier = "B", source = "Hex Lord Malacrass", contexts = { "raid" } },
               { itemId = 193757, tier = "B", source = "Melidrussa Chillworn", contexts = { "mplus" } },
@@ -4660,12 +4667,12 @@ ClassCodexSource["wowhead"] = {
               { itemId = 270175, tier = "S", source = "Ula'tek", contexts = { "raid" } },
               { itemId = 270164, tier = "S", source = "Mor'zahi", contexts = { "mplus" } },
               { itemId = 273796, tier = "A", source = "Rav'i", contexts = { "raid" } },
-              { itemId = 250229, tier = "A", source = "Nalorakk", contexts = { "raid" } },
+              { itemId = 250259, tier = "A", source = "Ziekket", contexts = { "mplus" } },
+              { itemId = 250228, tier = "A", source = "Xathuux the Annihilator", contexts = { "raid" } },
               { itemId = 270165, tier = "A", source = "Breath of Ula'tek", contexts = { "raid" } },
-              { itemId = 250238, tier = "A", source = "Ikuzz the Light Hunter", contexts = { "mplus" } },
-              { itemId = 250259, tier = "B", source = "Ziekket", contexts = { "mplus" } },
+              { itemId = 250238, tier = "B", source = "Ikuzz the Light Hunter", contexts = { "mplus" } },
+              { itemId = 250229, tier = "B", source = "Nalorakk", contexts = { "raid" } },
               { itemId = 193757, tier = "B", source = "Melidrussa Chillworn", contexts = { "mplus" } },
-              { itemId = 250228, tier = "B", source = "Xathuux the Annihilator", contexts = { "raid" } },
               { itemId = 193762, tier = "B", source = "Kokia Blazehoof", contexts = { "mplus" } },
               { itemId = 270168, tier = "C", source = "Ula'tek", contexts = { "mplus" } },
               { itemId = 273797, tier = "C", source = "Zul'jan", contexts = { "mplus" } },
@@ -4957,10 +4964,10 @@ ClassCodexSource["wowhead"] = {
               { export = "CkEAAAAAAAAAAAAAAAAAAAAAA0yAAAzMzYmZGzY2MzsMjxYmGmZYZMzMDzYmBAAAAbDAzYAGYD2WMaMDgZLmZDmxMDmNAYmBAgBMG", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "CkEAAAAAAAAAAAAAAAAAAAAAA0yAAAjZGzMzYGzmZmlZMGjGzYGLzMzMDzYmBAAAALDAzYAGYD2WMaMDgZJmZDmZMDmFAYmBAgBMG", label = "Mythic+", recommended = "Best" },
+              { export = "CkEAAAAAAAAAAAAAAAAAAAAAAkBAAGzYmZmZmxsZmZZGjxImxwyMzMzYGmZAAAAwyMDwMGgB2glFjGzAYWiZ2AmZGGbAwMDAAzAjB", label = "Mythic+", recommended = "Best" },
             },
             delves = {
-              { export = "CkEAAAAAAAAAAAAAAAAAAAAAA0yAAAjZGzMzYGzmZmlZMGjGzYGLzMzMDzYmBAAAALDAzYAGYD2WMaMDgZJmZDmZMDmFAYmBAgBMG", label = "Delves" },
+              { export = "CkEAAAAAAAAAAAAAAAAAAAAAAkBAAGzYmZmZmxsZmZZGjxImxwyMzMzYGmZAAAAwyMDwMGgB2glFjGzAYWiZ2AmZGGbAwMDAAzAjB", label = "Delves" },
             },
           },
         },
@@ -5019,5 +5026,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-08-21", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-08-25", schemaVersion = 1, source = "wowhead" },
 }

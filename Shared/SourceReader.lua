@@ -64,6 +64,12 @@ end
 -- The feed can repeat a step verbatim under differently-worded sub-headings
 -- that map to one context (e.g. "AoE Opener" / "Multi-Target Opener"); a
 -- priority list never carries the same exact step twice meaningfully.
+--
+-- Openers are the exception: they are sequences, so the same cast legitimately
+-- comes back a few steps later (Subtlety's "Shadowstrike … Vanish …
+-- Shadowstrike"). The data engine already collapses an opener listed twice
+-- under equivalent headings, so a second pass here could only delete real
+-- steps — skip it for every opener context.
 local function dedupeSteps(steps)
     local seen, out = {}, {}
     for _, s in ipairs(steps) do
@@ -73,6 +79,10 @@ local function dedupeSteps(steps)
         end
     end
     return out
+end
+
+local function isOpenerContext(playstyle)
+    return type(playstyle) == "string" and playstyle:find("opener", 1, true) ~= nil
 end
 
 local function buildClassCodexData(iv)
@@ -115,7 +125,7 @@ local function buildClassCodexData(iv)
                             heroTalent = heroDisplay,
                             context = rotationContextLabel(playstyle),
                             key = playstyle,
-                            steps = dedupeSteps(r.steps),
+                            steps = isOpenerContext(playstyle) and r.steps or dedupeSteps(r.steps),
                         }
                     end
                 end
@@ -344,9 +354,12 @@ local function uggTalentBuilds(class, spec)
                 topDps = b.topDps,
                 zoneKind = zoneKind,
                 difficulty = difficulty,
+                raidGroup = (zoneKind == "raid" and ns.GetUggRaidGroupKind and ns.GetUggRaidGroupKind(ctx)) or nil,
                 encounterLabel = (not isOverview) and label or nil,
                 contextId = contextId,
                 provider = "u.gg",
+                isOverview = isOverview or nil,
+                separatorBefore = entry.separatorBefore or nil,
             }
         end
     end

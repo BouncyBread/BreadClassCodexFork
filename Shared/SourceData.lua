@@ -213,9 +213,15 @@ function ns.ResolveCategory(category, hero, context)
     return nil
 end
 
+--- ResolveCategory's full triple (payload, hero, context) — or nil. The hit
+--- context tells callers whether a genuine entry resolved or a wildcard
+--- fallback did (the stat priority variants depend on it), so this must tail-
+--- call rather than embed ResolveCategory in an expression, which would
+--- truncate it to a single value.
 function ns.SourceValue(source, class, spec, category, hero, context)
     local sd = ns.SourceSpec(source, class, spec)
-    return sd and ns.ResolveCategory(sd[category], hero or WILDCARD, context or WILDCARD) or nil
+    if not sd then return nil end
+    return ns.ResolveCategory(sd[category], hero or WILDCARD, context or WILDCARD)
 end
 
 function ns.ActiveSource()

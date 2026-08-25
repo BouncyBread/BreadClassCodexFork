@@ -279,12 +279,14 @@ local function render(inst, args)
             local stepText = step
             local note = nil
             local heroOk = true
+            local heroTagged = false
             if type(step) == "table" then
                 stepText = step.text
                 note = step.note
                 if step.heroRequired and #step.heroRequired > 0 then
                     -- Hero-specific step: shown only for a matching hero
                     -- selection (none selected = shared skeleton only).
+                    heroTagged = true
                     heroOk = false
                     for _, allowed in ipairs(step.heroRequired) do
                         if hero and allowed == hero then
@@ -302,7 +304,7 @@ local function render(inst, args)
                     end
                 end
             end
-            if heroOk and h.shouldShow(stepText, hero) then
+            if heroOk and h.shouldShow(stepText, hero, heroTagged) then
                 visibleStep = visibleStep + 1
                 if visibleStep > MAX_STEPS then break end
                 local row = inst.rows[visibleStep]

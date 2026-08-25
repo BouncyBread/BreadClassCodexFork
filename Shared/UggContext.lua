@@ -108,6 +108,34 @@ function ns.FindUggBuildByExportString(class, spec, exportString)
     return nil
 end
 
+-- Current-season display order for u.gg encounters, keyed by the numeric u.gg
+-- encounter id (context keys look like "raid:mythic:ugg-3470"). Encounters not
+-- listed sort after the listed ones, alphabetically by label. RAID_BREAK ids
+-- start a new section: consumers draw a separator in front of them (e.g.
+-- Nymrissa belongs to a different raid than the season's main one).
+local SEASON_DUNGEON_ORDER = {
+    12923, -- Voidscar Arena
+    12859, -- The Blinding Vale
+    61877, -- Temple of Sethraliss
+    112521, -- Ruby Life Pools
+    12813, -- Murder Row
+    61762, -- King's Rest
+    12825, -- Den of Nalorakk
+    12993, -- Altar of Fangs
+}
+local SEASON_RAID_ORDER = {
+    3470, -- Nek'zali the Soulcoiler
+    3445, -- Entombed Sentinels
+    3497, -- The Lost Explorers
+    3455, -- Vashnik the Malignant
+    3420, -- Sszorak
+    3421, -- The Twin Fangs
+    3429, -- The Coiled Altar
+    3492, -- Ula'tek
+    3379, -- Nymrissa Wavecaller
+}
+local SEASON_RAID_BREAK = { [3379] = true }
+
 function ns.GroupUggContexts(specData)
     local out = {
         mplusDungeons = {},
@@ -158,16 +186,51 @@ function ns.GroupUggContexts(specData)
         process(ctxKey)
     end
 
-    if type(order) ~= "table" then
-        local function byLabel(a, b)
-            return ns.GetUggEncounterLabel(a.ctx) < ns.GetUggEncounterLabel(b.ctx)
+    -- Sort each encounter bucket by the explicit season order above. The
+    -- contextOrder emitted by SourceReader reflects pairs() discovery order —
+    -- Lua hash order, which shuffles between sessions.
+    local dungeonRank, raidRank = {}, {}
+    for i, id in ipairs(SEASON_DUNGEON_ORDER) do
+        dungeonRank[id] = i
+    end
+    for i, id in ipairs(SEASON_RAID_ORDER) do
+        raidRank[id] = i
+    end
+    local function encounterId(ctx)
+        local e = ctx and ctx.encounter
+        if type(e) ~= "string" then return nil end
+        return tonumber(e:match("ugg%-(%d+)$"))
+    end
+    local function sortBySeason(list, rank, isRaid)
+        for _, e in ipairs(list) do
+            local id = encounterId(e.ctx)
+            e.rank = (id and rank[id]) or math.huge
+            e.separatorBefore = (isRaid and id and SEASON_RAID_BREAK[id]) or false
         end
-        table.sort(out.mplusDungeons, byLabel)
-        table.sort(out.raidHeroicBosses, byLabel)
-        table.sort(out.raidMythicBosses, byLabel)
+        table.sort(list, function(a, b)
+            if a.rank ~= b.rank then return a.rank < b.rank end
+            return (ns.GetUggEncounterLabel(a.ctx) or "") < (ns.GetUggEncounterLabel(b.ctx) or "")
+        end)
+    end
+    sortBySeason(out.mplusDungeons, dungeonRank, false)
+    sortBySeason(out.raidHeroicBosses, raidRank, true)
+    sortBySeason(out.raidMythicBosses, raidRank, true)
+
+    for _, k in ipairs({ "mplusOverview", "raidOverviewHeroic", "raidOverviewMythic" }) do
+        if out[k] then out[k].isOverview = true end
     end
 
     return out
+end
+
+function ns.GetUggRaidGroupKind(ctx)
+    if not ctx then return nil end
+    if ctx.encounter == "all-bosses" then return "overview" end
+    if type(ctx.encounter) == "string" then
+        local id = tonumber(ctx.encounter:match("ugg%-(%d+)$"))
+        if id and SEASON_RAID_BREAK[id] then return "other" end
+    end
+    return "main"
 end
 
 local activeContextKey

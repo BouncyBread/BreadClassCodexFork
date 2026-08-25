@@ -19,9 +19,8 @@ ClassCodexSource["icyveins"] = {
               crafts={
                 {bonusIDs={13751,9627,13768,8960},itemId=240949},
                 {bonusIDs={12214,13836,13751,9627,13750,8960,13764,8792},itemId=237834},
-                275707,
               },
-              embellishments={273060},
+              embellishments={273060,245876},
             },
           },
         },
@@ -209,10 +208,6 @@ ClassCodexSource["icyveins"] = {
                 "Pre-place {43265} where you expect to be fighting. Do not target an enemy when doing this (if {1264351} procs, it will automatically spawn and aggro your current target)",
                 "Just before pull, cast {195292} at your target. This grants you two {195181} charges and immediately applies {55078}.",
                 {heroRequired={"Deathbringer"},text="Cast {439843} and {46585}. As Deathbringer, you can macro these together."},
-                {
-                  heroRequired={"Deathbringer"},
-                  text="Cast {195182} to consume the {441378} charge {1265855} gave you. This is a bug and may be fixed at any moment.",
-                },
                 {heroRequired={"Deathbringer"},text="Cast {49028}."},
                 {heroRequired={"San'layn"},text="Cast {49028} and {46585}."},
                 {heroRequired={"Deathbringer"},text="Cast {50842} to pandemic {55078} and apply the two copies from your Rune Weapons."},
@@ -230,7 +225,11 @@ ClassCodexSource["icyveins"] = {
             },
           },
         },
-        statPriority={all={all={secondary={{"haste"},{"crit"},{"mastery"},{"versatility"}}}}},
+        statPriority={
+          all={all={secondary={{"haste"},{"crit"},{"mastery"},{"versatility"}}}},
+          deathbringer={all={secondary={{"crit"},{"mastery","versatility"},{"haste"}}}},
+          sanlayn={all={secondary={{"haste"},{"crit"},{"mastery"},{"versatility"}}}},
+        },
         talents={
           deathbringer={
             delve={
@@ -311,12 +310,7 @@ ClassCodexSource["icyveins"] = {
         crafting={
           all={
             all={
-              crafts={
-                251513,
-                {bonusIDs={13751,12497,13836,12384,8791},itemId=237834},
-                {bonusIDs={13751,12497,13836,12384,8791},itemId=237828},
-                275707,
-              },
+              crafts={251513,{bonusIDs={13751,12497,13836,12384,8791},itemId=237834},{bonusIDs={13751,12497,13836,12384,8791},itemId=237828}},
               embellishments={240167,251490,245876},
             },
             pvp={crafts={},embellishments={240167}},
@@ -457,6 +451,11 @@ ClassCodexSource["icyveins"] = {
                 "{1249658} + {51271} + Potion + Trinket + {46585}",
                 "{51271} + Potion + Trinket + {46585}",
                 "{279302}",
+                "{49020}",
+                "{207230}",
+                "{47568}",
+                "{207230}",
+                "{49020}",
               },
             },
             ["aoe-opener"]={
@@ -469,6 +468,11 @@ ClassCodexSource["icyveins"] = {
                 "{1249658} + {51271} + Potion + Trinket + {46585}",
                 "{51271} + Potion + Trinket + {46585}",
                 "{279302}",
+                "{49020}",
+                "{207230}",
+                "{47568}",
+                "{207230}",
+                "{49020}",
               },
             },
             pvp={
@@ -495,6 +499,9 @@ ClassCodexSource["icyveins"] = {
                 "{1249658} + {51271} + Potion + Trinket + {46585}",
                 "{51271} + Potion + Trinket + {46585}",
                 "{279302}",
+                "{49020}",
+                "{47568}",
+                "{49020}",
               },
             },
             ["single-target-opener"]={
@@ -506,6 +513,9 @@ ClassCodexSource["icyveins"] = {
                 "{1249658} + {51271} + Potion + Trinket + {46585}",
                 "{51271} + Potion + Trinket + {46585}",
                 "{279302}",
+                "{49020}",
+                "{47568}",
+                "{49020}",
               },
             },
           },
@@ -614,7 +624,7 @@ ClassCodexSource["icyveins"] = {
         crafting={
           all={
             all={
-              crafts={{bonusIDs={13751,12497,13836,12384,8791},itemId=237834},{bonusIDs={13751,12497,13836,12384,8791},itemId=237828},275707},
+              crafts={{bonusIDs={13751,12497,13836,12384,8791},itemId=237834},{bonusIDs={13751,12497,13836,12384,8791},itemId=237828}},
               embellishments={240167,245876},
             },
             pvp={crafts={},embellishments={240167}},
@@ -784,6 +794,7 @@ ClassCodexSource["icyveins"] = {
                 "Use 2x {85948}.",
                 "Use {42650} + {63560} + Trinket + Racial + Potion",
                 "Use {1247378}.",
+                "Use {1247378}.",
                 "Use {47541}.",
                 "Use {343294}.",
                 "Use {343294} 6 seconds after pressing {63560}.",
@@ -795,6 +806,7 @@ ClassCodexSource["icyveins"] = {
                 "Use {77575}.",
                 "Use 2x {85948}.",
                 "Use {42650} + {63560} + Trinket + Racial + Potion",
+                "Use {1247378}.",
                 "Use {1247378}.",
                 "Use {47541}.",
                 "Use {343294}.",
@@ -816,6 +828,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CwPAAAAAAAAAAAAAAAAAAAAAAAYmhZMzMDz2MzMTzmZGjZAAAAAAAAgZGzYAwyMmZ2MzYMDYzsZYgBmNGasgBMDAjZmxMAzMzYMA",
                 label="Delves",
+                recommended=true,
               },
             },
             leveling={
@@ -1097,8 +1110,12 @@ ClassCodexSource["icyveins"] = {
                 "Cast {473662} twice",
                 {heroRequired={"Annihilator"},text="Cast {1241937}"},
                 {heroRequired={"Annihilator"},text="Cast {473662}"},
+                {heroRequired={"Void-Scarred"},text="Cast {1241937}"},
                 "Cast {473728}",
                 {heroRequired={"Annihilator"},text="Cast {473662} twice then {1226033}"},
+                {heroRequired={"Annihilator"},text="Cast {473662} twice"},
+                {heroRequired={"Annihilator"},text="Cast {473728}"},
+                {heroRequired={"Annihilator"},text="Cast {473662}"},
                 {heroRequired={"Void-Scarred"},text="Cast {1245412}"},
                 {
                   heroRequired={"Annihilator"},
@@ -1108,14 +1125,23 @@ ClassCodexSource["icyveins"] = {
                   heroRequired={"Void-Scarred"},
                   text="Cast {471306} and immediately {1226033} Use your {item:241288|Potion of Recklessness} Use on-use trinkets such as {item:250215|Freightrunner's Flask}",
                 },
+                {
+                  heroRequired={"Void-Scarred"},
+                  text="Cast {471306} Use your {item:241288|Potion of Recklessness} Use on-use trinkets such as {item:250215|Freightrunner's Flask}",
+                },
                 {heroRequired={"Annihilator"},text="Cast {1221167}"},
                 {heroRequired={"Annihilator"},text="Cast {1221167} into {1226033}"},
                 {heroRequired={"Annihilator"},text="Cast {473728} into {1226033}"},
+                {heroRequired={"Annihilator"},text="Cast {1221167}"},
+                {heroRequired={"Annihilator"},text="Cast {473728}"},
+                {heroRequired={"Void-Scarred"},text="Cast {473728}"},
+                {heroRequired={"Void-Scarred"},text="Cast {473728}"},
                 {heroRequired={"Void-Scarred"},text="Cast {1245470} into {198793}"},
                 {heroRequired={"Void-Scarred"},text="Cast {1245483} followed by {1245470} into {198793}"},
                 {heroRequired={"Void-Scarred"},text="Cast {1259431} followed by {1245470} into {198793}"},
                 {heroRequired={"Void-Scarred"},text="Cast {1226033}"},
                 {heroRequired={"Void-Scarred"},text="Cast {1217610} three times"},
+                {heroRequired={"Void-Scarred"},text="Cast {473728}"},
                 {
                   heroRequired={"Void-Scarred"},
                   text="Stop Casting Soul / Fury generators until you leave {471306} You want to avoid picking up Souls to get out of the window as fast as possible. Cast {185123} if exiting will take longer than one GCD. Cast {1241937} at 20 or less Fury as it's expiring.",
@@ -1156,19 +1182,25 @@ ClassCodexSource["icyveins"] = {
                 "Cast {473662} twice then {1226019}",
                 {heroRequired={"Void-Scarred"},text="Cast {1241937} then {1226019}"},
                 {heroRequired={"Annihilator"},text="Cast {1241937}"},
+                {heroRequired={"Annihilator"},text="Cast {473662} twice then {1226019}"},
                 "Cast {473728}",
+                "Cast {473662} twice then {1226019}",
                 "Cast {473662} twice then {1226033}",
+                "Cast {473728}",
                 "Cast {473662}",
                 {heroRequired={"Void-Scarred"},text="Cast {1245412}"},
                 {heroRequired={"Void-Scarred"},text="Cast {1245412} followed by {198793}"},
                 {heroRequired={"Void-Scarred"},text="Cast {1246167}"},
                 "Cast {471306} Use your {item:241288|Potion of Recklessness} Use on-use trinkets such as {item:250215|Freightrunner's Flask}",
+                {heroRequired={"Annihilator"},text="Cast {473728}"},
                 {heroRequired={"Annihilator"},text="Cast {1221167} into {1226033}"},
                 {heroRequired={"Annihilator"},text="Cast {1221167}"},
                 {heroRequired={"Void-Scarred"},text="Cast {1245453}"},
                 {heroRequired={"Void-Scarred"},text="Cast {1245470} into {198793}"},
                 {heroRequired={"Void-Scarred"},text="Cast {1245483} into {1245470} then {198793}"},
                 {heroRequired={"Void-Scarred"},text="Cast {1259431} into {1245470} then {198793}"},
+                {heroRequired={"Void-Scarred"},text="Cast {1245453}"},
+                {heroRequired={"Void-Scarred"},text="Cast {473728}"},
                 "Continue with normal ability priority.",
               },
             },
@@ -1179,6 +1211,8 @@ ClassCodexSource["icyveins"] = {
             all={secondary={{"haste"},{"mastery"},{"crit"},{"versatility"}}},
             pvp={secondary={{"versatility"},{"mastery"},{"haste"},{"crit"}}},
           },
+          annihilator={all={secondary={{"haste"},{"mastery"},{"crit"},{"versatility"}}}},
+          ["void-scarred"]={all={secondary={{{note="to 18%",stat="haste"}},{"crit"},{"mastery"},{"versatility"},{"haste"}}}},
         },
         talents={
           annihilator={
@@ -1334,11 +1368,7 @@ ClassCodexSource["icyveins"] = {
         crafting={
           all={
             all={
-              crafts={
-                {bonusIDs={13751,12497,13836,13771,8791},itemId=237840},
-                {bonusIDs={13751,12497,13836,12384,8791},itemId=244576},
-                {bonusIDs={13848},itemId=268209},
-              },
+              crafts={{bonusIDs={13751,12497,13836,13771,8791},itemId=237840},{bonusIDs={13751,12497,13836,12384,8791},itemId=244576}},
               embellishments={273060,240167,245876,273069,273066,270899},
             },
             pvp={crafts={},embellishments={240167}},
@@ -1528,11 +1558,16 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Fel-Scarred"},text="Cast {370965}"},
                 {heroRequired={"Fel-Scarred"},text="Cast {232893} to trigger {427640}"},
                 {heroRequired={"Aldrachi Reaver"},text="Cast {201427}"},
+                {heroRequired={"Aldrachi Reaver"},text="Cast {232893} to trigger {427640}"},
                 "Cast {258860}",
                 {heroRequired={"Aldrachi Reaver"},text="Cast {210152} twice"},
+                {heroRequired={"Fel-Scarred"},text="Cast {210152} twice"},
+                {heroRequired={"Fel-Scarred"},text="Cast {201427}"},
                 "Cast {198793} and immediately {191427}",
                 {heroRequired={"Aldrachi Reaver"},text="Cast {210152}"},
+                {heroRequired={"Fel-Scarred"},text="Cast {210152}"},
                 {heroRequired={"Fel-Scarred"},text="Cast {452487}"},
+                {heroRequired={"Fel-Scarred"},text="Cast {201427}"},
                 "Cast {344865} to trigger {427640}",
                 {heroRequired={"Aldrachi Reaver"},text="Cast {198013}"},
                 {heroRequired={"Fel-Scarred"},text="Cast {452497}"},
@@ -1622,13 +1657,20 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Fel-Scarred"},text="Cast {258920}"},
                 "Cast {198013}",
                 {heroRequired={"Fel-Scarred"},text="Cast {370965}"},
+                {heroRequired={"Fel-Scarred"},text="Cast {232893} to trigger {427640}"},
                 "Cast {258860}",
                 {heroRequired={"Aldrachi Reaver"},text="Cast {210152}"},
                 {heroRequired={"Aldrachi Reaver"},text="Cast {201427}"},
+                {heroRequired={"Aldrachi Reaver"},text="Cast {210152}"},
                 {heroRequired={"Fel-Scarred"},text="Cast {210152} twice"},
+                {heroRequired={"Fel-Scarred"},text="Cast {201427}"},
                 "Cast {198793} and immediately {191427}",
+                {heroRequired={"Aldrachi Reaver"},text="Cast {210152}"},
+                {heroRequired={"Fel-Scarred"},text="Cast {210152}"},
+                {heroRequired={"Fel-Scarred"},text="Cast {201427}"},
                 {heroRequired={"Fel-Scarred"},text="Cast {452487}"},
                 "Cast {344865} to trigger {427640}",
+                {heroRequired={"Aldrachi Reaver"},text="Cast {198013}"},
                 {heroRequired={"Fel-Scarred"},text="Cast {452497}"},
                 "Continue with normal ability priority.",
               },
@@ -1675,6 +1717,14 @@ ClassCodexSource["icyveins"] = {
               },
             },
           },
+          all={
+            pvp={
+              {
+                export="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZMjxMjZmJDzAAAAAAAmFjZbMzMzsNzMWmZMjlZGmZbmlZwwYZjJMmZMjFAAAAAAAwMDwAAAAwA",
+                label="3v3",
+              },
+            },
+          },
           ["fel-scarred"]={
             delve={
               {
@@ -1705,6 +1755,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CEkAAAAAAAAAAAAAAAAAAAAAAYmZMzMjZMzMjZmJDDAAAAAAwsYMbzMmZmtZmBzYGmZYsNwysYGDzCTjZmxM2AAAAAAAAYmBDAAAAD",
                 label="PvP",
+                recommended=true,
               },
             },
             raid={
@@ -1898,8 +1949,16 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Aldrachi Reaver"},text="Cast {228477}"},
                 {heroRequired={"Aldrachi Reaver"},text="Cast {207407}"},
                 {heroRequired={"Aldrachi Reaver"},text="Cast {247454}"},
+                {heroRequired={"Annihilator"},text="Cast {390163}"},
+                {heroRequired={"Annihilator"},text="Cast {263642}"},
+                {heroRequired={"Annihilator"},text="Cast {247454}"},
+                {heroRequired={"Annihilator"},text="Cast {390163}"},
                 {heroRequired={"Annihilator"},text="Cast {232893}"},
+                {heroRequired={"Annihilator"},text="Cast {207407}"},
                 {heroRequired={"Annihilator"},text="Cast {187827}"},
+                {heroRequired={"Annihilator"},text="Cast {263642}"},
+                {heroRequired={"Annihilator"},text="Cast {247454}"},
+                {heroRequired={"Annihilator"},text="Cast {228477}"},
                 "Continue with your rotation",
               },
             },
@@ -1948,10 +2007,15 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Aldrachi Reaver"},text="Cast {442294}"},
                 "Use {263642}",
                 {heroRequired={"Aldrachi Reaver"},text="Cast {228477}"},
+                {heroRequired={"Aldrachi Reaver","Annihilator"},text="Use {263642}"},
                 {heroRequired={"Annihilator"},text="Cast {247454}"},
                 "Cast {207407}",
                 {heroRequired={"Annihilator"},text="Cast {187827}"},
                 {heroRequired={"Annihilator"},text="Cast {263642}"},
+                {heroRequired={"Annihilator"},text="Cast {263642}"},
+                {heroRequired={"Annihilator"},text="Cast {247454}"},
+                {heroRequired={"Aldrachi Reaver"},text="Cast {247454}"},
+                {heroRequired={"Annihilator"},text="Cast {228477}"},
                 "Continue with your rotation",
               },
             },
@@ -2044,12 +2108,7 @@ ClassCodexSource["icyveins"] = {
     DRUID={
       balance={
         consumables={all={all={augmentRune={259085},flask={241322,241325},food={255846,255845,242275},potions={241288,241308,271883,5512}}}},
-        crafting={
-          all={
-            all={crafts={245769,271092,268203,245770,275707},embellishments={273060,240167}},
-            pvp={crafts={},embellishments={240167}},
-          },
-        },
+        crafting={all={all={crafts={245769,245770},embellishments={273060,240167}},pvp={crafts={},embellishments={240167}}}},
         enchants={
           all={
             all={
@@ -2267,6 +2326,8 @@ ClassCodexSource["icyveins"] = {
             all={secondary={{"mastery"},{"haste"},{"crit"},{"versatility"}}},
             pvp={secondary={{"haste"},{"versatility"},{"mastery"},{"crit"}}},
           },
+          ["elunes-chosen"]={all={secondary={{"mastery"},{"haste"},{"crit"},{"versatility"}}}},
+          ["keeper-of-the-grove"]={all={secondary={{"mastery"},{"crit"},{"haste"},{"versatility"}}}},
         },
         talents={
           ["elunes-chosen"]={
@@ -2285,7 +2346,8 @@ ClassCodexSource["icyveins"] = {
             raid={
               {
                 export="CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWoMbNjxMD8AmFzMzMLMMMmZZGGzYhlZWmZMmZDDAGbLzMYMbDgJAAAALMzMzgNjZMmBAwMDWGA",
-                label="Best",
+                label="Raid / Single-Target",
+                recommended=true,
               },
             },
           },
@@ -2294,6 +2356,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWoMbNjxMD8AmlZmZmZDgZZmtZWmxM2YZGjxMjNMAYA22GLYamZbAAAAwmZmZmBbGzYMDgZGAYA",
                 label="Delves",
+                recommended=true,
               },
             },
             leveling={
@@ -2391,7 +2454,6 @@ ClassCodexSource["icyveins"] = {
               crafts={
                 {bonusIDs={13751,12497,13836,12384,8793},itemId=244569},
                 {bonusIDs={13751,12497,13836,12384,8793},itemId=244576},
-                {bonusIDs={13848,13846},itemId=268215},
                 {bonusIDs={13751,12497,13836,13771,8793},itemId=245771},
               },
               embellishments={240167,273060,245876,273069,273066,270899},
@@ -2603,6 +2665,7 @@ ClassCodexSource["icyveins"] = {
         statPriority={
           all={
             all={secondary={{"mastery"},{"haste","crit"},{"versatility"}}},
+            aoe={secondary={{"mastery"},{"crit"},{"haste"},{"versatility"}}},
             pvp={secondary={{"mastery"},{"versatility"},{"haste"},{"crit"}}},
           },
         },
@@ -2853,7 +2916,12 @@ ClassCodexSource["icyveins"] = {
             },
           },
         },
-        statPriority={all={all={secondary={{"haste"},{"versatility"},{"mastery"},{"crit"}}}}},
+        statPriority={
+          all={
+            all={secondary={{"haste"},{"versatility"},{"mastery"},{"crit"}}},
+            damage={secondary={{"haste"},{"versatility"},{"crit","mastery"}}},
+          },
+        },
         talents={
           ["druid-of-the-claw"]={
             mplus={
@@ -2879,6 +2947,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CgGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgZmxsMPwMjZWMLGmZZZgZDmpJyMzyMzMzsMmBAAAAAgZmlZALbzMYMbDgJAAAgNMzAsYGMgNLAMzAYA",
                 label="Delves",
+                recommended=true,
               },
             },
             leveling={
@@ -2950,7 +3019,7 @@ ClassCodexSource["icyveins"] = {
         consumables={all={all={augmentRune={259085},flask={241325,241322},food={255845,242272,255846,255847},potions={241288,271883,5512}}}},
         crafting={
           all={
-            all={crafts={245769,244572,244569,275707},embellishments={240167,245876,273069}},
+            all={crafts={245769,244572,244569},embellishments={240167,245876,273069}},
             pvp={crafts={},embellishments={240167,244603}},
           },
         },
@@ -3125,6 +3194,7 @@ ClassCodexSource["icyveins"] = {
         statPriority={
           all={
             all={secondary={{"haste","mastery"},{"versatility"},{"crit"}}},
+            mplus={secondary={{"mastery","haste"},{"versatility"},{"crit"}}},
             pvp={secondary={{"mastery"},{"versatility"},{"haste"},{"crit"}}},
           },
         },
@@ -3166,6 +3236,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CkGAAAAAAAAAAAAAAAAAAAAAAMMmZZMjZmxsNzMgFzsZbGAAAAAAAAAAsNoZzw0MmZMmFzMzMLzwYAAAAAAAwAAAAAgZZmtmlZWsBz8AYGLgmBAYmBgB",
                 label="Delves",
+                recommended=true,
               },
             },
             leveling={
@@ -3194,6 +3265,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CkGAAAAAAAAAAAAAAAAAAAAAAMjxMLzMjZmxsNMYmNjNmBAAAAAAAAAAbDa2YMNzY4BMLzMzMDDzAAAAAAAAAAAAAwsNzSz2Mb2YMzMMzAjmBAYmBgB",
                 label="Raid",
+                recommended=true,
               },
             },
           },
@@ -3236,13 +3308,11 @@ ClassCodexSource["icyveins"] = {
                 {bonusIDs={12066,13622,9627,8791,13453},itemId=240949},
                 {bonusIDs={12066,13622,9627,8791,13453},itemId=240950},
                 {bonusIDs={13751,13836,12497,8791,13771},itemId=245769},
-                {bonusIDs={12854},itemId=271092},
                 {bonusIDs={13751,13836,12497,8791,13771},itemId=237838},
                 {bonusIDs={12066,13622,9627,12384,8791},itemId=244584},
                 {bonusIDs={12066,13622,9627,12384,8791},itemId=244581},
                 {bonusIDs={13836,13751,9627,13750,11137},itemId=244745},
                 {bonusIDs={13836,13751,9627,13750,11137},itemId=244773},
-                275707,
               },
               embellishments={240167,273060,245876,251487},
             },
@@ -3403,6 +3473,7 @@ ClassCodexSource["icyveins"] = {
                 "Use DPS Potion.",
                 "Use Trinkets.",
                 "Cast {409311}.",
+                "Cast {409311}.",
                 "Cast {403631}.",
                 "Cast {357210}.",
                 {heroRequired={"Chronowarden"},text="Cast {395152}"},
@@ -3410,7 +3481,13 @@ ClassCodexSource["icyveins"] = {
                 "Cast {357208}.",
                 "Cast {396286} at the lowest rank that can fit all enemies in the AoE.",
                 "Cast {404977}.",
+                {heroRequired={"Chronowarden"},text="Cast {395152}"},
                 "Cast {357208} at the highest rank possible.",
+                "Cast {409311}.",
+                "Cast {409311}.",
+                "Cast {395160}.",
+                "Cast {395160}.",
+                "Cast {396286} at the lowest rank that can fit all enemies in the AoE.",
                 "Cast {395160}.",
                 "Continue with Normal Rotation Priority.",
               },
@@ -3695,6 +3772,7 @@ ClassCodexSource["icyveins"] = {
                 "Cast {357208} at Empower level 1",
                 "Cast {359073} at Empower level 1",
                 "Cast {356995} twice",
+                "Cast {357208} at Empower level 1",
                 "Cast {356995} until out of Essence",
               },
             },
@@ -3724,6 +3802,8 @@ ClassCodexSource["icyveins"] = {
                 "Cast {357210}",
                 "Cast {359073} at Empower level 1",
                 "Cast {356995} once",
+                "Cast {357208} at Empower level 1",
+                "Cast {356995} until you run out of Essence",
                 "Cast {361469} as your filler to generate {369297}",
                 "Follow the rotation outlined below.",
               },
@@ -3739,6 +3819,8 @@ ClassCodexSource["icyveins"] = {
                 "Cast {357210}",
                 "Cast {359073} at Empower level 1",
                 "Cast {356995} once",
+                "Cast {357208} at Empower level 1",
+                "Cast {356995} until you run out of Essence",
                 "Cast {361469} as your filler to generate {369297}",
                 "Follow the rotation outlined below.",
               },
@@ -3849,9 +3931,7 @@ ClassCodexSource["icyveins"] = {
       },
       preservation={
         consumables={all={all={augmentRune={259085},flask={241322,241325},food={242747},potions={241288,241301,271883}}}},
-        crafting={
-          all={all={crafts={244584,244577,245769,275707},embellishments={240167,245876}},pvp={crafts={},embellishments={244603}}},
-        },
+        crafting={all={all={crafts={244584,244577,245769},embellishments={240167,245876}},pvp={crafts={},embellishments={244603}}}},
         enchants={
           all={
             all={
@@ -4047,10 +4127,11 @@ ClassCodexSource["icyveins"] = {
           flameshaper={
             delve={
               {
-                export="CwbBAAAAAAAAAAAAAAAAAAAAAAAAAAAmZmZ2WGzYYmxsZGw2wAAAzYGzMjhZiZmBAAAMzMTGzMjxMzAAjZgFwCYGmAbM2MMAmZGD",
+                export="CwbBAAAAAAAAAAAAAAAAAAAAAAAAAAAmZmZ2WmZGDjxsZGw2wAAAzYGzMjhZiZmBAAAMzMTGzMjxMzAAjZgFwCYGmAbM2MMAmZGD",
                 label="Mythic+ / Delve",
-                labels={"Dungeon"},
+                labels={"Default Mythic+"},
                 recommended=true,
+                tags={"Weekly Key","High Key"},
               },
             },
             leveling={
@@ -4061,16 +4142,15 @@ ClassCodexSource["icyveins"] = {
             },
             mplus={
               {
-                export="CwbBAAAAAAAAAAAAAAAAAAAAAAAAAAAmZmZ2WGzYYmxsZGw2wAAAzYGzMjhZiZmBAAAMzMTGzMjxMzAAjZgFwCYGmAbM2MMAmZGD",
-                label="Mythic+ / Delve",
-                labels={"Dungeon"},
-                recommended=true,
-              },
-              {
                 export="CwbBAAAAAAAAAAAAAAAAAAAAAAAAAAAmZmZ2WmZGDjxsZGw2wAAAzYGzMjhZiZmBAAAMzMTGzMjxMzAAjZgFwCYGmAbM2MMAmZGD",
-                label="Default Mythic+",
+                label="Mythic+ / Delve",
+                labels={"Default Mythic+"},
                 recommended=true,
                 tags={"Weekly Key","High Key"},
+              },
+              {
+                export="CwbBAAAAAAAAAAAAAAAAAAAAAAAAAAAmZmZ2WGzYYmxsZGw2wAAAzYGzMjhZiZmBAAAMzMTGzMjxMzAAjZgFwCYGmAbM2MMAmZGD",
+                label="Dungeon",
               },
             },
             raid={
@@ -4114,7 +4194,7 @@ ClassCodexSource["icyveins"] = {
     HUNTER={
       ["beast-mastery"]={
         consumables={all={all={augmentRune={259085},flask={241322},food={255846,255845,242747},potions={241288,241308,271883}}}},
-        crafting={all={all={crafts={265337,268207,244581,244584,275707,258556},embellishments={273060,240167}}}},
+        crafting={all={all={crafts={265337,244581,244584,244582},embellishments={273060,240167}}}},
         enchants={
           all={
             all={
@@ -4273,8 +4353,17 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Dark Ranger"},text="{1264359}"},
                 {heroRequired={"Dark Ranger"},text="{34026}"},
                 {heroRequired={"Dark Ranger"},text="{217200}"},
+                {heroRequired={"Dark Ranger"},text="{34026}"},
+                {heroRequired={"Dark Ranger"},text="{466930}"},
+                {heroRequired={"Dark Ranger"},text="{34026}"},
                 {heroRequired={"Dark Ranger"},text="Continue with the priority list as described below."},
+                {heroRequired={"Pack Leader"},text="{217200}"},
+                {heroRequired={"Pack Leader"},text="Use your Potion, on-use Trinket, Racials, etc."},
+                {heroRequired={"Pack Leader"},text="{1264359}"},
                 {heroRequired={"Pack Leader"},text="{19574}"},
+                {heroRequired={"Pack Leader"},text="{217200}"},
+                {heroRequired={"Pack Leader"},text="{34026}"},
+                {heroRequired={"Pack Leader"},text="Continue with the priority list as described below."},
               },
             },
             pvp={steps={"Use {199483} (if talented)"}},
@@ -4314,11 +4403,21 @@ ClassCodexSource["icyveins"] = {
               steps={
                 {heroRequired={"Dark Ranger"},text="{217200}"},
                 {heroRequired={"Dark Ranger"},text="Use your Potion, on-use Trinket, Racials, etc."},
+                {heroRequired={"Dark Ranger"},text="{217200}"},
                 {heroRequired={"Dark Ranger"},text="{19574}"},
                 {heroRequired={"Dark Ranger"},text="{34026}"},
                 {heroRequired={"Dark Ranger"},text="{466930}"},
+                {heroRequired={"Dark Ranger"},text="{34026}"},
                 {heroRequired={"Dark Ranger"},text="Continue with the priority list as described below."},
+                {heroRequired={"Pack Leader"},text="{217200}"},
+                {heroRequired={"Pack Leader"},text="Use your Potion, on-use Trinket, Racials, etc."},
+                {heroRequired={"Pack Leader"},text="{217200}"},
+                {heroRequired={"Pack Leader"},text="{19574}"},
+                {heroRequired={"Pack Leader"},text="{34026}"},
                 {heroRequired={"Pack Leader"},text="{193455}"},
+                {heroRequired={"Pack Leader"},text="{217200}"},
+                {heroRequired={"Pack Leader"},text="{34026}"},
+                {heroRequired={"Pack Leader"},text="Continue with the priority list as described below."},
               },
             },
           },
@@ -4326,6 +4425,7 @@ ClassCodexSource["icyveins"] = {
         statPriority={
           all={
             all={secondary={{"mastery"},{"haste"},{"crit"},{"versatility"}}},
+            mplus={secondary={{"mastery"},{"crit"},{"versatility"},{"haste"}}},
             pvp={secondary={{{note="to 24%",stat="versatility"}},{"mastery"},{"haste"},{"crit"}}},
           },
         },
@@ -4372,6 +4472,11 @@ ClassCodexSource["icyveins"] = {
             },
             mplus={
               {
+                export="C0PAAAAAAAAAAAAAAAAAAAAAAAMmxwCsAzwQDbAAYGmZmlZGzMzMjZGMzYmhZGzYmFzMjZMDGTzAAAAAAAAgxMzAMzGsBzCYbAYA",
+                label="Raid AoE / Cleave",
+                recommended=true,
+              },
+              {
                 export="C0PAAAAAAAAAAAAAAAAAAAAAAAMmxwCsAzwQDbAAYGzMzsYGzMzMjZGMzYmhZGzMzYbmZMjZYZMNDAAAAAAAA8AjxAmZDAzCYbAYA",
                 label="Mythic+",
                 labels={"AoE"},
@@ -4395,6 +4500,11 @@ ClassCodexSource["icyveins"] = {
               {
                 export="C0PAAAAAAAAAAAAAAAAAAAAAAAMmxwCsAzwQDbAAYGGzsMzwMmZYYmxYmxMzYGzsYmZMjZwYaGAAAAwMAAAMmZGgZ2gNYWAbDAD",
                 label="Single-Target",
+                recommended=true,
+              },
+              {
+                export="C0PAAAAAAAAAAAAAAAAAAAAAAAMmxwCsAzwQDbAAYGmZmlZGzMzMjZGMzYmhZGzYmFzMjZMDGTzAAAAAAAAgxMzAMzGsBzCYbAYA",
+                label="Raid AoE / Cleave",
                 recommended=true,
               },
               {
@@ -4431,7 +4541,7 @@ ClassCodexSource["icyveins"] = {
       },
       marksmanship={
         consumables={all={all={augmentRune={259085},flask={241326},food={255846,255845,242747},potions={241288,241308,271883}}}},
-        crafting={all={all={crafts={265337,268207,244581,244584,275707,258556},embellishments={273060,240167}}}},
+        crafting={all={all={crafts={265337,244581,244584,244582},embellishments={273060,240167}}}},
         enchants={
           all={
             all={
@@ -4577,7 +4687,7 @@ ClassCodexSource["icyveins"] = {
                 },
                 {
                   heroRequired={"Sentinel"},
-                  text="Cast {257044} on cooldown with {257621} up at a target without {1253601}, and clip the end of the channel with {257620} - Click for Details {257620} is nearly always the button you press after {257044} anyway, so cast it just before the channel finishes and you will lose only the last tick of {257044}. The {257620} will benefit from the {257044}-granted {260240} that would normally only affect the {185358} fired by {1277548}. Both shots get the buff instead of only one. By having a {257620} with {260240} benefit here, we get to spread more {1253601}s around for more DPS.",
+                  text="Cast {257044} on cooldown with {257621} up at a target without {1253601}, and clip the end of the channel with {257620} - Click for Details {257620} is nearly always the button you press after {257044} anyway, so cast it just before the channel finishes and you will lose only the last tick of {257044}. That {257620} should be mouseovered on on targets your {257044} was not hitting to spread more {1253601}s around. {257620} does the same damage on all targets hit, so there is no priority damage lost here.",
                 },
                 {heroRequired={"Sentinel"},text="Cast {257044} on cooldown with {257621} up."},
                 {
@@ -4599,10 +4709,7 @@ ClassCodexSource["icyveins"] = {
                   heroRequired={"Dark Ranger"},
                   text="Before you press {288613}, swap to a target that does not already have {466872} - Click for Details Feathered Frenzy makes {288613} apply {466872} to whatever you have targeted when you press it, as pressing {288613} on a target that is already marked wastes it. In an opener, you {288613} on one target, {257044} on a second, and a {257620} on a third clipping the end of that {257044} channel. One {19434} then consumes all three Marks at once. Spending {260240} applies a Mark around 40% of the time, and around 90% of the time inside {288613}. This is somewhat difficult to perform and it breaks the flow of the rotation. Without some practice to perform it smoothly and consistently, the swapping will cost you more damage than the extra Marks are worth.",
                 },
-                {
-                  heroRequired={"Dark Ranger"},
-                  text="Cast {257044} with {257621} up, and clip the end of the channel with {466932} - Click for Details {466932} is nearly always the button you press after {257044} anyway, so cast it just before the channel finishes and you will lose only the last tick of {257044}. The {466932} will benefit from the {257044}-granted {260240} that would normally only affect the {185358} fired by {1277548}. Both shots get the buff instead of only one. {466932} hits much harder than that {185358}, so the same proc is worth more.",
-                },
+                {heroRequired={"Dark Ranger"},text="Cast {257044} with {257621} up."},
                 {heroRequired={"Dark Ranger"},text="Cast {257044} with {257621} up if {389019} is about to expire."},
                 {heroRequired={"Dark Ranger"},text="Cast {392060} if {466932} is not ready."},
                 {
@@ -4621,14 +4728,26 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Dark Ranger"},text="{19434} around 2.5 seconds before combat begins."},
                 {heroRequired={"Dark Ranger"},text="{212431}"},
                 {heroRequired={"Dark Ranger"},text="{212431} on a second target"},
+                {heroRequired={"Dark Ranger"},text="{212431}"},
                 {heroRequired={"Dark Ranger"},text="{260243}"},
                 {heroRequired={"Dark Ranger"},text="{466932}"},
                 {heroRequired={"Dark Ranger"},text="{288613}, alongside your Potion, on-use Trinket, Racials, etc."},
                 {heroRequired={"Dark Ranger"},text="{257044}"},
                 {heroRequired={"Dark Ranger"},text="{19434}"},
+                {heroRequired={"Dark Ranger"},text="{466932}"},
                 {heroRequired={"Dark Ranger"},text="Continue with the priority list as described below."},
+                {heroRequired={"Sentinel"},text="{19434} around 2.5 seconds before combat begins."},
+                {heroRequired={"Sentinel"},text="{212431}"},
+                {heroRequired={"Sentinel"},text="{212431} on a second target"},
+                {heroRequired={"Sentinel"},text="{212431}"},
+                {heroRequired={"Sentinel"},text="{260243}"},
+                {heroRequired={"Sentinel"},text="{288613}, alongside your Potion, on-use Trinket, Racials, etc."},
                 {heroRequired={"Sentinel"},text="{257620}"},
+                {heroRequired={"Sentinel"},text="{257044}"},
                 {heroRequired={"Sentinel"},text="{257620}, clipping the end of the {257044} channel"},
+                {heroRequired={"Sentinel"},text="{19434}"},
+                {heroRequired={"Sentinel"},text="{257620}"},
+                {heroRequired={"Sentinel"},text="Continue with the priority list as described below."},
               },
             },
             pvp={
@@ -4674,12 +4793,12 @@ ClassCodexSource["icyveins"] = {
                 },
                 {
                   heroRequired={"Sentinel"},
-                  text="Cast {185358} to spend {260240}, preferring targets without {1253601} unless you are focusing a priority target. During {288613}, only do this immediately after an {19434}.",
+                  text="Cast {185358} to spend {260240}, preferring targets without {1253601} unless you are focusing a priority target.",
                 },
                 {heroRequired={"Sentinel"},text="Cast {257044} on cooldown."},
                 {
                   heroRequired={"Sentinel"},
-                  text="Cast {257044} on cooldown at a target without {1253601}, and outside of {288613}, clip the end of the channel with {185358} - Click for Details Your {185358} will benefit from the {257044}-granted {260240} that would normally only affect the {185358} fired by {1277548}. Both shots get the buff instead of only one. This is a small DPS increase of around 0.3%. Unlike {257620}, swapping targets for {257044} moves real damage off your priority target, so stay on the priority target when there is one.",
+                  text="Cast {257044} on cooldown at a target without {1253601} - Click for Details You do not need to spend {260240} first. The first shot {1277548} fires consumes it, {473385} reapplies it immediately thereafter, and the last shot of the channel consumes the fresh one, so the proc ends up on two shots instead of one. Unlike {257620}, swapping targets for {257044} does cost you significant priority target damage, so stay on the priority target when there is one.",
                 },
                 {
                   heroRequired={"Sentinel"},
@@ -4701,7 +4820,7 @@ ClassCodexSource["icyveins"] = {
                 },
                 {
                   heroRequired={"Dark Ranger"},
-                  text="Cast {257044} on cooldown at a target without {466872}, and clip the end of the channel with {466932} - Click for Details {466932} is nearly always the button you press after {257044} anyway, so cast it just before the channel finishes and you will lose only the last tick of {257044}. Your {466932} will benefit from the {257044}-granted {260240} that would normally only affect the {185358} fired by {1277548}. Both shots get the buff instead of only one. {466932} hits much harder than that {185358}, so the same proc is worth more. This is a DPS increase of around 0.9%. Unlike {257620}, swapping targets for {257044} moves real damage off your priority target, so stay on the priority target when there is one.",
+                  text="Cast {257044} on cooldown at a target without {466872}, and let the channel finish - Click for Details Unlike {257620}, swapping targets for {257044} does cost you significant priority target damage, so stay on the priority target when there is one.",
                 },
                 {heroRequired={"Dark Ranger"},text="Cast {392060} on cooldown."},
                 {
@@ -4720,12 +4839,23 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Dark Ranger"},text="{19434} around 2.5 seconds before combat begins."},
                 {heroRequired={"Dark Ranger"},text="{466932}"},
                 {heroRequired={"Dark Ranger"},text="{212431}"},
+                {heroRequired={"Dark Ranger"},text="{212431}"},
                 {heroRequired={"Dark Ranger"},text="{260243}"},
                 {heroRequired={"Dark Ranger"},text="{288613}, alongside your Potion, on-use Trinket, Racials, etc."},
                 {heroRequired={"Dark Ranger"},text="{19434}"},
+                {heroRequired={"Dark Ranger"},text="{466932}"},
                 {heroRequired={"Dark Ranger"},text="{257044}"},
                 {heroRequired={"Dark Ranger"},text="Continue with the priority list as described below."},
+                {heroRequired={"Sentinel"},text="{19434} around 2.5 seconds before combat begins."},
+                {heroRequired={"Sentinel"},text="{212431}"},
+                {heroRequired={"Sentinel"},text="{212431}"},
+                {heroRequired={"Sentinel"},text="{260243}"},
+                {heroRequired={"Sentinel"},text="{288613}, alongside your Potion, on-use Trinket, Racials, etc."},
+                {heroRequired={"Sentinel"},text="{257044}"},
+                {heroRequired={"Sentinel"},text="{19434}"},
                 {heroRequired={"Sentinel"},text="{185358}"},
+                {heroRequired={"Sentinel"},text="{19434}"},
+                {heroRequired={"Sentinel"},text="Continue with the priority list as described below."},
               },
             },
           },
@@ -4772,7 +4902,7 @@ ClassCodexSource["icyveins"] = {
           sentinel={
             delve={
               {
-                export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGNWGAzgNAAAAAAAAwMmZmBjZmxMDjphBzy2yMzMzMzMzsgZbYGAAgZGjBgZshlZA2YmtZMA",
+                export="C4PAAAAAAAAAAAAAAAAAAAAAAwGMwMGNWGAzgNAAAAAAAAwMmZmBjZmxMDjphBzy22MzMzMzMzsgZbYGAAgZGjBgZshlZA2YmtZMA",
                 label="Delves",
                 recommended=true,
               },
@@ -4790,8 +4920,13 @@ ClassCodexSource["icyveins"] = {
                 recommended=true,
               },
               {
-                export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGNWGAzgNAAAAAAAAwMmZmx2MmZGzwyYaGDmltlZmZmZmZmZhZWGmBAAwDMGDAzYDMAbMz2MG",
+                export="C4PAAAAAAAAAAAAAAAAAAAAAAwGMwMGNWGAzgNAAAAAAAAwMmZmx2MmZGzwyYaGDmlttZmZmZmZmZhZWGmBAAwDMGDAzYDMAbMz2MG",
                 label="Mythic+",
+                recommended=true,
+              },
+              {
+                export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGNWGAzgNAAAAAAAAwMmZmx2MmZGzwyYaGDmltlZmZmZmZmZhZWGmBAAwDMGDAzYDMAbMz2MG",
+                label="Mythic+ (Weekly Key)",
                 labels={"Dungeon"},
                 recommended=true,
                 tags={"Weekly Key","High Key"},
@@ -4845,7 +4980,7 @@ ClassCodexSource["icyveins"] = {
       },
       survival={
         consumables={all={all={augmentRune={259085},flask={241322},food={255846,255845,242747},potions={241288,241308,271883}}}},
-        crafting={all={all={crafts={237847,245771,244581,244584,268215,275707,258556},embellishments={273060,273069}}}},
+        crafting={all={all={crafts={237847,245771,244581,244584,244582},embellishments={273060,240167}}}},
         enchants={
           all={
             all={
@@ -4868,9 +5003,9 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={13848},itemId=271490,slot="Shoulders",source="Catalyst from Coiled Altar"},
               {bonusIDs={13848},itemId=268253,slot="Back",source="Coiled Altar"},
               {bonusIDs={13848,13708},itemId=271495,slot="Chest",source="Catalyst from Ula'tek"},
-              {bonusIDs={13751,12497,13836,13767,8791,8960,1808},itemId=244584,slot="Wrist",source="Crafted by Leatherworking"},
+              {bonusIDs={13751,12497,13836,12384,8791,8960,1808},itemId=244584,slot="Wrist",source="Crafted by Leatherworking"},
               {bonusIDs={12854},itemId=271493,slot="Hands",source="Catalyst from King's Rest"},
-              {bonusIDs={13751,12497,13836,13767,8791,8960,1808},itemId=244581,slot="Waist",source="Crafted by Leatherworking"},
+              {bonusIDs={13751,12497,13836,12384,8791,8960,1808},itemId=244581,slot="Waist",source="Crafted by Leatherworking"},
               {bonusIDs={13848},itemId=271491,slot="Legs",source="Catalyst from Coiled Altar"},
               {bonusIDs={12854},itemId=268233,slot="Feet",source="Sszorak"},
               {bonusIDs={12854},itemId=252258,slot="Finger 1",source="Voidscar Arena"},
@@ -4885,9 +5020,9 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={12854},itemId=271490,slot="Shoulders",source="Catalyst from King's Rest"},
               {bonusIDs={12854},itemId=251190,slot="Back",source="The Blinding Vale"},
               {bonusIDs={12854},itemId=271495,slot="Chest",source="Catalyst from Voidscar Arena"},
-              {bonusIDs={13751,12497,13836,13767,8791,8960,1808},itemId=244584,slot="Wrist",source="Crafted by Leatherworking"},
+              {bonusIDs={13751,12497,13836,12384,8791,8960,1808},itemId=244584,slot="Wrist",source="Crafted by Leatherworking"},
               {bonusIDs={12854},itemId=271493,slot="Hands",source="Catalyst from King's Rest"},
-              {bonusIDs={13751,12497,13836,13767,8791,8960,1808},itemId=244581,slot="Waist",source="Crafted by Leatherworking"},
+              {bonusIDs={13751,12497,13836,12384,8791,8960,1808},itemId=244581,slot="Waist",source="Crafted by Leatherworking"},
               {bonusIDs={12854},itemId=271491,slot="Legs",source="Catalyst from Temple of Sethraliss"},
               {bonusIDs={12854},itemId=159388,slot="Feet",source="Temple of Sethraliss"},
               {bonusIDs={12854},itemId=252258,slot="Finger 1",source="Voidscar Arena"},
@@ -4902,15 +5037,15 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={13848},itemId=271493,slot="Hands"},
               {bonusIDs={13848},itemId=240952,slot="Neck"},
               {bonusIDs={13848},itemId=244565,slot="Waist"},
-              {bonusIDs={13848},itemId=244564,slot="Shoulders"},
-              {bonusIDs={13848},itemId=271491,slot="Legs"},
-              {bonusIDs={13848},itemId=239678,slot="Back"},
-              {bonusIDs={13848},itemId=244561,slot="Feet"},
+              {bonusIDs={13848},itemId=271490,slot="Shoulders"},
+              {bonusIDs={13848},itemId=244566,slot="Legs"},
+              {bonusIDs={13848},itemId=270580,slot="Back"},
+              {bonusIDs={13848},itemId=270744,slot="Feet"},
               {bonusIDs={13848},itemId=271495,slot="Chest"},
               {bonusIDs={13848},itemId=240951,slot="Finger 1"},
               {bonusIDs={13848},itemId=240951,slot="Finger 2"},
               {bonusIDs={13848},itemId=270605,slot="Trinket 1"},
-              {bonusIDs={13848},itemId=244568,slot="Wrist"},
+              {bonusIDs={13848},itemId=270755,slot="Wrist"},
               {bonusIDs={13848},itemId=270603,slot="Trinket 2"},
               {bonusIDs={13848},itemId=270844,slot="Main Hand"},
             },
@@ -4920,9 +5055,9 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={13848},itemId=271490,slot="Shoulders",source="Catalyst from Coiled Altar"},
               {bonusIDs={13848},itemId=268253,slot="Back",source="Coiled Altar"},
               {bonusIDs={13848,13708},itemId=271495,slot="Chest",source="Catalyst from Ula'tek"},
-              {bonusIDs={13751,12497,13836,13767,8791,8960,1808},itemId=244584,slot="Wrist",source="Crafted by Leatherworking"},
+              {bonusIDs={13751,12497,13836,12384,8791,8960,1808},itemId=244584,slot="Wrist",source="Crafted by Leatherworking"},
               {bonusIDs={12854},itemId=271493,slot="Hands",source="Catalyst from Nymrissa Wavecaller"},
-              {bonusIDs={13751,12497,13836,13767,8791,8960,1808},itemId=244581,slot="Waist",source="Crafted by Leatherworking"},
+              {bonusIDs={13751,12497,13836,12384,8791,8960,1808},itemId=244581,slot="Waist",source="Crafted by Leatherworking"},
               {bonusIDs={13848},itemId=271491,slot="Legs",source="Catalyst from Coiled Altar"},
               {bonusIDs={12854},itemId=268233,slot="Feet",source="Sszorak"},
               {bonusIDs={12854},itemId=268266,slot="Finger 1",source="Nymrissa Wavecaller"},
@@ -4994,10 +5129,27 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Pack Leader"},text="{259489}"},
                 {heroRequired={"Pack Leader"},text="Use your Potion, on-use Trinket, Racials, etc."},
                 {heroRequired={"Pack Leader"},text="{1250646}"},
+                {heroRequired={"Pack Leader"},text="{259489}"},
+                {heroRequired={"Pack Leader"},text="{259495}"},
                 {heroRequired={"Pack Leader"},text="{1261193}"},
+                {heroRequired={"Pack Leader"},text="{259495}"},
+                {heroRequired={"Pack Leader"},text="{259495}"},
                 {heroRequired={"Pack Leader"},text="{186270}"},
+                {heroRequired={"Pack Leader"},text="{259489}"},
                 {heroRequired={"Pack Leader"},text="Continue with the priority list as described below."},
+                {heroRequired={"Sentinel"},text="{1250646}, alongside your Potion, on-use Trinket, Racials, etc."},
+                {heroRequired={"Sentinel"},text="{259489}"},
+                {heroRequired={"Sentinel"},text="Use your Potion, on-use Trinket, Racials, etc."},
+                {heroRequired={"Sentinel"},text="{1261193}"},
+                {heroRequired={"Sentinel"},text="{259495}"},
+                {heroRequired={"Sentinel"},text="{259489}"},
+                {heroRequired={"Sentinel"},text="{259495}"},
+                {heroRequired={"Sentinel"},text="{259489}"},
+                {heroRequired={"Sentinel"},text="{1250646}"},
                 {heroRequired={"Sentinel"},text="{1264902}"},
+                {heroRequired={"Sentinel"},text="{259489}"},
+                {heroRequired={"Sentinel"},text="{259495}"},
+                {heroRequired={"Sentinel"},text="Continue with the priority list as described below."},
               },
             },
             pvp={steps={"Use {199483}, then summon your pet (if playing {199483})"}},
@@ -5032,11 +5184,34 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Pack Leader"},text="{259489}"},
                 {heroRequired={"Pack Leader"},text="Use your Potion, on-use Trinket, Racials, etc."},
                 {heroRequired={"Pack Leader"},text="{1250646}"},
+                {heroRequired={"Pack Leader"},text="{259489}"},
+                {heroRequired={"Pack Leader"},text="{259495}"},
                 {heroRequired={"Pack Leader"},text="{259495}"},
                 {heroRequired={"Pack Leader"},text="{1261193}"},
                 {heroRequired={"Pack Leader"},text="{186270}"},
                 {heroRequired={"Pack Leader"},text="Continue with the priority list as described below."},
+                {heroRequired={"Pack Leader"},text="{259495} around 1 sec before combat begins."},
                 {heroRequired={"Pack Leader"},text="{1250646}, alongside your Potion, on-use Trinket, Racials, etc."},
+                {heroRequired={"Pack Leader"},text="{259495}"},
+                {heroRequired={"Pack Leader"},text="{259489}"},
+                {heroRequired={"Pack Leader"},text="{1261193}"},
+                {heroRequired={"Pack Leader"},text="{259495}"},
+                {heroRequired={"Pack Leader"},text="{186270}"},
+                {heroRequired={"Pack Leader"},text="{259489}"},
+                {heroRequired={"Pack Leader"},text="{186270}"},
+                {heroRequired={"Pack Leader"},text="Continue with the priority list as described below."},
+                {heroRequired={"Sentinel"},text="{259495} around 1 sec before combat begins."},
+                {heroRequired={"Sentinel"},text="{259489}"},
+                {heroRequired={"Sentinel"},text="Use your Potion, on-use Trinket, Racials, etc."},
+                {heroRequired={"Sentinel"},text="{1261193}"},
+                {heroRequired={"Sentinel"},text="{259489}"},
+                {heroRequired={"Sentinel"},text="{1250646}"},
+                {heroRequired={"Sentinel"},text="{259495}"},
+                {heroRequired={"Sentinel"},text="Continue with the priority list as described below."},
+                {heroRequired={"Sentinel"},text="{259495} around 1 sec before combat begins."},
+                {heroRequired={"Sentinel"},text="{1250646}, alongside your Potion, on-use Trinket, Racials, etc."},
+                {heroRequired={"Sentinel"},text="{259495}"},
+                {heroRequired={"Sentinel"},text="Continue with the priority list as described below."},
               },
             },
           },
@@ -5149,7 +5324,7 @@ ClassCodexSource["icyveins"] = {
         crafting={
           all={
             all={
-              crafts={{bonusIDs={13751,12497,13836,13771},itemId=245769},{bonusIDs={13751,12497,13836,12384},itemId=239648},245770,275707},
+              crafts={{bonusIDs={13751,12497,13836,13771},itemId=245769},{bonusIDs={13751,12497,13836,12384},itemId=239648},245770},
               embellishments={273060,240167},
             },
             pvp={crafts={},embellishments={240167}},
@@ -5440,7 +5615,12 @@ ClassCodexSource["icyveins"] = {
         crafting={
           all={
             all={
-              crafts={{bonusIDs={13751,12497,13836,12384},itemId=239649},{bonusIDs={13751,12497,13836,12384},itemId=239648},245770,275707},
+              crafts={
+                {bonusIDs={13751,12497,13836,12384},itemId=239649},
+                {bonusIDs={13751,12497,13836,12384},itemId=239648},
+                245770,
+                {bonusIDs={13751,12497,13836,13771},itemId=245769},
+              },
               embellishments={240167,273060},
             },
             pvp={crafts={},embellishments={240167}},
@@ -5471,7 +5651,7 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={12854},itemId=271567,slot="Chest",source="Altar of Fangs + Catalyst"},
               {bonusIDs={13751,12497,13836,12384},itemId=239648,slot="Wrist",source="Crafted by Tailoring"},
               {bonusIDs={13848},itemId=271565,slot="Hands",source="Coiled Altar + Catalyst"},
-              {bonusIDs={13751,12497,13836,12384},itemId=239649,slot="Waist",source="Crafted by Tailoring"},
+              {bonusIDs={13848,13708},itemId=268257,slot="Waist",source="Sszorak"},
               {bonusIDs={12854},itemId=271563,slot="Legs",source="Nek'zali + Catalyst"},
               {bonusIDs={13848},itemId=268255,slot="Feet",source="Coiled Altar"},
               {bonusIDs={12854},itemId=268266,slot="Finger 1",source="Nek'zali"},
@@ -5479,7 +5659,7 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={12854},itemId=273796,slot="Trinket 1",source="Altar of Fangs"},
               {bonusIDs={12854},itemId=270164,slot="Trinket 2",source="Lost Explorers"},
               {bonusIDs={13848},itemId=271092,slot="Main Hand",source="Ula'tek"},
-              {bonusIDs={12854},itemId=159667,slot="Off Hand",source="King's Rest"},
+              {bonusIDs={13751,12497,13836,13771},itemId=245769,slot="Off Hand",source="Crafted by Inscription"},
             },
             mplus={
               {bonusIDs={12854},itemId=271564,slot="Head",source="Voidscar Arena + Catalyst"},
@@ -5524,7 +5704,7 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={12854},itemId=271567,slot="Chest",source="Vashnik"},
               {bonusIDs={13751,12497,13836,12384},itemId=239648,slot="Wrist",source="Crafted by Tailoring"},
               {bonusIDs={13848},itemId=271565,slot="Hands",source="Coiled Altar + Catalyst"},
-              {bonusIDs={13751,12497,13836,12384},itemId=239649,slot="Waist",source="Crafted by Tailoring"},
+              {bonusIDs={13848,13708},itemId=268257,slot="Waist",source="Sszorak"},
               {bonusIDs={12854},itemId=271563,slot="Legs",source="Nek'zali + Catalyst"},
               {bonusIDs={13848},itemId=268255,slot="Feet",source="Coiled Altar"},
               {bonusIDs={12854},itemId=268266,slot="Finger 1",source="Nek'zali"},
@@ -5532,7 +5712,7 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={12854},itemId=270170,slot="Trinket 1",source="Twin Fangs"},
               {bonusIDs={12854},itemId=270164,slot="Trinket 2",source="Lost Explorers"},
               {bonusIDs={13848},itemId=271092,slot="Main Hand",source="Ula'tek"},
-              {bonusIDs={12854},itemId=268263,slot="Off Hand",source="Nek'zali"},
+              {bonusIDs={13751,12497,13836,13771},itemId=245769,slot="Off Hand",source="Crafted by Inscription"},
             },
           },
         },
@@ -5678,6 +5858,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="C8DAAAAAAAAAAAAAAAAAAAAAAMzwYZmZmFMzIzMzMAAAGAwMz0sssMDAwmZmx2YmZGLAAAAAYzMjZGAAMmhxMzMzsNAMzAMGDmhBA",
                 label="Delves and Open World",
+                recommended=true,
               },
             },
             leveling={
@@ -5739,10 +5920,7 @@ ClassCodexSource["icyveins"] = {
       frost={
         consumables={all={all={augmentRune={259085},flask={241326},food={255846,255845,242275,255847},potions={241288,271883,5512}}}},
         crafting={
-          all={
-            all={crafts={245770,239649,245769,275707},embellishments={248130,273060,240167}},
-            pvp={crafts={},embellishments={240167}},
-          },
+          all={all={crafts={245770,239649,245769},embellishments={248130,273060,240167}},pvp={crafts={},embellishments={240167}}},
         },
         enchants={
           all={
@@ -6060,7 +6238,6 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               crafts={
-                268215,
                 {bonusIDs={13751,12497,13836,8795,13771},itemId=237847},
                 {bonusIDs={13751,12497,13836},itemId=251513},
                 {bonusIDs={13751,12497,13836,8795,13454},itemId=244576},
@@ -6220,6 +6397,7 @@ ClassCodexSource["icyveins"] = {
                 "Use {100780}.",
                 "Use {325153}. You may instead activate {132578}.",
                 "Use {121253}.",
+                "Use {100784}.",
                 "Activate {132578}. Depending on earlier, you may instead cast {325153}.",
                 "Follow the main AoE priority below.",
               },
@@ -6290,19 +6468,26 @@ ClassCodexSource["icyveins"] = {
                 "Use {100780}.",
                 "Use {325153}. You may instead activate {132578}.",
                 "Use {121253}.",
+                "Use {100784}.",
                 "Activate {132578}. Depending on earlier, you may instead cast {325153}.",
                 "Follow the main single-target priority below.",
               },
             },
           },
         },
-        statPriority={all={all={secondary={{"crit","versatility","mastery"},{"haste"}}}}},
+        statPriority={
+          all={
+            all={secondary={{"crit","versatility","mastery"},{"haste"}}},
+            damage={secondary={{"crit","mastery"},{"versatility"},{"haste"}}},
+          },
+        },
         talents={
           ["master-of-harmony"]={
             delve={
               {
                 export="CwQAAAAAAAAAAAAAAAAAAAAAAAAAAgZZzYGzwyM2MmZMAAAAAAALLgYmBmhBzgZmZGzsNMjZWGW2ssNbzYWAAglZZaZ2mZZAAAAMsBmZATjBMAgB",
                 label="Delves / Open World",
+                recommended=true,
               },
             },
             leveling={
@@ -6417,7 +6602,7 @@ ClassCodexSource["icyveins"] = {
             },
           },
         },
-        crafting={all={all={crafts={275707},embellishments={240167,245873}},pvp={crafts={},embellishments={244603}}}},
+        crafting={all={all={crafts={},embellishments={240167,245873}},pvp={crafts={},embellishments={244603}}}},
         enchants={
           all={
             all={
@@ -6573,6 +6758,7 @@ ClassCodexSource["icyveins"] = {
         statPriority={
           all={
             all={secondary={{"haste"},{"crit"},{"versatility"},{"mastery"}}},
+            mplus={secondary={{"haste"},{"crit","versatility"},{"mastery"}}},
             pvp={secondary={{"haste"},{"versatility"},{"mastery"},{"crit"}}},
           },
         },
@@ -6582,6 +6768,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="C4QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAghxyMLjZx2MzMz2G2sNjZ2Mz22yMjFmZaGzYBDGglZmZGmNYwyMBAAAAAALWmZZWmZAAAYAYGwAsMZMDA",
                 label="Solo-Delves",
+                recommended=true,
               },
             },
             leveling={
@@ -6675,7 +6862,7 @@ ClassCodexSource["icyveins"] = {
       },
       windwalker={
         consumables={all={all={augmentRune={259085},flask={241325},food={255846,242275},potions={241288,271883}}}},
-        crafting={all={all={crafts={275707},embellishments={240167}},pvp={crafts={},embellishments={240167}}}},
+        crafting={all={all={crafts={},embellishments={240167}},pvp={crafts={},embellishments={240167}}}},
         enchants={
           all={
             all={
@@ -6824,6 +7011,7 @@ ClassCodexSource["icyveins"] = {
                 "Cast {107428}",
                 "Cast {113656} if {107428} reset its cooldown",
                 "Cast {152175}",
+                {heroRequired={"Shado-Pan"},text="Cast {392983}"},
                 {heroRequired={"Shado-Pan"},text="Cast {433082}"},
                 "Continue with normal priority.",
               },
@@ -6978,10 +7166,7 @@ ClassCodexSource["icyveins"] = {
       holy={
         consumables={all={all={flask={241322,241325,241326},food={242747},potions={241288,241301,271883}}}},
         crafting={
-          all={
-            all={crafts={237834,237828,237843,237831,275707},embellishments={240167,245876}},
-            pvp={crafts={},embellishments={244603}},
-          },
+          all={all={crafts={237834,237828,237843,237831},embellishments={240167,245876}},pvp={crafts={},embellishments={244603}}},
         },
         enchants={
           all={
@@ -7165,8 +7350,11 @@ ClassCodexSource["icyveins"] = {
         statPriority={
           all={
             all={secondary={{"mastery"},{"haste"},{"crit"},{"versatility"}}},
+            mplus={secondary={{"mastery"},{"haste"},{"crit"},{"versatility"}}},
             pvp={secondary={{"versatility"},{"mastery"},{"haste"},{"crit"}}},
           },
+          ["herald-of-the-sun"]={all={secondary={{"mastery"},{"haste"},{"crit"},{"versatility"}}}},
+          lightsmith={all={secondary={{"mastery"},{"crit"},{"haste"},{"versatility"}}}},
         },
         talents={
           ["herald-of-the-sun"]={
@@ -7207,12 +7395,14 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CEEAAAAAAAAAAAAAAAAAAAAAAAAAgZBAmBAA2GzMzMjZmZBmZYZsZmFjmYWmxMzwY2yAwAwGYjlZmBAAAmZ22WsNzwGYGsBMMYGAzMAMjxoB",
                 label="Mythic+ / Delves",
+                recommended=true,
               },
             },
             mplus={
               {
                 export="CEEAAAAAAAAAAAAAAAAAAAAAAAAAgZBAmBAA2GzMzMjZmZBmZYZsZmFjmYWmxMzwY2yAwAwGYjlZmBAAAmZ22WsNzwGYGsBMMYGAzMAMjxoB",
                 label="Mythic+ / Delves",
+                recommended=true,
               },
               {
                 export="CEEAAAAAAAAAAAAAAAAAAAAAAAAAgZBAMAAw2YmZmZMzMLwMDLjNzsY0EzyMmZGGzWGAGA2AbsMzMAAAwMz22itZG2AzgNYMMYGAzMAMjxoB",
@@ -7268,7 +7458,7 @@ ClassCodexSource["icyveins"] = {
       },
       protection={
         consumables={all={all={augmentRune={259085},flask={241326},food={242274,255846,242273},potions={241308,271883,5512}}}},
-        crafting={all={all={crafts={237839,237831,237834,237828,275707},embellishments={240167,245876}}}},
+        crafting={all={all={crafts={237839,237831,237834,237828},embellishments={240167,245876}}}},
         enchants={
           all={
             all={
@@ -7389,9 +7579,17 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Templar"},text="{429826}"},
                 {heroRequired={"Lightsmith"},text="{53600}"},
                 "{31935}",
+                "{53600}",
                 "{1241288}",
+                "{53600}",
+                "{1241288}",
+                "{53600}",
+                "{204019}",
                 "{204019}",
                 "{53595}",
+                "{53595}",
+                "{31935}",
+                "{53600}",
                 "{155145}",
               },
             },
@@ -7416,7 +7614,12 @@ ClassCodexSource["icyveins"] = {
             },
           },
         },
-        statPriority={all={all={secondary={{"haste"},{"versatility","mastery"},{"crit"}}}}},
+        statPriority={
+          all={
+            all={secondary={{"haste"},{"versatility","mastery"},{"crit"}}},
+            damage={secondary={{"haste"},{"crit"},{"versatility","mastery"}}},
+          },
+        },
         talents={
           lightsmith={
             mplus={
@@ -7471,10 +7674,7 @@ ClassCodexSource["icyveins"] = {
         consumables={all={all={augmentRune={259085},flask={241322},food={242275},potions={241288,241308,271883,5512}}}},
         crafting={
           all={
-            all={
-              crafts={{bonusIDs={13751,12497,13836},itemId=251513},240892,237846,275707},
-              embellishments={251490,240167,273069,273060},
-            },
+            all={crafts={{bonusIDs={13751,12497,13836},itemId=251513},240892,237846},embellishments={251490,240167,273069,273060}},
             pvp={crafts={},embellishments={240167}},
           },
         },
@@ -7633,6 +7833,7 @@ ClassCodexSource["icyveins"] = {
                 "Cast {255937}.",
                 {heroRequired={"Templar"},text="Cast {429826}."},
                 {heroRequired={"Herald of the Sun"},text="Cast {383327}."},
+                {heroRequired={"Herald of the Sun"},text="Cast {383327}."},
                 "Cast {375576}.",
                 "Continue with the regular priority.",
               },
@@ -7695,6 +7896,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CYEAAAAAAAAAAAAAAAAAAAAAAAAAgBAoZZbmZWGmZMAAAAAAzUmlZYmx2w2wMbzYMmZYGLsNAMLzyMzs1AAAALAGAjxMmBmxwGwMzwYYwA",
                 label="PvP",
+                recommended=true,
               },
               {
                 export="CYEAAAAAAAAAAAAAAAAAAAAAAAAAAAANLbzMz2YmZAAAAAAYmysMDzM2G2GmZbGjxMDzYhtBgZZ2mZmlGAAAYBwAYMmxMDmxwGwMzwYYwA",
@@ -7719,6 +7921,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CYEAAAAAAAAAAAAAAAAAAAAAAAAAAAwoZbbmZWGjZmBAAAAAYmyYGMjtZmthZ2mxYMzwM2YDAAgZm2mZ2mBAsBYAAzwAzYGbYZGMmxMGMA",
                 label="Delves / Open World",
+                recommended=true,
               },
             },
             leveling={
@@ -7789,7 +7992,7 @@ ClassCodexSource["icyveins"] = {
         consumables={all={all={augmentRune={259085},flask={241325},potions={241308,241288,241294,271883}}}},
         crafting={
           all={
-            all={crafts={{bonusIDs={13751,13836,12497,8793,13771},itemId=245769},275707},embellishments={273060,240167}},
+            all={crafts={{bonusIDs={13751,13836,12497,8793,13771},itemId=245769}},embellishments={273060,240167}},
             pvp={crafts={},embellishments={244603}},
           },
         },
@@ -7974,6 +8177,8 @@ ClassCodexSource["icyveins"] = {
             all={secondary={{{note="(until 1800 rating)",stat="haste"}},{"mastery"},{"crit"},{"versatility"}}},
             pvp={secondary={{"versatility"},{"mastery"},{"haste"},{"crit"}}},
           },
+          oracle={all={secondary={{"haste"},{"mastery"},{"crit"},{"versatility"}}}},
+          voidweaver={all={secondary={{{note="(until 1800 rating)",stat="haste"}},{"mastery"},{"crit"},{"versatility"}}}},
         },
         talents={
           oracle={
@@ -8098,7 +8303,6 @@ ClassCodexSource["icyveins"] = {
                 {bonusIDs={13751,13836,12497,8791},itemId=245769},
                 {bonusIDs={13751,13836,12497,8791,12384},itemId=239649},
                 {bonusIDs={13751,13836,12497,8791,12384},itemId=239648},
-                275707,
               },
               embellishments={245876,240167},
             },
@@ -8288,6 +8492,7 @@ ClassCodexSource["icyveins"] = {
         statPriority={
           all={
             all={secondary={{"crit"},{"mastery","versatility"},{"haste"}}},
+            mplus={secondary={{"crit"},{"versatility","haste"},{"mastery"}}},
             pvp={secondary={{"versatility"},{"mastery"},{"haste"},{"crit"}}},
           },
         },
@@ -8414,7 +8619,6 @@ ClassCodexSource["icyveins"] = {
                 239662,
                 239661,
                 251513,
-                275707,
               },
               embellishments={240167,273060},
             },
@@ -8653,6 +8857,7 @@ ClassCodexSource["icyveins"] = {
                 "Use any on-use Trinkets you have equipped.",
                 "Use {item:241288|Potion of Recklessness}.",
                 "Cast {10060} and any stat-based racial abilities. Make sure to cast Power Infusion on an ally if using {373466}.",
+                "Cast {1240401}.",
                 "Cast {335467}.",
                 {heroRequired={"Voidweaver"},text="Cast {263165}."},
                 "Continue with the priority list as described below.",
@@ -8789,7 +8994,7 @@ ClassCodexSource["icyveins"] = {
             all={augmentRune={259085},flask={241325,241326,241319},food={255845,242275},potions={241308,241285,271883,241305,5512}},
           },
         },
-        crafting={all={all={crafts={237837,244576,275707},embellishments={273060,273069}},pvp={crafts={},embellishments={240167}}}},
+        crafting={all={all={crafts={237837,244576},embellishments={273060,273069}},pvp={crafts={},embellishments={240167}}}},
         enchants={
           all={
             all={
@@ -9110,9 +9315,7 @@ ClassCodexSource["icyveins"] = {
             all={augmentRune={259085},flask={241326,241325,241319},food={255845,242275},potions={241288,241285,271883,241305,5512}},
           },
         },
-        crafting={
-          all={all={crafts={237839,244569,244573,275707},embellishments={240167,245873}},pvp={crafts={},embellishments={240167}}},
-        },
+        crafting={all={all={crafts={237839,244569,244573},embellishments={240167,245873}},pvp={crafts={},embellishments={240167}}}},
         enchants={
           all={
             all={
@@ -9391,7 +9594,7 @@ ClassCodexSource["icyveins"] = {
       },
       subtlety={
         consumables={all={all={augmentRune={259085},flask={241325,241322},food={255846,242275},potions={241308,241292,241288,271883}}}},
-        crafting={all={all={crafts={237837,244576,275707},embellishments={273060,240167}},pvp={crafts={},embellishments={240167}}}},
+        crafting={all={all={crafts={237837,244576},embellishments={273060,240167}},pvp={crafts={},embellishments={240167}}}},
         enchants={
           all={
             all={
@@ -9535,7 +9738,9 @@ ClassCodexSource["icyveins"] = {
                 "{185438}",
                 "{196819}",
                 "{1856}",
+                "{185438}",
                 "{426591}",
+                {heroRequired={"Deathstalker"},text="{196819}"},
                 "{121471}",
                 "Any on-use stat trinket (eg: {item:270175|Voracious Heart of Ula'tek}) , {item:241308|Light's Potential} and any stat racial you might have (eg: {33697}/{274738}/{26297})",
                 {heroRequired={"Trickster"},text="{185313} + {280719}"},
@@ -9681,13 +9886,7 @@ ClassCodexSource["icyveins"] = {
         crafting={
           all={
             all={
-              crafts={
-                {bonusIDs={13751,12497,13836,1686},itemId=245770},
-                {bonusIDs={13848},itemId=271092},
-                {bonusIDs={13751,12497,13836,1686},itemId=244584},
-                {bonusIDs={13708,13848},itemId=271876},
-                275707,
-              },
+              crafts={{bonusIDs={13751,12497,13836,1686},itemId=245770},{bonusIDs={13751,12497,13836,1686},itemId=244584}},
               embellishments={273060,240167},
             },
             pvp={crafts={},embellishments={240167}},
@@ -9887,6 +10086,7 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Farseer"},text="Use {443454}."},
                 "Cast {470057}",
                 "Cast {114050} with on-use trinkets and {item:241308|Light's Potential}.",
+                "Proceed with regular rotation.",
                 "Proceed with regular rotation.",
               },
             },
@@ -10198,8 +10398,14 @@ ClassCodexSource["icyveins"] = {
             ["aoe-opener"]={
               steps={
                 {heroRequired={"Stormbringer"},text="Pre-cast {187874} Avoid hitting anything early!"},
-                "Pre-pot {item:241288|Potion of Recklessness} Pre-potting avoids stat procs switching it away from Mastery",
-                "Cast {470057} on the way into melee",
+                "Pre-pot {item:241288|Potion of Recklessness} Pre-potting avoids stat procs switching it away from Mastery or Critical Strike",
+                {
+                  heroRequired={"Stormbringer"},
+                  text="Cast {187874} as soon as you reach melee Use {item:271886|Liquid Luster} as the pull starts",
+                },
+                {heroRequired={"Totemic"},text="Cast {470057} on the way into melee"},
+                {heroRequired={"Stormbringer"},text="Cast {470057} on the way into melee"},
+                {heroRequired={"Totemic"},text="Cast {470057} on the way into melee Use {item:271886|Liquid Luster} as the pull starts"},
                 {heroRequired={"Stormbringer"},text="Cast {17364} once for starting {187880}"},
                 {
                   heroRequired={"Totemic"},
@@ -10226,6 +10432,7 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Stormbringer"},text="Cast {115356} every GCD otherwise"},
                 {heroRequired={"Stormbringer"},text="Cast {470057} as soon as its cooldown expires"},
                 "Continue with normal ability priority.",
+                "With {item:241288|Potion of Recklessness}, you need to make sure it triggers either Critical Strike or Mastery with your current gear.",
               },
             },
             ["single-target"]={
@@ -10262,9 +10469,15 @@ ClassCodexSource["icyveins"] = {
             },
             ["single-target-opener"]={
               steps={
+                {
+                  heroRequired={"Stormbringer"},
+                  text="Pre-pot {item:271886|Liquid Luster} 12 seconds before the pull This allows it to ramp before your opening {467263}",
+                },
                 "Pre-cast {187874} Avoid hitting anything early!",
-                "Pre-pot {item:241288|Potion of Recklessness} Pre-potting avoids stat procs switching it away from Mastery",
-                "Cast {470057} on the way into melee",
+                "Pre-pot {item:241288|Potion of Recklessness} Pre-potting avoids stat procs switching it away from Mastery or Critical Strike",
+                {heroExcluded={"Totemic"},text="Cast {470057} on the way into melee"},
+                {heroRequired={"Totemic"},text="Cast {470057} on the way into melee"},
+                {heroRequired={"Totemic"},text="Cast {470057} on the way into melee Use {item:271886|Liquid Luster} at the same time"},
                 {heroRequired={"Stormbringer"},text="Cast {17364} once for {187880}"},
                 {
                   heroRequired={"Totemic"},
@@ -10291,6 +10504,8 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Stormbringer"},text="Cast {470057} as soon as its cooldown expires"},
                 {heroRequired={"Stormbringer"},text="Cast {1218047} with 10 {187880} before it expires"},
                 "Continue with normal ability priority.",
+                "When using {item:241288|Potion of Recklessness}, you need to ensure it grants Critical Strike or Mastery with your current gear.",
+                "{item:271886|Liquid Luster} is used 12 seconds before the pull to ramp it before {114051}.",
               },
             },
           },
@@ -10300,6 +10515,8 @@ ClassCodexSource["icyveins"] = {
             all={secondary={{"mastery","haste"},{"crit"},{"versatility"}}},
             pvp={secondary={{"versatility"},{"haste"},{"mastery"},{"crit"}}},
           },
+          stormbringer={all={secondary={{"mastery","haste"},{"crit"},{"versatility"}}}},
+          totemic={all={secondary={{"mastery"},{"haste"},{"crit"},{"versatility"}}}},
         },
         talents={
           stormbringer={
@@ -10421,7 +10638,6 @@ ClassCodexSource["icyveins"] = {
                 {bonusIDs={13751,12497,13836,8795,12384},itemId=244584},
                 {bonusIDs={13751,12497,13836,8795,12384},itemId=239656},
                 {bonusIDs={13751,12497,13836,8795,12384},itemId=244577},
-                275707,
               },
               embellishments={240167,273060},
             },
@@ -10607,6 +10823,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CgQAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAzMzYbZMzMPwMzMmZGDLwGMjFN2GAzAbYmBzyMzMa2WmZWYMbsZMDzMb2GAAMAmZMmZAYMYA",
                 label="Blitz",
+                recommended=true,
               },
               {
                 export="CgQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwglFAPAGwYYB2gZswYbAMDsBwMbjxwssMzsMmBWMmZMzsNbGAAAYmBzMAwgB",
@@ -10655,7 +10872,7 @@ ClassCodexSource["icyveins"] = {
         consumables={all={all={augmentRune={259085},flask={241325},potions={241288,241308,270168,271886,271883}}}},
         crafting={
           all={
-            all={crafts={{bonusIDs={13751,12497,13836},itemId=245770},275707},embellishments={240167,273059,273060}},
+            all={crafts={{bonusIDs={13751,12497,13836},itemId=245770}},embellishments={240167,273059,273060}},
             pvp={crafts={},embellishments={240167}},
           },
         },
@@ -10891,6 +11108,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CkQAAAAAAAAAAAAAAAAAAAAAAwMjZGNLmxyMzYWGAAwMzsMLzMzyYAgxyyADYAzwWghtBAAgZAAAMzMmZY2GjZwMzMMMzMzAAmBG",
                 label="Delves",
+                recommended=true,
               },
             },
             leveling={
@@ -10910,6 +11128,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CkQAAAAAAAAAAAAAAAAAAAAAAsMGmZ0sNzYhZmZZAAAmZWmNzMLmBAGLLDMgBMDbBG2GAAAmBAAwMzMzMzMmZGmxMzMGMjZAAGwA",
                 label="PvP",
+                recommended=true,
               },
             },
             raid={
@@ -10952,7 +11171,7 @@ ClassCodexSource["icyveins"] = {
         consumables={all={all={augmentRune={259085},flask={241326},potions={241288,241308,271883}}}},
         crafting={
           all={
-            all={crafts={{bonusIDs={13751,12497,13836},itemId=245770},275707},embellishments={240167,273059,273060}},
+            all={crafts={{bonusIDs={13751,12497,13836},itemId=245770}},embellishments={240167,273059,273060}},
             pvp={crafts={},embellishments={240167}},
           },
         },
@@ -11099,12 +11318,16 @@ ClassCodexSource["icyveins"] = {
             opener={
               steps={
                 "Pre-cast {264178}.",
+                "Pre-cast {264178}.",
                 "Pre-cast {264130} with 2 Wild Imps out.",
                 "Pre-cast {686}.",
                 "Cast {686}.",
                 "Cast {1276672}.",
                 "Cast {1276452}.",
                 "Cast {1276467}.",
+                {heroRequired={"Diabolist"},text="Cast {686}."},
+                {heroRequired={"Diabolist"},text="Cast {686}."},
+                {heroRequired={"Diabolist"},text="Cast {686}."},
                 {heroRequired={"Soul Harvester"},text="Cast {686} if below 2 Soul Shards."},
                 "Cast {104316}.",
                 "Cast {265187}.",
@@ -11143,6 +11366,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CoQAAAAAAAAAAAAAAAAAAAAAAsMGmZY2mZswMzsMAAAAAAAAAAAAwmxYsNLzMzwAAmZmZmBAzMzMzAAAMmxMGzwyMAGA",
                 label="Soul Harvester",
+                recommended=true,
               },
             },
           },
@@ -11173,6 +11397,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CoQAAAAAAAAAAAAAAAAAAAAAAwMjZGNLmxiZGzyAAAAAAAMWWGYADYG2CM2MmZsMmxMzMAwMzMGDwMzYmxMbAAgxMzMzYw2MDwA",
                 label="Delves",
+                recommended=true,
               },
             },
             mplus={
@@ -11227,7 +11452,7 @@ ClassCodexSource["icyveins"] = {
         consumables={all={all={augmentRune={259085},flask={241326,241322,250215,244031},potions={241288,241308,271883}}}},
         crafting={
           all={
-            all={crafts={{bonusIDs={13751,12497,13836},itemId=245770},275707},embellishments={240167,273059,273060}},
+            all={crafts={{bonusIDs={13751,12497,13836},itemId=245770}},embellishments={240167,273059,273060}},
             pvp={crafts={},embellishments={240167}},
           },
         },
@@ -11393,6 +11618,7 @@ ClassCodexSource["icyveins"] = {
                 "Use your trinkets and racials.",
                 {heroRequired={"Hellcaller"},text="cast {430014}."},
                 "Cast {116858}.",
+                "Cast {17962}.",
               },
             },
             pvp={
@@ -11434,7 +11660,7 @@ ClassCodexSource["icyveins"] = {
           diabolist={
             mplus={
               {
-                export="CsQAAAAAAAAAAAAAAAAAAAAAAwMjZGNLmxmZGzysNzYmFzYZZMAAYGjZmZBMmxwGMw2wCNWYAAgxMMsBgZGgxMjZ2AAAMzMzAAYMM",
+                export="CsQAAAAAAAAAAAAAAAAAAAAAAwMjZGNLmxmZGzysNzYmFzYZZMAAYGjZmZBMmxwCMw2wCNWYAAgxMMsBgZGgxMjZ2AAAMzMzAAYMM",
                 label="Mythic+",
                 labels={"Best Mythic+"},
                 recommended=true,
@@ -11456,6 +11682,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CsQAAAAAAAAAAAAAAAAAAAAAAwMjZGNLmxmZGzysZGzsYYZZmBAAzMjZmZxCMwsY0YGAzG2YAAgxMAAAzMYMzMmNAAAzMzMAAMDD",
                 label="Delves",
+                recommended=true,
               },
             },
             leveling={
@@ -11478,6 +11705,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CsQAAAAAAAAAAAAAAAAAAAAAAsMmxMjmtZGLMzMLDmxsMjZbxMAAYGjZmZxCMwsY0YGAzG2YAAgxAjNAgZGMzMzYAAAYGzAAwMDD",
                 label="PvP",
+                recommended=true,
               },
             },
             raid={
@@ -11516,7 +11744,7 @@ ClassCodexSource["icyveins"] = {
     WARRIOR={
       arms={
         consumables={all={all={augmentRune={259085},flask={241325,241326},food={255846,242275},potions={241288,241308,271883}}}},
-        crafting={all={all={crafts={237834,237828,275707},embellishments={245876,273069}},pvp={crafts={},embellishments={240167}}}},
+        crafting={all={all={crafts={237834,237828},embellishments={245876,273069}},pvp={crafts={},embellishments={240167}}}},
         enchants={
           all={
             all={
@@ -11660,11 +11888,15 @@ ClassCodexSource["icyveins"] = {
                 "Cast {107574}",
                 "Cast {167105}",
                 {heroRequired={"Slayer"},text="Cast {227847}"},
+                "Cast {845}",
+                {heroRequired={"Colossus"},text="Continue casting {845} with {1261056}"},
                 {heroRequired={"Colossus"},text="Continue casting {845} with {1261056}"},
                 {heroRequired={"Colossus"},text="Cast {12294}"},
                 {heroRequired={"Colossus"},text="Cast {436358}"},
+                {heroRequired={"Colossus"},text="Cast {845}"},
                 "Cast {7384}",
                 {heroRequired={"Slayer"},text="Cast {163201}"},
+                "Cast {845}",
                 "Proceed with the normal multitarget priority.",
               },
             },
@@ -11723,9 +11955,13 @@ ClassCodexSource["icyveins"] = {
                 "Cast {167105}",
                 {heroRequired={"Slayer"},text="Cast {227847}"},
                 "Cast {1269383}",
+                "Cast {12294}",
                 {heroRequired={"Colossus"},text="Cast {436358}"},
                 "Cast {7384}",
+                {heroRequired={"Colossus"},text="Cast {12294}"},
                 {heroRequired={"Slayer"},text="Cast {163201} with {29725}"},
+                "Cast {7384}",
+                "Cast {12294}",
               },
             },
           },
@@ -11844,9 +12080,7 @@ ClassCodexSource["icyveins"] = {
       },
       fury={
         consumables={all={all={augmentRune={259085},flask={241322,241325},food={255846,242275},potions={241288,241308,271883}}}},
-        crafting={
-          all={all={crafts={237847,237834,237828,275707},embellishments={245876,273069}},pvp={crafts={},embellishments={240167}}},
-        },
+        crafting={all={all={crafts={237847,237834,237828},embellishments={245876,273069}},pvp={crafts={},embellishments={240167}}}},
         enchants={
           all={
             all={
@@ -12004,11 +12238,18 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Mountain Thane"},text="Cast {184367} to apply Enrage"},
                 {heroRequired={"Mountain Thane"},text="Cast {435607}"},
                 {heroRequired={"Mountain Thane"},text="Cast {113344}"},
+                {heroRequired={"Mountain Thane"},text="Cast {435607}"},
                 "Cast {184367}",
+                {heroRequired={"Mountain Thane"},text="Cast {435607}"},
+                {heroRequired={"Mountain Thane"},text="Cast {184367}"},
                 {heroRequired={"Mountain Thane"},text="Cast {6343}"},
                 {heroRequired={"Slayer"},text="Cast {46924}"},
+                {heroRequired={"Slayer"},text="Cast {184367}"},
+                {heroRequired={"Slayer"},text="Cast {184367}"},
                 {heroRequired={"Slayer"},text="Cast {385059}"},
+                {heroRequired={"Slayer"},text="Cast {184367}"},
                 {heroRequired={"Slayer"},text="Cast {190411}"},
+                {heroRequired={"Slayer"},text="Cast {184367}"},
                 {heroRequired={"Slayer"},text="Cast {335097}"},
                 "Proceed with the normal multitarget priority.",
               },
@@ -12068,10 +12309,21 @@ ClassCodexSource["icyveins"] = {
                 {heroRequired={"Mountain Thane"},text="Cast {107574}"},
                 "Cast {184367}",
                 {heroRequired={"Slayer"},text="Cast {46924}"},
+                {heroRequired={"Slayer"},text="Cast {184367}"},
                 {heroRequired={"Slayer"},text="Cast {5308}"},
+                {heroRequired={"Slayer"},text="Cast {184367}"},
+                {heroRequired={"Slayer"},text="Cast {335097}"},
+                {heroRequired={"Slayer"},text="Cast {184367}"},
+                {heroRequired={"Slayer"},text="Cast {184367}"},
                 {heroRequired={"Slayer"},text="Cast {335097}"},
                 {heroRequired={"Mountain Thane"},text="Cast {435607} to avoid wasting a proc"},
                 {heroRequired={"Mountain Thane"},text="Cast {113344}"},
+                {heroRequired={"Mountain Thane"},text="Cast {335097}"},
+                {heroRequired={"Mountain Thane"},text="Cast {184367}"},
+                {heroRequired={"Mountain Thane"},text="Cast {113344}"},
+                {heroRequired={"Mountain Thane"},text="Cast {435607} to avoid wasting a proc"},
+                {heroRequired={"Mountain Thane"},text="Cast {335097}"},
+                {heroRequired={"Mountain Thane"},text="Cast {184367}"},
               },
             },
           },
@@ -12215,7 +12467,6 @@ ClassCodexSource["icyveins"] = {
                 {bonusIDs={12066,13622,9627,12384,8790},itemId=237834},
                 {bonusIDs={13622,13667,12066,9627,12693,8960,8790},itemId=237828},
                 {bonusIDs={13622,13667,12066,9627,12693,8960,8790},itemId=239656},
-                275707,
               },
               embellishments={245876,240167},
             },
@@ -12427,6 +12678,7 @@ ClassCodexSource["icyveins"] = {
                 "Cast {1160}.",
                 "Cast {376079}.",
                 {heroRequired={"Colossus"},text="Cast {436358}."},
+                {heroRequired={"Mountain Thane"},text="Cast {435607}."},
                 "Cast {385952}.",
               },
             },
@@ -12505,6 +12757,7 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CkEAAAAAAAAAAAAAAAAAAAAAA02AAAzMzYmZmZmxmxsMMGz0MzYswMzMMDzMAAAAYZMAzYAGYDWWMaMDgZDzsxMMmBzCAMzAAwMwYA",
                 label="Colossus",
+                recommended=true,
               },
               {
                 export="CkEAAAAAAAAAAAAAAAAAAAAAA02AAAzMzYmZGzY2MGDjxMNzMGLMzMDzYmZAAAAwyYAmxAMwGssY0YGAzGmZjxMjZwsAAzMAAMgxA",
@@ -12547,7 +12800,7 @@ ClassCodexSource["icyveins"] = {
       },
     },
   },
-  meta={contentHash="2a012d72b3e33b94",generatedAt="2026-08-21T18:17:46.092Z",schemaVersion=1,source="icyveins"},
+  meta={contentHash="5dbac0e817eed1c5",generatedAt="2026-08-24T10:26:22.720Z",schemaVersion=1,source="icyveins"},
   reference={
     heroNames={
       ["aldrachi-reaver"]="Aldrachi Reaver",

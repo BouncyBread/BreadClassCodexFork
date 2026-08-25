@@ -96,10 +96,21 @@ end
 local STAT_PRIORITY_DISPLAY =
     { crit = "Critical Strike", haste = "Haste", mastery = "Mastery", versatility = "Versatility" }
 
+--- SourceValue's full triple (payload, hero, context) for a statPriority
+--- lookup — the hit context tells callers whether a genuine entry resolved or
+--- the wildcard fallback did.
+local function statPriorityValue(source, classToken, specKey, hero, context)
+    if not ns.SourceValue then return nil, nil, nil end
+    return ns.SourceValue(source, classToken, specKey, "statPriority", hero, context)
+end
+
 local function resolveStatPriority(classToken, specKey, context, source, heroSlug)
     if not classToken or not specKey then return nil end
     local hero = heroSlug
-    if not hero then
+    -- "all" must go through the same active-hero resolution as nil: u.gg keys
+    -- statPriority per hero (its "all" bucket only carries PvP), so a literal
+    -- "all" lookup shows nothing in PvE views even on the player's own spec.
+    if not hero or hero == "all" then
         hero = "all"
         local pc, ps
         if ns.GetClassAndSpec then
@@ -108,7 +119,7 @@ local function resolveStatPriority(classToken, specKey, context, source, heroSlu
         if pc == classToken and ps == specKey then hero = ActiveHeroSlug() or "all" end
     end
     source = source or (ns.ActiveSource and ns.ActiveSource())
-    local sp = ns.SourceValue and ns.SourceValue(source, classToken, specKey, "statPriority", hero, context or "all")
+    local sp, _, hitCtx = statPriorityValue(source, classToken, specKey, hero, context or "all")
     if
         not (sp and sp.secondary)
         and context == "pvp"
@@ -118,14 +129,17 @@ local function resolveStatPriority(classToken, specKey, context, source, heroSlu
         return nil
     end
     if not (sp and sp.secondary) and context and context ~= "all" then
-        sp = ns.SourceValue and ns.SourceValue(source, classToken, specKey, "statPriority", hero, "all")
+        sp, _, hitCtx = statPriorityValue(source, classToken, specKey, hero, "all")
     end
     if not (sp and sp.secondary) then return nil end
-    return sp
+    return sp, hitCtx
 end
 
+--- Returns the display tiers, plus the context key the data actually resolved
+--- through ("mplus", "damage", "all" for the wildcard fallback, …) — callers
+--- use it to tell a genuine per-context priority from the general one.
 function ns.GetStatPriority(classToken, specKey, context, source, heroSlug)
-    local sp = resolveStatPriority(classToken, specKey, context, source, heroSlug)
+    local sp, hitCtx = resolveStatPriority(classToken, specKey, context, source, heroSlug)
     if not sp then return nil end
     local tiers = {}
     for _, tier in ipairs(sp.secondary) do
@@ -143,7 +157,8 @@ function ns.GetStatPriority(classToken, specKey, context, source, heroSlug)
         end
         if #names > 0 then tiers[#tiers + 1] = names end
     end
-    return #tiers > 0 and tiers or nil
+    if #tiers == 0 then return nil end
+    return tiers, hitCtx
 end
 
 --- Qualified breakpoint entries in a spec's priority ("Haste to 22%",
@@ -208,19 +223,34 @@ local PLAYER_STAT_READERS = {
 
 local playerStatCache = {}
 
+local canUseStatValue
+if canaccessvalue then
+    canUseStatValue = canaccessvalue
+elseif issecretvalue then
+    canUseStatValue = function(v)
+        return not issecretvalue(v)
+    end
+else
+    canUseStatValue = function()
+        return true
+    end
+end
+
 local function readPlayerStat(statKey)
     local read = PLAYER_STAT_READERS[statKey]
     if not read then return 0, 0 end
     if not InCombatLockdown() then
         local rating, pct = read()
-        playerStatCache[statKey] = { rating = rating, pct = pct }
-        return rating, pct
+        if canUseStatValue(rating) and canUseStatValue(pct) then
+            playerStatCache[statKey] = { rating = rating, pct = pct }
+            return rating, pct
+        end
     end
     local cached = playerStatCache[statKey]
     if cached then return cached.rating, cached.pct end
-    -- No pre-combat snapshot yet (e.g. reload during a pull) — a live read is
-    -- still better than zeros.
-    return read()
+    local rating, pct = read()
+    if canUseStatValue(rating) and canUseStatValue(pct) then return rating, pct end
+    return nil, nil
 end
 
 function ns.GetPlayerStatRating(statKey)
@@ -233,7 +263,7 @@ function ns.GetPlayerStatPercent(statKey)
 end
 
 function ns.ClassifyStatDelta(currentRating, targetRating)
-    if not targetRating or targetRating <= 0 then return nil, 0 end
+    if not currentRating or not targetRating or targetRating <= 0 then return nil, 0 end
     local diff = currentRating - targetRating
     local pct = (diff / targetRating) * 100
     if math.abs(pct) < 5 then
@@ -255,8 +285,8 @@ function ns.AppendStatExtrasToTooltip(tooltip, statKey, snapshot, opts)
     if not tooltip or not statKey then return end
     opts = opts or {}
     local label = ns.STAT_LABELS[statKey] or statKey
-    local current = ns.GetPlayerStatRating(statKey) or 0
-    local livePct = ns.GetPlayerStatPercent(statKey) or 0
+    local current = ns.GetPlayerStatRating(statKey)
+    local livePct = ns.GetPlayerStatPercent(statKey)
     local target = snapshot and snapshot.targets and snapshot.targets[statKey]
 
     local COLORS = ns.Tooltip.COLORS
@@ -266,8 +296,8 @@ function ns.AppendStatExtrasToTooltip(tooltip, statKey, snapshot, opts)
         tooltip:AddLine(label, ct[1], ct[2], ct[3])
         local cl, cr = COLORS.intro, COLORS.muted
         tooltip:AddDoubleLine(
-            string.format("%.1f%%", livePct),
-            string.format("%d rating", current),
+            livePct and string.format("%.1f%%", livePct) or "—",
+            current and string.format("%d rating", current) or "—",
             cl[1],
             cl[2],
             cl[3],
@@ -281,24 +311,26 @@ function ns.AppendStatExtrasToTooltip(tooltip, statKey, snapshot, opts)
         if opts.includeTitle then tooltip:AddLine(" ") end
         local cl, cr = COLORS.muted, COLORS.intro
         tooltip:AddDoubleLine("Target", string.format("%d", target), cl[1], cl[2], cl[3], cr[1], cr[2], cr[3])
-        local kind = ns.ClassifyStatDelta(current, target) or "below"
-        local diff = current - target
-        local sign = (diff >= 0) and "+" or "−"
-        local stateLabels = {
-            above = "Above target",
-            at = "At target",
-            below = "Below target",
-        }
-        local c = STATE_COLORS[kind]
-        tooltip:AddDoubleLine(
-            stateLabels[kind],
-            string.format("%s%d", sign, math.abs(diff)),
-            c[1],
-            c[2],
-            c[3],
-            c[1],
-            c[2],
-            c[3]
-        )
+        if current then
+            local kind = ns.ClassifyStatDelta(current, target) or "below"
+            local diff = current - target
+            local sign = (diff >= 0) and "+" or "−"
+            local stateLabels = {
+                above = "Above target",
+                at = "At target",
+                below = "Below target",
+            }
+            local c = STATE_COLORS[kind]
+            tooltip:AddDoubleLine(
+                stateLabels[kind],
+                string.format("%s%d", sign, math.abs(diff)),
+                c[1],
+                c[2],
+                c[3],
+                c[1],
+                c[2],
+                c[3]
+            )
+        end
     end
 end

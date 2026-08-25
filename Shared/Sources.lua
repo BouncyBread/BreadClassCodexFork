@@ -200,11 +200,21 @@ local function perSpec(specKey)
     return nil
 end
 
+-- Spec keys come in two shapes: the panel's class-prefixed form
+-- ("HUNTER-beast-mastery") and the compendium's bare form ("beast-mastery").
+-- Strip only a leading class prefix — a bare match("-(.+)") mangles dashed
+-- spec slugs ("beast-mastery" -> "mastery") and every link built from it.
+local function specFromKey(classToken, specKey)
+    if type(specKey) ~= "string" then return nil end
+    local prefix = (type(classToken) == "string" and classToken or ""):lower() .. "-"
+    if specKey:sub(1, #prefix):lower() == prefix then return specKey:sub(#prefix + 1) end
+    return specKey
+end
+
 local function playerClassSpec()
     local classToken = select(2, UnitClass("player"))
     local specKey = ns.GetSpecKey and ns.GetSpecKey()
-    local spec = specKey and (specKey:match("-(.+)") or specKey) or nil
-    return classToken, spec
+    return classToken, specFromKey(classToken, specKey)
 end
 
 local function srcUrl(class, spec, source, page)
@@ -220,13 +230,14 @@ end
 local UGG_CLASS_SLUG = { DEATHKNIGHT = "death_knight", DEMONHUNTER = "demon_hunter" }
 -- u.gg scopes PvE pages by content segment (…/<page>/raid?difficulty=<mythic|heroic>).
 -- The site's default raid difficulty is mythic, matching the addon default.
-local function uggPageUrl(class, spec, page)
+local function uggPageUrl(class, spec, page, mode)
     if not class or not spec then return ns.WithReferral(ns.SOURCES.ugg.homepage) end
     local classSlug = UGG_CLASS_SLUG[class] or class:lower()
     local specSlug = spec:gsub("-", "_")
     local base = string.format("https://u.gg/wow/%s/%s", specSlug, classSlug)
-    if page and page ~= "pvp" then
-        local ct = ns.Context and ns.Context.contentType and ns.Context.contentType() or nil
+    if page and page ~= "pvp" and mode ~= "pvp" then
+        local ct = mode == "pve" and "pve"
+            or (ns.Context and ns.Context.contentType and ns.Context.contentType() or nil)
         if ct == "raid" then
             local diff = (ClassCodexDB and ClassCodexDB.raidDifficulty == "heroic") and "heroic" or "mythic"
             return ns.WithReferral(base .. "/" .. page .. "/raid?difficulty=" .. diff)
@@ -260,26 +271,59 @@ local function ivPageUrl(class, spec, suffix)
     )
 end
 
+-- iv.data prefers the scraper's recorded canonical URL for the page the data
+-- came from; iv.suffix/pvpSuffix build the canonical URL scheme otherwise.
+-- uggPvp is u.gg's spec PvP page (its PvP pages are one per spec).
 local SURFACES = {
     guide = { label = "Guide", iv = { data = "talents" }, ugg = "talents" },
-    talents = { label = "Talents", iv = { data = "talents" }, ugg = "talents" },
-    rotation = { label = "Rotation", iv = { suffix = "pve-{role}-rotation-cooldowns-abilities" }, ugg = "builds" },
-    bis = { label = "Gear", iv = { data = "bis" }, ugg = "gear" },
-    trinkets = { label = "Trinkets", iv = { data = "bis" }, ugg = "trinkets" },
+    talents = {
+        label = "Talents",
+        iv = { data = "talents", pvpSuffix = "pvp-talents-and-builds" },
+        ugg = "talents",
+        uggPvp = "pvp",
+    },
+    rotation = {
+        label = "Rotation",
+        iv = { suffix = "pve-{role}-rotation-cooldowns-abilities", pvpSuffix = "pvp-rotation-and-playstyle" },
+        ugg = "builds",
+        uggPvp = "pvp",
+    },
+    bis = {
+        label = "Gear",
+        iv = { data = "bis", pvpSuffix = "pvp-stat-priority-gear-and-trinkets" },
+        ugg = "gear",
+        uggPvp = "pvp",
+    },
+    trinkets = {
+        label = "Trinkets",
+        iv = { data = "bis", pvpSuffix = "pvp-stat-priority-gear-and-trinkets" },
+        ugg = "trinkets",
+        uggPvp = "pvp",
+    },
     enhancements = {
         label = "Enchants",
         iv = { suffix = "pve-{role}-gems-enchants-consumables" },
         ugg = "gems-and-enchants",
+        uggPvp = "pvp",
     },
     crafting = { label = "Crafting", iv = { data = "bis" }, ugg = "gear" },
-    stats = { label = "Stats", iv = { data = "bis" }, ugg = "gear" },
+    stats = {
+        label = "Stats",
+        iv = { suffix = "pve-{role}-stat-priority", pvpSuffix = "pvp-stat-priority-gear-and-trinkets" },
+        ugg = "gear",
+        uggPvp = "pvp",
+    },
     leveling = { label = "Leveling", iv = { data = "leveling", suffix = "leveling-guide" } },
 }
 
-function ns.SourceLink(source, surface, class, spec)
+function ns.SourceLink(source, surface, class, spec, mode)
     local def = SURFACES[surface]
     if not def then return nil, nil end
-    if source == "ugg" and def.ugg then return uggPageUrl(class, spec, def.ugg), def.label end
+    local isPvp = mode == "pvp"
+    if source == "ugg" and def.ugg then
+        local page = (isPvp and def.uggPvp) and def.uggPvp or def.ugg
+        return uggPageUrl(class, spec, page, isPvp and "pvp" or nil), def.label
+    end
     -- Locally scraped sources publish their own page URLs in sd.links; without
     -- this they fell into the Icy Veins branch below, which hardcodes
     -- srcUrl(..., "icyveins", ...) and so returned an icy-veins.com link for
@@ -292,6 +336,7 @@ function ns.SourceLink(source, surface, class, spec)
         if home then return ns.WithReferral(home), def.label end
     end
     local iv = def.iv
+    if isPvp and iv and iv.pvpSuffix then return ivPageUrl(class, spec, iv.pvpSuffix), def.label end
     if iv and iv.data then
         local dataUrl = srcUrl(class, spec, "icyveins", iv.data)
         if dataUrl then return ns.WithReferral(dataUrl), def.label end
@@ -406,11 +451,11 @@ local function surfaceSource(surface, ps, active, class, spec)
     return "icyveins"
 end
 
-function ns.ResolveAttribution(surface, class, specKey, sourceOverride)
+function ns.ResolveAttribution(surface, class, specKey, sourceOverride, mode)
     local ps = perSpec(specKey)
-    local spec = specKey and (specKey:match("-(.+)") or specKey) or nil
+    local spec = specFromKey(class, specKey)
     local source = surfaceSource(surface, ps, sourceOverride, class, spec)
-    local url, label = ns.SourceLink(source, surface, class, spec)
+    local url, label = ns.SourceLink(source, surface, class, spec, mode or currentMode())
     if not url then return nil end
     return source, url, label
 end
