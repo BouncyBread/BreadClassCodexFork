@@ -18,10 +18,15 @@ ns.RawSourceSpec = rawSpec
 -- ns.SourceValue; merging here means every section inherits the behaviour
 -- without touching its own lookup code.
 --
--- Merge is per-leaf at category -> hero -> context depth. A category upstream
--- lacks entirely is adopted wholesale; a category it has gains only the
--- hero/context combinations it is missing. Nothing is mutated in place: the
--- merged view is built into fresh tables so ClassCodexSource stays pristine.
+-- Merge is per-leaf at category -> hero -> context depth. A category nothing
+-- has yet is adopted wholesale (copied, not aliased); a category that is
+-- already present gains only the hero/context combinations it is missing.
+--
+-- FILL_SOURCES is a PRECEDENCE order and each source is compared against the
+-- merged-so-far view, not against the base alone -- so the first fill source to
+-- supply a leaf wins and later ones only add what is still absent. Nothing is
+-- mutated in place: every table the merge writes through is one it created, so
+-- both ClassCodexSource[base] and ClassCodexSource[fill] stay pristine.
 local BASE_SOURCES = { icyveins = true, ugg = true }
 local FILL_SOURCES = { "wowhead", "archongg" }
 
@@ -41,48 +46,114 @@ local function cacheKey(source, class, spec)
     return source .. "\0" .. class .. "\0" .. spec
 end
 
+-- Every "do we already have this?" test below reads the CURRENT merged view,
+-- never `base` alone. Reading `base` meant each fill source was compared only
+-- against upstream, so with two fill sources the SECOND silently replaced the
+-- first instead of filling what it left: u.gg ships no `consumables`, so both
+-- Wowhead and Archon took the whole-category path and Archon clobbered
+-- Wowhead's on all 39 specs it covers. Archon's consumables carry only
+-- mplus/raid contexts while the gear lookup asks for "all", so the net effect
+-- was that Wowhead's consumables never rendered anywhere. FILL_SOURCES order
+-- is a precedence order: first source to supply a leaf wins.
 local function mergeSpec(source, class, spec)
     local base = rawSpec(source, class, spec)
+    -- No base spec means this source does not cover the spec at all. Fill
+    -- sources fill GAPS in a source's coverage; they do not invent coverage,
+    -- or u.gg starts being offered as a source for specs it has never had.
+    -- Reachable as soon as a scrape covers a spec ahead of an upstream build.
+    if base == nil then return nil, nil end
     local prov = {}
     local out, dirty = nil, false
+    -- Which tables in `out` we created and may therefore mutate. Anything not
+    -- listed here is still shared with `base` or with a fill source's raw data.
+    -- ownedCtx is NESTED, not a concatenated key. The concatenated form
+    -- (category .. "\0" .. hero) is asymmetric: it is written from two
+    -- components but read back to index byHero[hero], so a NUL inside either
+    -- component makes two different (category, hero) pairs share a key and the
+    -- second one indexes a nil table -- a hard error that aborts the whole
+    -- panel render, not a silent mis-merge. cacheKey and the provenance keys
+    -- concatenate too, but they are written and read with the same expression,
+    -- so a collision there is at worst a provenance mix-up.
+    local ownedCat, ownedCtx = {}, {}
+
+    -- The merged-so-far view of a category: our own copy if we have one, else
+    -- the base's table, else nil.
+    local function currentCategory(category)
+        if out and out[category] ~= nil then return out[category] end
+        return base and base[category] or nil
+    end
+
+    -- A category table we own. Seeded from the current view, so taking
+    -- ownership never drops what is already merged.
+    local function ownCategory(category)
+        if ownedCat[category] then return out[category] end
+        local cur, copy = currentCategory(category), {}
+        if type(cur) == "table" then
+            for hero, byCtx in pairs(cur) do copy[hero] = byCtx end
+        end
+        out = out or {}
+        out[category] = copy
+        ownedCat[category] = true
+        return copy
+    end
+
+    -- A hero's context table we own. Copy-on-write: neither the base's nor a
+    -- fill source's context table may gain foreign entries in place.
+    local function ownContexts(category, hero)
+        local byHero = ownCategory(category)
+        local seen = ownedCtx[category]
+        if seen == nil then seen = {}; ownedCtx[category] = seen end
+        if seen[hero] then return byHero[hero] end
+        local cur, copy = byHero[hero], {}
+        if type(cur) == "table" then
+            for ctx, v in pairs(cur) do copy[ctx] = v end
+        end
+        byHero[hero] = copy
+        seen[hero] = true
+        return copy
+    end
 
     for _, fill in ipairs(FILL_SOURCES) do
         local fsd = fill ~= source and rawSpec(fill, class, spec) or nil
         if fsd then
             for category, fByHero in pairs(fsd) do
                 if type(fByHero) == "table" and not NON_SUBSTITUTABLE[category] then
-                    local bByHero = base and base[category]
-                    if bByHero == nil then
-                        -- Upstream has no such category at all: adopt it whole.
-                        out = out or {}
-                        out[category] = fByHero
-                        prov[category] = prov[category] or {}
-                        prov[category]["*"] = fill
-                        dirty = true
-                    elseif type(bByHero) == "table" then
+                    local curByHero = currentCategory(category)
+                    if curByHero == nil then
+                        -- Nothing has this category yet: adopt it whole. Copied
+                        -- rather than aliased, so a later fill source cannot
+                        -- mutate ClassCodexSource[fill] in place.
+                        --
+                        -- Count what actually lands: adopting unconditionally
+                        -- made an EMPTY fill category produce merged[cat] = {},
+                        -- and ns.SourceHas then reported the category present
+                        -- with nothing in it.
+                        local adopted = 0
                         for hero, fByCtx in pairs(fByHero) do
                             if type(fByCtx) == "table" then
-                                local bByCtx = bByHero[hero]
+                                local oByCtx = ownContexts(category, hero)
                                 for ctx, val in pairs(fByCtx) do
-                                    if bByCtx == nil or bByCtx[ctx] == nil then
-                                        out = out or {}
-                                        local oByHero = out[category]
-                                        if oByHero == nil then
-                                            oByHero = {}
-                                            for h, v in pairs(bByHero) do oByHero[h] = v end
-                                            out[category] = oByHero
-                                        end
-                                        local oByCtx = oByHero[hero]
-                                        -- Copy-on-write: the base's own context
-                                        -- table must not gain foreign entries.
-                                        if oByCtx == nil or oByCtx == bByCtx then
-                                            local copy = {}
-                                            if bByCtx then
-                                                for c, v in pairs(bByCtx) do copy[c] = v end
-                                            end
-                                            oByCtx = copy
-                                            oByHero[hero] = copy
-                                        end
+                                    oByCtx[ctx] = val
+                                    adopted = adopted + 1
+                                end
+                            end
+                        end
+                        if adopted > 0 then
+                            prov[category] = prov[category] or {}
+                            prov[category]["*"] = fill
+                            dirty = true
+                        elseif out then
+                            out[category] = nil
+                            ownedCat[category] = nil
+                            ownedCtx[category] = nil
+                        end
+                    elseif type(curByHero) == "table" then
+                        for hero, fByCtx in pairs(fByHero) do
+                            if type(fByCtx) == "table" then
+                                local curByCtx = curByHero[hero]
+                                for ctx, val in pairs(fByCtx) do
+                                    if curByCtx == nil or curByCtx[ctx] == nil then
+                                        local oByCtx = ownContexts(category, hero)
                                         oByCtx[ctx] = val
                                         prov[category] = prov[category] or {}
                                         prov[category][hero .. "\0" .. ctx] = fill
@@ -130,8 +201,14 @@ function ns.FilledFrom(source, class, spec, category, hero, context)
     local prov = provenance[cacheKey(source, class, spec)]
     local byCat = prov and prov[category]
     if not byCat then return nil end
+    -- Exact first: a category can now be adopted wholesale by one fill source
+    -- and then gain individual leaves from the next, so the "*" marker is the
+    -- fallback, not the answer.
+    if hero and context then
+        local exact = byCat[hero .. "\0" .. context]
+        if exact then return exact end
+    end
     if byCat["*"] then return byCat["*"] end
-    if hero and context then return byCat[hero .. "\0" .. context] end
     return nil
 end
 

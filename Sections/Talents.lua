@@ -29,7 +29,14 @@ local function buildCardList(args)
     local out = {}
     local usedContext = {}
     for order, b in ipairs(raw) do
-        local contentOk = (not b.zoneKind) or b.zoneKind == ct or (b.leveling and ct ~= "pvp")
+        -- An unclassified build (nil zoneKind) shows under every PvE filter,
+        -- but never under PvP: PvP has to be positively claimed. Wowhead
+        -- returns nil for genuinely ambiguous rows ("Single Target"), and
+        -- without the ct check those raid builds were offered as PvP
+        -- recommendations on Unholy DK, Marksmanship Hunter and Shadow Priest.
+        -- Mirrors the rule the leveling arm already applies.
+        local contentOk = (not b.zoneKind and ct ~= "pvp") or b.zoneKind == ct
+            or (b.leveling and ct ~= "pvp")
         local diffOk = (not b.difficulty) or b.difficulty == diff
         if contentOk and diffOk then
             local keep

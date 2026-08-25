@@ -685,9 +685,11 @@ local function GenericBuildEntries()
     local wantZone = ZoneKindFromState()
     local list, seen = {}, {}
     for i, b in ipairs(GenericBuilds()) do
-        -- nil zoneKind means "unclassified", which shows under every scope
-        -- rather than being hidden from the one it belongs to.
-        local zoneOk = (not b.zoneKind) or b.zoneKind == wantZone
+        -- nil zoneKind means "unclassified", which shows under every PvE
+        -- scope rather than being hidden from the one it belongs to -- but
+        -- never under PvP, which must be positively claimed. Same rule as
+        -- Sections/Talents.lua.
+        local zoneOk = (not b.zoneKind and wantZone ~= "pvp") or b.zoneKind == wantZone
         local heroOk = selectedUggHero == HERO_ALL or not b.hero or b.hero == selectedUggHero
         if zoneOk and heroOk and b.exportString and b.exportString ~= "" then
             local key = tostring(b.contextId or b.label or i) .. "\0" .. tostring(b.hero or "")

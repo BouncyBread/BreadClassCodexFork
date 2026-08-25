@@ -316,6 +316,21 @@ local SURFACES = {
     leveling = { label = "Leveling", iv = { data = "leveling", suffix = "leveling-guide" } },
 }
 
+-- Which recorded page backs each surface for the fill sources. Trinkets,
+-- crafted gear, stat priority and enchants/gems all live inside the gear
+-- guide, so they point at `bis`; `rotation` and `leveling` have no recorded
+-- page and deliberately have no entry, so they fall back to the homepage
+-- rather than silently linking somewhere wrong.
+local FILL_LINK_KEYS = {
+    bis          = { "bis" },
+    trinkets     = { "bis" },
+    crafting     = { "bis" },
+    stats        = { "bis" },
+    enhancements = { "bis" },
+    talents      = { "talents" },
+    guide        = { "talents", "bis" },
+}
+
 function ns.SourceLink(source, surface, class, spec, mode)
     local def = SURFACES[surface]
     if not def then return nil, nil end
@@ -328,10 +343,23 @@ function ns.SourceLink(source, surface, class, spec, mode)
     -- this they fell into the Icy Veins branch below, which hardcodes
     -- srcUrl(..., "icyveins", ...) and so returned an icy-veins.com link for
     -- Wowhead and Archon content.
+    --
+    -- The key is named EXPLICITLY per surface. It used to be borrowed from
+    -- upstream's own `def.iv.data`, which quietly made this lookup depend on a
+    -- table the fork does not control: when 1.0.8 dropped `data` from
+    -- SURFACES.stats the expression fell through to the surface name and
+    -- started asking for a `links.stats` that has never existed. The scrapers
+    -- record exactly two pages per spec -- `bis` (the gear guide) and
+    -- `talents` -- so anything not listed here has no page and correctly
+    -- falls back to the source's homepage.
     if source == "wowhead" or source == "archongg" then
-        local own = srcUrl(class, spec, source, def.iv and def.iv.data or surface)
-            or srcUrl(class, spec, source, surface)
-        if own then return ns.WithReferral(own), def.label end
+        local keys = FILL_LINK_KEYS[surface]
+        if keys then
+            for _, key in ipairs(keys) do
+                local own = srcUrl(class, spec, source, key)
+                if own then return ns.WithReferral(own), def.label end
+            end
+        end
         local home = ns.SOURCES[source] and ns.SOURCES[source].homepage
         if home then return ns.WithReferral(home), def.label end
     end

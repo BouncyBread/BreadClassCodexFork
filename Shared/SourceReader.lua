@@ -500,7 +500,17 @@ local function wowheadTalentBuilds(class, spec)
                                 recommended = b.recommended ~= nil and b.recommended ~= false,
                                 zoneKind = zone,
                                 artKind = art,
-                                contextId = ctx .. "\0" .. hero,
+                                -- The label is part of the identity. Wowhead
+                                -- publishes several distinct builds under one
+                                -- context slug -- Holy Paladin ships
+                                -- "Raid - Virtue" and "Raid - Faith" with
+                                -- different export strings under the same ctx
+                                -- -- and both the pane and Sections/Talents.lua
+                                -- dedupe on contextId, so keying on ctx+hero
+                                -- alone silently dropped every build after the
+                                -- first. That defeated the verbatim label kept
+                                -- just above precisely to keep these distinct.
+                                contextId = ctx .. "\0" .. hero .. "\0" .. label,
                                 provider = "Wowhead",
                             }
                         end
@@ -613,6 +623,22 @@ local function archonTalentBuilds(class, spec)
                                 -- data is Heroic, and the pane defaults to
                                 -- Mythic, which would filter every row away.
                                 encounterLabel = encLabel,
+                                -- DELIBERATELY ctx+hero, without the label --
+                                -- unlike the Wowhead builder above, which adds
+                                -- it. Both consumers dedupe on contextId, so
+                                -- this collapses each encounter to its single
+                                -- recommended build (sortBuilds puts that
+                                -- first). Archon publishes 3-4 ranked variants
+                                -- per encounter across ~680 encounter contexts;
+                                -- keying them apart would surface ~2400 extra
+                                -- rows whose only difference is pickrate.
+                                -- Wowhead's same-context rows are distinct
+                                -- NAMED builds ("Raid - Virtue" / "Raid -
+                                -- Faith"), which is why it does key on label.
+                                -- Revisit if the pane ever wants an
+                                -- alternatives view: the "alt N" labels above
+                                -- exist for exactly that and are dead weight
+                                -- until then.
                                 contextId = ctx .. "\0" .. hero,
                                 provider = "Archon",
                             }
