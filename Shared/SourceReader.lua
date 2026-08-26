@@ -425,6 +425,18 @@ local function heroDisplayName(slug)
 end
 ns.HeroDisplayName = heroDisplayName
 
+-- The source's own hero label is a guess for the fill sources -- Archon has no
+-- per-build hero in its payload, so every build on a page inherits that page's
+-- most-played hero and can disagree with the loadout it ships. Prefer the hero
+-- the export string actually selects; fall back to the label when it cannot be
+-- decoded (a different spec than the player's, or outside the game entirely,
+-- which is every headless test).
+local function resolveHero(bucketHero, exportString)
+    local actual = ns.HeroFromExportString and ns.HeroFromExportString(exportString)
+    if actual and actual ~= "" then return actual end
+    return heroDisplayName(bucketHero)
+end
+
 -- Wowhead has NO per-encounter data — unlike Archon, none of its contexts name
 -- a dungeon or boss. They are slugified BUILD NAMES: "Raid Cleave" -> cleave,
 -- "Raid (Standard)" -> standard-raid, "Raid Multitarget" -> mt-raid.
@@ -495,7 +507,7 @@ local function wowheadTalentBuilds(class, spec)
                             local best = type(b.recommended) == "string" and b.recommended or nil
                             out[#out + 1] = {
                                 label = best and (label .. " (" .. best .. ")") or label,
-                                hero = heroDisplayName(hero),
+                                hero = resolveHero(hero, b.export),
                                 exportString = b.export,
                                 recommended = b.recommended ~= nil and b.recommended ~= false,
                                 zoneKind = zone,
@@ -611,7 +623,7 @@ local function archonTalentBuilds(class, spec)
                             end
                             out[#out + 1] = {
                                 label = label,
-                                hero = heroDisplayName(hero),
+                                hero = resolveHero(hero, b.export),
                                 exportString = b.export,
                                 -- Archon's own "Recommended Class Tree" is often
                                 -- not the most-played build, so flag its pick

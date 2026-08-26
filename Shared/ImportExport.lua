@@ -138,6 +138,87 @@ local function ParseExportString(exportString, treeID, expectedSpecID, configID)
     return entryInfo
 end
 
+-- Which hero talent an export string ACTUALLY selects.
+--
+-- The hero a data source attaches to a build is not evidence. Archon's payload
+-- carries no per-build hero at all, so scrape_archon.py buckets every build on
+-- a page under that page's most-played hero subtree -- measurably so: not one
+-- of its 860 talent contexts carries two heroes. A build labelled "Herald of
+-- the Sun" can therefore hand you a Templar loadout, which is exactly what
+-- Ret Paladin/Vashnik did: the dock showed the label and looked right, while
+-- the talent pane decoded the string to draw its preview and showed Templar.
+--
+-- The export string is the one thing that cannot disagree with itself. Read the
+-- hero out of it and let it override whatever the data claimed.
+--
+-- Only the ACTIVE spec is decodable here: GetTreeNodes needs that spec's
+-- treeID, and walking another spec's export against it desyncs the bitstream
+-- and yields confident garbage rather than nil. Anything else returns nil and
+-- the caller keeps the source's label.
+local heroByExport = {}
+
+function ns.ResetHeroFromExportCache()
+    heroByExport = {}
+end
+
+function ns.HeroFromExportString(exportString)
+    if not exportString or exportString == "" then return nil end
+    if not (C_Traits and C_ClassTalents and ExportUtil and Enum and Enum.TraitNodeType) then return nil end
+
+    local activeSpecID = GetSpecID()
+    if not activeSpecID then return nil end
+    -- Keyed by spec too: the same string decodes differently (or not at all)
+    -- against another spec's tree, so a cache hit from before a spec swap
+    -- would be wrong rather than merely stale.
+    local key = activeSpecID .. "\0" .. exportString
+    local hit = heroByExport[key]
+    if hit ~= nil then
+        if hit == false then return nil end
+        return hit
+    end
+
+    local treeID = GetTreeID()
+    local configID = C_ClassTalents.GetActiveConfigID()
+    if not treeID or not configID then return nil end
+
+    local result = false
+    local ok, stream = pcall(ExportUtil.MakeImportDataStream, exportString)
+    if ok and stream then
+        local headerValid, version, specID = ReadLoadoutHeader(stream)
+        if headerValid
+            and version == C_Traits.GetLoadoutSerializationVersion()
+            and specID == activeSpecID then
+            local okContent, content = pcall(ReadLoadoutContent, stream, treeID)
+            if okContent and type(content) == "table" then
+                local treeNodes = C_Traits.GetTreeNodes(treeID)
+                for i, nodeID in ipairs(treeNodes) do
+                    local idx = content[i]
+                    if idx and idx.isNodePurchased and idx.isChoiceNode then
+                        local info = C_Traits.GetNodeInfo(configID, nodeID)
+                        if info and info.type == Enum.TraitNodeType.SubTreeSelection
+                            and info.entryIDs and #info.entryIDs > 0 then
+                            -- Same clamp as ConvertToEntryInfo: the import's
+                            -- 2-bit choice field allows 1..3, so a 2-entry node
+                            -- carrying a "3" would index past the end.
+                            local choice = math.min(idx.choiceNodeSelection or 1, #info.entryIDs)
+                            local entry = C_Traits.GetEntryInfo(configID, info.entryIDs[choice])
+                            local sub = entry and entry.subTreeID
+                                and C_Traits.GetSubTreeInfo(configID, entry.subTreeID)
+                            if sub and sub.name and sub.name ~= "" then
+                                result = sub.name
+                                break
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    heroByExport[key] = result
+    if result == false then return nil end
+    return result
+end
+
 function ns.ParseLoadoutNodes(exportString)
     if not exportString or exportString == "" then return nil, "Empty export string" end
     local treeID, configID, expectedSpecID
