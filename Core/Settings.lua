@@ -130,6 +130,15 @@ function ns.RegisterSettings()
 
         local general = group(L["settings.header.general"])
         general.check(
+            "showHelpButton",
+            L["onboarding.settings_show_button_label"],
+            L["onboarding.settings_show_button_tooltip"],
+            true,
+            function()
+                if ns.RefreshHelpButton then ns.RefreshHelpButton() end
+            end
+        )
+        general.check(
             "showMinimapButton",
             L["settings.label.minimap_button"],
             L["settings.tooltip.minimap_button"],

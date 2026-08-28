@@ -335,7 +335,7 @@ local function buildSettings(parent, context)
     )
     settingsRow.icon:SetSize(16, 16)
     if not isComp then
-        addLinkRow(
+        ns._onbCompendiumRow = addLinkRow(
             "Interface\\AddOns\\BreadClassCodex\\Media\\icon",
             L["about.compendium"],
             L["about.compendium_tip"],
@@ -348,7 +348,7 @@ local function buildSettings(parent, context)
             0.4
         )
     end
-    addToggleRow(
+    local dockRow = addToggleRow(
         "Interface\\AddOns\\BreadClassCodex\\Media\\dock",
         L["about.loadout_dock"],
         L["about.loadout_dock_tip"],
@@ -363,6 +363,7 @@ local function buildSettings(parent, context)
         TOGGLE,
         0.3
     )
+    if not isComp then ns._onbDockRow = dockRow end
     addToggleRow(
         "Interface\\AddOns\\BreadClassCodex\\Media\\talent-highlight",
         L["about.talent_highlight"],

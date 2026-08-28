@@ -475,3 +475,32 @@ L["settings.tooltip.stat_priority_source_line"] = "Show the "
 L["settings.label.priority_display"] = "Priority Display"
 L["settings.tooltip.priority_display"] =
     "How the Stat Priority line shows the hero and content: icons, labels, or both."
+
+L["onboarding.title"] = "Bread Codex Tour"
+L["onboarding.next"] = "Next"
+L["onboarding.help_tooltip_title"] = "Bread Codex Tour"
+L["onboarding.help_tooltip_body"] = "Take the tour.\nIt hides once you finish. Re-enable it in Settings."
+L["onboarding.ctx_title"] = "Context"
+L["onboarding.ctx_body"] = "Set your content, guide source, and hero.\n\n|cffffd100Click the dropdown to change it.|r"
+L["onboarding.tabs_title"] = "Tabs"
+L["onboarding.tabs_body"] = "Each tab is a guide for your spec.\n\n|cffffd100Click one to open it.|r"
+L["onboarding.about_title"] = "About Tab"
+L["onboarding.about_body"] =
+    "Open the Compendium, toggle the Loadout Dock, and reach settings, Discord, and support.\n\n|cffffd100Click the About tab to open it.|r"
+L["onboarding.comp_title"] = "Compendium"
+L["onboarding.comp_body"] =
+    "The same idea as this panel, but for every class and spec.\n\n|cffffd100Click to open the Compendium.|r"
+L["onboarding.minimap_title"] = "Minimap Button"
+L["onboarding.minimap_body"] =
+    "|cffffd100Left click|r the minimap icon for the Compendium.\n|cffffd100Right click|r it for settings."
+L["onboarding.dock_title"] = "Loadout Dock"
+L["onboarding.dock_body"] =
+    "|cffffd100Click this toggle to turn it on.|r\n\n|cffffd100Left click|r the dock to switch loadout.\n|cffffd100Right click|r the dock for settings, like which hero's talents to show."
+L["onboarding.talent_title"] = "Talent Builds"
+L["onboarding.talent_body"] =
+    "Bread Codex adds a build picker to your talent tree. Pick a build and the changed talents glow.\n\n|cffffd100Click the icon to show or hide it.|r"
+L["onboarding.thanks_title"] = "You're All Set"
+L["onboarding.thanks_body"] =
+    "Thank you for using |cffffd100Bread Codex|r.\n\nQuestions, bugs, or ideas?\nCome find us on Discord."
+L["onboarding.settings_show_button_label"] = "Show the help button on the panel"
+L["onboarding.settings_show_button_tooltip"] = "Show the round i on the panel. Click it to replay the tour."

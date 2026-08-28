@@ -1862,7 +1862,7 @@ copyPopup:SetBackdrop({
     edgeSize = 12,
     insets = { left = 2, right = 2, top = 2, bottom = 2 },
 })
-copyPopup:SetFrameStrata("DIALOG")
+copyPopup:SetFrameStrata("FULLSCREEN_DIALOG")
 copyPopup:Hide()
 
 local copyEdit = CreateFrame("EditBox", nil, copyPopup, "InputBoxTemplate")
@@ -2099,6 +2099,22 @@ end
 ns.setActiveTab = function(tab)
     activeTab = tab
     UpdateTabAppearance()
+end
+ns.SelectPanelTab = function(tab)
+    activeTab = tab
+    if ClassCodexCharDB then ClassCodexCharDB.activeTab = activeTab end
+    UpdateTabAppearance()
+    ns:UpdatePanel()
+    if ns.ScrollToTab then ns:ScrollToTab(tab) end
+end
+ns.GetSideTabs = function()
+    return sideTabs
+end
+ns.GetPanelContentFrame = function()
+    return contentScroll
+end
+ns.GetContextSelector = function()
+    return subheaderFrame
 end
 ns.HERO_TALENT_ATLAS = HERO_TALENT_ATLAS
 ns.SPEC_KEYS = SPEC_KEYS
@@ -3689,6 +3705,10 @@ local function GetCachedRanks()
 end
 
 local function OnTooltipItem(tooltip, tooltipData)
+    -- IsForbidden is the one call permitted on forbidden tooltips (e.g.
+    -- quest-reward tooltips assembled through secure code by the Journeys
+    -- UI); any other method raises "access forbidden object".
+    if tooltip:IsForbidden() then return end
     if not ClassCodexDB then return end
 
     local itemId = tooltipData and tooltipData.id
@@ -3995,10 +4015,11 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
             dockLoadoutShowPvp = true,
             dockLoadoutWidth = 200,
             dockLoadoutMaxWidth = 400,
-            dockLoadoutAutoWidth = false,
+            dockLoadoutAutoWidth = true,
             dockLoadoutScale = 100,
             dockLoadoutAlignment = "LEFT",
             raidDifficulty = "both",
+            showHelpButton = true,
         }
         local charDefaults = {
             panelOpen = true,

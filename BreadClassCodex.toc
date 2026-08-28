@@ -81,3 +81,4 @@ Core\LoadoutDock.lua
 Core\UnitMenuIntegration.lua
 Core\SettingsAbout.lua
 Core\Settings.lua
+Core\Onboarding.lua
