@@ -679,10 +679,10 @@ ClassCodexSource["wowhead"] = {
               { export = "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMjZwMjZGz8AzMzYYmZmx2YGjxMAAAAMbzghxyGTYYmZsAAAAgBGABYmBMDAAAgB", label = "Mythic+/AoE" },
             },
             cleave = {
-              { export = "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjZmZkZmZYYmZGDzYmxMmxMmxMmZsZmxYAAAAAz2MYYssxEGmZGLAAAAYwAQAmZAGAAAAD", label = "Raid Cleave" },
+              { export = "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjZmZkZmZYYmZGDzYmxMmxMmxMmZsNzMGDAAAAY2mBDjlNmwwMzYBAAAADGACwMDwAAAAYA", label = "Raid Cleave" },
             },
             council = {
-              { export = "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjZmZkZmZYYmZGDzYmxMmxMmxMmZsZmxYAAAAAz2MYYssxEGmZGLAAAAYwAQAmZAGAAAAD", label = "Raid Council" },
+              { export = "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjZmZkZmZYYmZGDzYmxMmxMmxMmZsNzMGDAAAAY2mBDjlNmwwMzYBAAAADGACwMDwAAAAYA", label = "Raid Council" },
             },
             delves = {
               { export = "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjxMjMzMwmZMDmZMzYmHYGzYMzMzM2GzgxMAAAAMbzghxyGTYYmZsAAAAgBzAIAzMADAAAgB", label = "Delves" },
@@ -4735,7 +4735,7 @@ ClassCodexSource["wowhead"] = {
         enchants = {
           all = {
             all = {
-              Weapon = { { itemId = 243973 } },
+              Weapon = { { itemId = 273072 } },
               Helm = { { itemId = 243951 } },
               Shoulder = { { itemId = 243991 } },
               Chest = { { itemId = 243977 } },
@@ -5027,5 +5027,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-08-26", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-08-28", schemaVersion = 1, source = "wowhead" },
 }
