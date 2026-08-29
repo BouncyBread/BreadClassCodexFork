@@ -1057,7 +1057,7 @@ ClassCodexSource["wowhead"] = {
         talents = {
           ["druid-of-the-claw"] = {
             raid = {
-              { export = "CgGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgZmxsMPwYMzmZZGMWGY2gRT0MzsMzMzMGzYGAAAAAwMWmBAAAgamlZZmZGAALYmBYxMYAbW2GAMzGMA", label = "Raid", recommended = "Best" },
+              { export = "CgGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgZmxsMPwYMzmZZGMWGY2gRT0MzsMzMzMGzYGAAAAAwMWmBAAAgamlZZmZGAALYmBYxMYAbW2GAMzGMA", label = "Raid" },
             },
             mplus = {
               { export = "CgGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgZmxsMmZMziZZGmZZZgZzwoJamZWmZmZmlxMMAAAAAgZsMDAAAA1MLzyMzMAAWwMPAwiZwA2sAAmZDG", label = "Mythic+" },
@@ -1068,7 +1068,7 @@ ClassCodexSource["wowhead"] = {
           },
           ["elunes-chosen"] = {
             raid = {
-              { export = "CgGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgZmxs4BGjZ2MLzgZZZgZDGNRzMzyMzMzYMjZAAAAAAzYZGwy2MDGz2AYKAAAwGmZAWMDGwmltBYmBwA", label = "Raid" },
+              { export = "CgGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgZmxsYGjZ2MLGMLLDMbwoJamZWmZmZGjZMDAAAAAYGLzAW2mZwY2GATBAAA2wMDwiZwA2ssNAzMAG", label = "Raid", recommended = "Best" },
             },
             mplus = {
               { export = "CgGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgZmZml5BmZMziZxwMLLDMbGGNRzMzyMzMzsMmBAAAAAgZsYAbbzMYMLDgpAAAAbYmBYxMYAbWAYmBwA", label = "Mythic+", recommended = "Best" },
@@ -2489,7 +2489,6 @@ ClassCodexSource["wowhead"] = {
               { itemId = 270167, tier = "A", source = "Nymrissa Wavebinder", contexts = { "raid" } },
               { itemId = 270169, tier = "A", source = "Hex Lord Malacrass", contexts = { "raid" } },
               { itemId = 270164, tier = "A", source = "Mor'zahi", contexts = { "raid" } },
-              { itemId = 273649, tier = "B", source = "King Dazar", contexts = { "mplus" } },
               { itemId = 248583, tier = "B", source = "Delves", contexts = { "delves" } },
               { itemId = 251792, tier = "B", source = "Delves", contexts = { "delves" } },
               { itemId = 273796, tier = "B", source = "Rav'i", contexts = { "mplus" } },
@@ -2501,6 +2500,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 250254, tier = "C", source = "Meittik", contexts = { "mplus" } },
               { itemId = 250214, tier = "C", source = "Lightwarden Ruia", contexts = { "mplus" } },
               { itemId = 264507, tier = "C", source = "Delves", contexts = { "delves" } },
+              { itemId = 273649, tier = "D", source = "King Dazar", contexts = { "mplus" } },
               { itemId = 251789, tier = "D", source = "Delves", contexts = { "delves" } },
               { itemId = 270171, tier = "D", source = "Vexhul", contexts = { "raid" } },
               { itemId = 251788, tier = "D", source = "Delves", contexts = { "delves" } },
@@ -2546,7 +2546,7 @@ ClassCodexSource["wowhead"] = {
                 "{1269159}",
                 "{115151} if at 3 charges",
                 "{115869} if at 20 stacks",
-                "If you have 2 {1260565} stacks, consume at least one to avoid overcapping If you have 2 {1260565} or 6 {1270958} stacks, use some stacks to avoid overcapping",
+                "If you have 2 {1260565} stacks, consume at least one to avoid overcapping",
                 "{116680} (empowering {115151})",
                 "Any remaining {115151} charges",
                 "{116670} with high {115151} coverage and an injured raid",
@@ -3270,8 +3270,7 @@ ClassCodexSource["wowhead"] = {
             all = {
               steps = {
                 "Cast {2050} for single target healing on cooldown.",
-                "Consume any {114255} procs on {596} whenever possible, you can hold up to two stacks.",
-                "Keep {33076} on cooldown.",
+                "Keep {33076} on cooldown, you can pool a charge if you know you will need to move so that you have something to cast while moving.",
                 "Cast {2061}s to spot-heal as needed and make sure to not overcap on {1262755} stacks (2).",
                 "Cast {585} during downtime to farm for {114255} procs.",
                 "Cast {64843} for raid-wide damage.",
@@ -3684,9 +3683,9 @@ ClassCodexSource["wowhead"] = {
                 "Cast {381989} if you have a stage 3 or higher {315508} active.",
                 "Cast {1277933} whenever {315341}, {13750}, and {51690} are on cooldown.",
                 "Cast {13750} on cooldown at 2 or fewer combo points, followed by {51690}.",
-                "Cast {2098} with the 4-set bonus active.",
                 "Cast {271877} on cooldown.",
                 "Cast {315341} at 6 or more combo points.",
+                "Cast {2098} with the 4-set bonus active.",
                 "Cast {2098} at 6 or more combo points.",
                 "Cast {185763} if; {279876} has 6 stacks.",
                 "{279876} has 3 stacks, and you are at 1-3 combo points.",
@@ -4863,7 +4862,7 @@ ClassCodexSource["wowhead"] = {
         enchants = {
           all = {
             all = {
-              Weapon = { { itemId = 243973 } },
+              Weapon = { { itemId = 273072 } },
               Helm = { { itemId = 243951 } },
               Shoulder = { { itemId = 243991 } },
               Chest = { { itemId = 243977 } },
@@ -5027,5 +5026,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-08-28", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-08-29", schemaVersion = 1, source = "wowhead" },
 }
