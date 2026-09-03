@@ -137,7 +137,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 268265, slot = "Neck", source = "Ula'tek" },
               { itemId = 271472, slot = "Shoulders", source = "Tier Set" },
               { itemId = 268253, slot = "Cloak", source = "The Coiled Altar" },
-              { itemId = 271474, slot = "Chest", source = "The Coiled Altar" },
+              { itemId = 271477, slot = "Chest", source = "The Coiled Altar" },
               { itemId = 237834, slot = "Wrist", source = "Crafting/Misc" },
               { itemId = 271475, slot = "Gloves", source = "Tier Set" },
               { itemId = 268259, slot = "Belt", source = "The Coiled Altar" },
@@ -181,7 +181,7 @@ ClassCodexSource["wowhead"] = {
               { export = "CsPAAAAAAAAAAAAAAAAAAAAAAMAzMMjZAz2MzMzMLzMjMjxYYmxgZmZmZmZmZAAAAAAAAAYMbDMgFwywEyYBzMmZGYAYYmBYmBD", label = "Mythic+", recommended = "Best" },
             },
             delves = {
-              { export = "CsPAAAAAAAAAAAAAAAAAAAAAAMDYmhZmZAzmZmZmZZmZkZMGDzAMzMzMzMzMDAAAAAAAAAjZbgBsAWGmQGLYmZmZGYAYYmBYmBD", label = "Delves", recommended = "Best" },
+              { export = "CsPAAAAAAAAAAAAAAAAAAAAAAMAzMMzMDY2MzMzMLzMjMjxYYmxgZmZmZmZmZAAAAAAAAAYMbDMgFwywEyYBzMmZGYAYYmBYmBD", label = "Delves", recommended = "Best" },
             },
           },
           ["rider-of-the-apocalypse"] = {
@@ -1532,7 +1532,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 271493, slot = "Gloves", source = "King's Rest" },
               { itemId = 244581, slot = "Belt", source = "Leatherworking" },
               { itemId = 271491, slot = "Legs", source = "The Coiled Altar" },
-              { itemId = 268233, slot = "Boots", source = "Sszorak" },
+              { itemId = 159388, slot = "Boots", source = "Temple of Sethraliss" },
               { itemId = 268249, slot = "Ring", source = "Vashnik the Malignant" },
               { itemId = 252258, slot = "Ring", source = "Voidscar Arena" },
               { itemId = 270173, slot = "Trinket", source = "The Coiled Altar" },
@@ -1998,7 +1998,7 @@ ClassCodexSource["wowhead"] = {
         enchants = {
           all = {
             all = {
-              Weapon = { { itemId = 244029 } },
+              Weapon = { { itemId = 273071 } },
               Head = { { itemId = 244007 } },
               Shoulders = { { itemId = 244021 } },
               Chest = { { itemId = 243977 } },
@@ -2802,7 +2802,7 @@ ClassCodexSource["wowhead"] = {
         enchants = {
           all = {
             all = {
-              Weapon = { { itemId = 244031 } },
+              Weapon = { { itemId = 273072 } },
               Shoulders = { { itemId = 244021 } },
               Chest = { { itemId = 244003 } },
               Helmet = { { itemId = 243951 } },
@@ -3504,30 +3504,30 @@ ClassCodexSource["wowhead"] = {
         talents = {
           deathstalker = {
             ["raid-single-target"] = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlxsNDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMzMjZMjxYmxwAsZWGYALBLDTghFwMDwMjB", label = "Raid Single Target", recommended = "Best" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlxsNDGAAAAAYWGsNDAAAAAottZmZmZmxYZmZmtZWmZmZMjZMGzMGGgNzyADYJYZYCMsAmZAGjB", label = "Raid Single Target" },
             },
             raid = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAsZWGYALBLDTghFwMDwMjB", label = "Raid", recommended = "Best" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlxsZwAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AjxMjxYmZmxAsZWGYALBLDTghFwMDwYMA", label = "Raid" },
             },
             mplus = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxMmZMGgNzyADYJYZYCMsAmZAmZ8BA", label = "Mythic+", recommended = "Best" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxMmZMGgNzyADYJYZYCMsYwMDgZ8BA", label = "Mythic+" },
             },
             delves = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxMmZMGgNzyADYJYZYCMsAmZAmZ8BA", label = "Delves", recommended = "Best" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxMmZMGgNzyADYJYZYCMsYwMDgZ8BA", label = "Delves", recommended = "Best" },
             },
           },
           fatebound = {
             ["raid-single-target"] = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlxsNDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMzMjZMjxYmxwAYgFYGjGzGIbDYDAMzMzYA", label = "Raid Single Target" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlxsNDGAAAAAYWGsNDAAAAAottZmZmZmxYZmZmtZWmZmZMjZMGzMGGADsAzY0Y2AZbAbGAMzMYA", label = "Raid Single Target", recommended = "Best" },
             },
             raid = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxwMjxAYgFYGjGzGIbDYDAMzMzYA", label = "Raid" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlxsZwAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AjxMjxYmZmxAYgFYGjGzGIbDYzAgZmBD", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxMmZMGADsAzY0Y2AZbAbAgZmZGfA", label = "Mythic+" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxMmZMGADsAzY0YWAZbAbGAMzMDfA", label = "Mythic+", recommended = "Best" },
             },
             delves = {
-              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxMmZMGADsAzY0Y2AZbAbAgZmZGfA", label = "Delves" },
+              { export = "CMQAAAAAAAAAAAAAAAAAAAAAAYmlZmFDAAAAAAzygtZAAAAAAttNzMzMzMGLzMzsNzyMz8AmxMjxMmZMGADsAzY0YWAZbAbGAMzMDfA", label = "Delves" },
             },
           },
         },
@@ -3536,6 +3536,7 @@ ClassCodexSource["wowhead"] = {
             all = {
               steps = {
                 "Maintain {703}",
+                "Cast {5938} on cooldown",
                 "Cast {1329} until having 5 or more combo points",
                 "Cast {32645} at maximum combo points when {457058} is active",
                 "Maintain {1943} by casting at 5 or more combo points",
@@ -3550,7 +3551,7 @@ ClassCodexSource["wowhead"] = {
         enchants = {
           all = {
             all = {
-              ["Both Weapons"] = { { itemId = 243973 } },
+              ["Both Weapons"] = { { itemId = 273072 } },
               Helm = { { itemId = 243951 } },
               Chest = { { itemId = 243977 } },
               Shoulder = { { itemId = 244021 } },
@@ -3570,8 +3571,8 @@ ClassCodexSource["wowhead"] = {
         consumables = {
           all = {
             all = {
-              flask = { 241324 },
-              potions = { 271887 },
+              flask = { 241324, 241326, 241322 },
+              potions = { 271887, 241308, 241288 },
               healthPotion = { 271884 },
               weaponBuff = { 243734 },
               augmentRune = { 259085 },
@@ -4293,10 +4294,10 @@ ClassCodexSource["wowhead"] = {
               { export = "CkQAAAAAAAAAAAAAAAAAAAAAAwMmZGNbM2mZGzyAAAmZmlZxMzyYAALwAziRjZAZ2ALDAAAzAAAzMYMjZmtxwYmZmZYYmZGAgZgB", label = "Raid Cleave" },
             },
             mplus = {
-              { export = "CkQAAAAAAAAAAAAAAAAAAAAAAwMegZGNbzM2mZGz2AAAmZmlZxMzyYAALwAziRjZAZ2ALDAAAzAAAzMYMjxsNGzYmZmZYYmZGAgBMA", label = "Mythic+" },
+              { export = "CkQAAAAAAAAAAAAAAAAAAAAAAwMmZGNbM2mZmZWGAAwMmlZZmZWGDAYBGYWMaMDIzCYZAAAYAAAzMYMjxsxwMzYmZMDzMzAAMDMA", label = "Mythic+" },
             },
             delves = {
-              { export = "CkQAAAAAAAAAAAAAAAAAAAAAAwMegZGNbzM2mZGz2AAAmZmlZxMzyYAALwAziRjZAZ2ALDAAAzAAAzMYMjxsNGzYmZmZYYmZGAgBMA", label = "Delves" },
+              { export = "CkQAAAAAAAAAAAAAAAAAAAAAAwMmZGNbM2mZmZWGAAwMmlZZmZWGDAYBGYWMaMDIzCYZAAAYAAAzMYMjxsxwMzYmZMDzMzAAMDMA", label = "Delves" },
             },
           },
           ["soul-harvester"] = {
@@ -4307,10 +4308,10 @@ ClassCodexSource["wowhead"] = {
               { export = "CkQAAAAAAAAAAAAAAAAAAAAAAwMmZGNbM2mZGzyAAAmZmlZxMzyYAgx2yADYCmhtADbDAAAzAAAYmZMjZmtxwYmZmZYYmZGAgZgB", label = "Raid Cleave", recommended = "Best" },
             },
             mplus = {
-              { export = "CkQAAAAAAAAAAAAAAAAAAAAAAwMjZGNbmx2MzYWGAAwMzsMLmZ2GDAM2WGYATwMsFYYbAAAYGAAAzMjZMzsNGzYMzMzYYmZGAgBMA", label = "Mythic+", recommended = "Best" },
+              { export = "CkQAAAAAAAAAAAAAAAAAAAAAAwMMzoZzMz2MzYWGAAwMmlZZmZWGDAM22GYATwMsFYYbAAAYAAAYmZMjZmNGmZmZmhZYmZGAgZgB", label = "Mythic+", recommended = "Best" },
             },
             delves = {
-              { export = "CkQAAAAAAAAAAAAAAAAAAAAAAwMjZGNbmx2MzYWGAAwMzsMLmZ2GDAM2WGYATwMsFYYbAAAYGAAAzMjZMzsNGzYMzMzYYmZGAgBMA", label = "Delves", recommended = "Best" },
+              { export = "CkQAAAAAAAAAAAAAAAAAAAAAAwMMzoZzMz2MzYWGAAwMmlZZmZWGDAM22GYATwMsFYYbAAAYAAAYmZMjZmNGmZmZmhZYmZGAgZgB", label = "Delves", recommended = "Best" },
             },
           },
         },
@@ -5022,5 +5023,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-02", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-09-03", schemaVersion = 1, source = "wowhead" },
 }
