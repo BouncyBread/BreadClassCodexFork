@@ -333,9 +333,9 @@ local function EnsureFrames()
                 tint = GREY,
                 color = GREY,
                 alpha = 0.28,
-                onClick = function()
+                onClick = function(self)
                     FinishTour({})
-                    if ns.OpenSettings then ns.OpenSettings() end
+                    if ns.OpenSettings then ns.OpenSettings(self) end
                 end,
             },
             {
@@ -434,7 +434,7 @@ GoToStep = function(i)
     local step = steps[index]
     armed = step.watch
     if step.onEnter then pcall(step.onEnter) end
-    if card.SetTitle then card:SetTitle(L["onboarding.title"] .. " · " .. step.title()) end
+    if card.SetTitle then card:SetTitle(L["onboarding.title"] .. " " .. ns.DOT_SEPARATOR .. " " .. step.title()) end
     card.body:SetText(step.body())
     local showLinks = step.showLinks and true or false
     for _, row in ipairs(card.linkRows) do

@@ -97,6 +97,22 @@ function T.Hide()
     return T
 end
 
+--- Make the GameTooltip cluster click-through. Comparison ("shopping")
+--- tooltips spawn next to GameTooltip while Shift is held on equippable
+--- items' tooltips (TooltipComparisonManager → ShoppingTooltip1/2). They
+--- inherit the mouse-enabled tooltip template, so without this they
+--- swallow the mouse-up of the very shift-click that summoned them —
+--- gear rows behind them needed repeated clicks.
+function T.MakeClickThrough()
+    GameTooltip:EnableMouse(false)
+    local shopping = GameTooltip.shoppingTooltips
+    if shopping then
+        for i = 1, #shopping do
+            shopping[i]:EnableMouse(false)
+        end
+    end
+end
+
 local HELP_TEX = "Interface\\Common\\help-i"
 local HELP_IDLE = { 0.7, 0.7, 0.7, 0.9 }
 local HELP_HOVER = { 1, 1, 1, 1 }

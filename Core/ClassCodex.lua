@@ -460,6 +460,10 @@ panel:Hide()
 
 panel:HookScript("OnHide", function()
     if ns.HideSaveAsLoadoutPopup then ns.HideSaveAsLoadoutPopup() end
+    -- Escape (UISpecialFrames) closes the floating panel without running the
+    -- CloseButton handler, so persist the closed state here as well; docked
+    -- hides (host tab/close) must keep panelOpen so the panel returns.
+    if isFloating and ClassCodexCharDB then ClassCodexCharDB.panelOpen = false end
 end)
 
 if panel.SetTitle then panel:SetTitle("Bread Codex") end
@@ -472,7 +476,11 @@ if titleFS then
 end
 
 if panel.CloseButton then
-    panel.CloseButton:HookScript("OnClick", function()
+    -- Hide directly instead of riding the template default (HideParentPanel ->
+    -- HideUIPanel): HideUIPanel refuses to run for insecure callers during
+    -- combat, which left the X button doing nothing until combat ended.
+    panel.CloseButton:SetScript("OnClick", function()
+        panel:Hide()
         if ClassCodexCharDB then ClassCodexCharDB.panelOpen = false end
     end)
 end
@@ -1243,11 +1251,17 @@ local function CreateOptionDropdown(name, parent, width)
             else
                 label, value = opt, opt
             end
-            rootDescription:CreateRadio(label, function()
+            local radio = rootDescription:CreateRadio(label, function()
                 return value == dd._current
             end, function()
                 if dd._onSelect then dd._onSelect(value) end
             end)
+            if type(opt) == "table" and opt.tooltip and radio and radio.SetTooltip then
+                local tipTitle, tipBody = label, opt.tooltip
+                radio:SetTooltip(function(tip)
+                    ns.Tooltip.MenuTip(tip, tipTitle, tipBody)
+                end)
+            end
         end
     end)
 
@@ -1756,11 +1770,7 @@ local function CreateSourceButton(name, parent, badgeSize)
     end)
 
     btn:SetScript("OnEnter", function(self)
-        ns.Tooltip
-            .Open(self, "ANCHOR_RIGHT")
-            .Title("Context")
-            .Hint("Source, content type, hero spec — click to change.")
-            .Show()
+        ns.Tooltip.Open(self, "ANCHOR_RIGHT").Title(L["context.selector_title"]).Hint(L["context.selector_hint"]).Show()
     end)
     btn:SetScript("OnLeave", function()
         ns.Tooltip.Hide()
@@ -2814,8 +2824,24 @@ local function SlideInDocked()
     ag:Play()
 end
 
+-- Escape-close for the floating panel is opt-in (per-character setting): it
+-- never applies docked, where the panel rides with the character pane and
+-- registering it would turn one Escape press into two. On ns rather than
+-- locals because this main chunk is at Lua's 200-local limit — one more
+-- top-level local and the whole file fails to load.
+ns.SetEscapeClose = function(on)
+    if on then
+        if not tContains(UISpecialFrames, "ClassCodexPanel") then tinsert(UISpecialFrames, "ClassCodexPanel") end
+    else
+        for i = #UISpecialFrames, 1, -1 do
+            if UISpecialFrames[i] == "ClassCodexPanel" then tremove(UISpecialFrames, i) end
+        end
+    end
+end
+
 local function DockPanel()
     isFloating = false
+    ns.SetEscapeClose(false)
 
     if isMinimized then
         isMinimized = false
@@ -2832,6 +2858,7 @@ end
 
 local function FloatPanel()
     isFloating = true
+    ns.SetEscapeClose(ClassCodexCharDB and ClassCodexCharDB.floatEscClose and true or false)
     panel:SetParent(UIParent)
     panel:SetFrameStrata("HIGH")
     panel:SetMovable(true)
@@ -3234,7 +3261,7 @@ local function SetupWidgetButton()
                 end)
             end
         end)
-        if not ok then print("|cffff0000Bread Codex:|r Panel error: " .. tostring(err)) end
+        if not ok then print("|cffff0000Bread Codex:|r " .. string.format(L["error.panel"], tostring(err))) end
     end
 
     local function OnAnyHostHide()
@@ -3295,7 +3322,7 @@ function ClassCodex_OnAddonCompartmentEnter(_, menuButtonFrame)
     ns.Tooltip
         .Open(menuButtonFrame, "ANCHOR_RIGHT")
         .Intro("Bread Codex v" .. ver)
-        .Body("Click to open Compendium")
+        .Body(L["tooltip.open_compendium"])
         .Show()
 end
 
@@ -3619,7 +3646,7 @@ local function BuildTooltipEntries(itemId)
                             end
                             shortTabs[#shortTabs + 1] = short
                         end
-                        s = s .. " \194\183 " .. "|cff00ccff" .. table.concat(shortTabs, ", ") .. "|r"
+                        s = s .. " " .. ns.DOT_SEPARATOR .. " " .. "|cff00ccff" .. table.concat(shortTabs, ", ") .. "|r"
                     elseif showLabel then
                         s = s .. (showIcon and " " or "") .. "|cff00ccffIV|r"
                     end
@@ -3913,7 +3940,7 @@ local function OnTooltipItem(tooltip, tooltipData)
                         ctxPart = ctxPart .. " |T" .. vtex .. ":14:14|t"
                         if showLabel then ctxPart = ctxPart .. " " .. cachedRanksVariant end
                     else
-                        ctxPart = ctxPart .. " · " .. cachedRanksVariant
+                        ctxPart = ctxPart .. " " .. ns.DOT_SEPARATOR .. " " .. cachedRanksVariant
                     end
                 end
                 tooltip:AddLine(" ")
@@ -3961,6 +3988,7 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
         local dbDefaults = {
             showLoginMessage = false,
             showTooltipBadges = true,
+            statTargetBin = "top20",
             tooltipFooterMode = 2,
             showUggBisTooltip = true,
             showIcyVeinsBisTooltip = true,
@@ -4150,16 +4178,15 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
                 type = "launcher",
 
                 icon = "Interface\\AddOns\\BreadClassCodex\\Media\\minimap",
-                OnClick = function(_, button)
+                OnClick = function(self, button)
                     if button == "LeftButton" then
                         if ns.OpenCompendium then ns:OpenCompendium() end
                     elseif button == "RightButton" then
-                        if ns.settingsCategory then Settings.OpenToCategory(ns.settingsCategory:GetID()) end
+                        if ns.OpenSettings then ns.OpenSettings(self) end
                     end
                 end,
                 OnTooltipShow = function(tip)
-                    local ver = C_AddOns.GetAddOnMetadata(addonName, "Version") or ""
-                    tip:AddLine("Bread Codex v" .. ver, 1, 1, 1)
+                    tip:AddLine("Bread Codex", 1, 1, 1)
                     tip:AddLine("Left-click to open Compendium", 1, 0.82, 0)
                     tip:AddLine("Right-click to open Settings", 1, 0.82, 0)
                 end,
@@ -4299,7 +4326,7 @@ SlashCmdList["CLASSCODEX"] = function(msg)
         if panel:IsShown() then ns:UpdatePanel() end
     elseif msg == "help" then
         local sc = ns.FixSlash("/cc")
-        print("|cff00ccffBread Codex|r commands:")
+        print("|cff00ccffBread Codex|r " .. L["chat.commands_header"])
         print("  " .. sc)
         print("  " .. sc .. " compendium")
         print("  " .. sc .. " reset")

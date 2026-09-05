@@ -149,11 +149,7 @@ local function makeCog(inst, ctx)
     icon:SetVertexColor(0.6, 0.6, 0.6)
     cog:SetScript("OnEnter", function(self)
         icon:SetVertexColor(1, 1, 1)
-        ns.Tooltip
-            .Open(self, "ANCHOR_RIGHT")
-            .Title(L["tab.trinkets"] or "Trinkets")
-            .Hint("Click to filter tiers and content.")
-            .Show()
+        ns.Tooltip.Open(self, "ANCHOR_RIGHT").Title(L["tab.trinkets"] or "Trinkets").Hint(L["trinkets.cog_hint"]).Show()
     end)
     cog:SetScript("OnLeave", function()
         icon:SetVertexColor(0.6, 0.6, 0.6)
@@ -371,7 +367,7 @@ local function render(inst, args)
                     parts[#parts + 1] = tier
                 end
             end
-            inst.header.label:SetText(base .. " · " .. table.concat(parts, ", "))
+            inst.header.label:SetText(base .. " " .. ns.DOT_SEPARATOR .. " " .. table.concat(parts, ", "))
         else
             inst.header.label:SetText(base)
         end

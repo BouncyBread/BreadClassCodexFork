@@ -97,7 +97,7 @@ end
 function ns.DumpTalentTree()
     local configID = C_ClassTalents.GetActiveConfigID()
     if not configID then
-        print("|cff00ccffBread Codex:|r no active talent config — open the talents pane first.")
+        print("|cff00ccffBread Codex:|r " .. ns.L["error.no_talent_config"])
         return
     end
     local info = C_Traits.GetConfigInfo(configID)
@@ -105,7 +105,7 @@ function ns.DumpTalentTree()
     local specIdx = GetSpecialization()
     local specID = specIdx and (GetSpecializationInfo(specIdx))
     if not treeID or not specID then
-        print("|cff00ccffBread Codex:|r could not resolve tree/spec.")
+        print("|cff00ccffBread Codex:|r " .. ns.L["error.no_tree_spec"])
         return
     end
 

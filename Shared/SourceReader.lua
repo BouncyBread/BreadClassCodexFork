@@ -24,9 +24,9 @@ local function rotationContextLabel(key)
     if label then return label end
     local n = key:match("^aoe%-(%d+)plus$") or key:match("^aoe%-(%d+)$")
     if n then
-        if n == "2" then return "AoE · 2 Targets (ST + changes)" end
-        if key:sub(-#"plus") == "plus" then return ("AoE · %s+ Targets"):format(n) end
-        return ("AoE · %s Targets"):format(n)
+        if n == "2" then return "AoE " .. ns.DOT_SEPARATOR .. " 2 Targets (ST + changes)" end
+        if key:sub(-#"plus") == "plus" then return "AoE " .. ns.DOT_SEPARATOR .. " " .. n .. "+ Targets" end
+        return "AoE " .. ns.DOT_SEPARATOR .. " " .. n .. " Targets"
     end
     return key
 end

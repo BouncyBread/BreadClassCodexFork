@@ -52,6 +52,7 @@ Shared\SpecData.lua
 Shared\RotationFormat.lua
 Shared\SourceReader.lua
 Shared\GearingUtils.lua
+Shared\StatDR.lua
 Shared\StatTargets.lua
 Shared\DungeonArt.lua
 UI\Tooltip.lua

@@ -189,7 +189,7 @@ local function render(inst, args)
                 suffix = isRec and "Recommended" or nil
             end
             if suffix then
-                inst.header.label:SetText(base .. " · " .. suffix)
+                inst.header.label:SetText(base .. " " .. ns.DOT_SEPARATOR .. " " .. suffix)
             else
                 inst.header.label:SetText(base)
             end
@@ -334,10 +334,10 @@ local function makeCog(inst, refresh)
         cogIcon:SetVertexColor(1, 1, 1)
         ns.Tooltip
             .Open(self, "ANCHOR_RIGHT")
-            .Title("Talent builds")
+            .Title(L["talents.builds_title"])
             .Blank()
-            .Body("Choose raid difficulty and toggle Recommended (the most popular build per boss/dungeon).")
-            .Hint("Click to change.")
+            .Body(L["talents.builds_body"])
+            .Hint(L["hint.click_change"])
             .Show()
     end)
     cog:SetScript("OnLeave", function()

@@ -307,7 +307,12 @@ function ns.LayoutTable(content, rows, items, opts)
             row.labelText:SetTextColor(0.6, 0.6, 0.6)
         end
         local name = (item.itemId or item.spellId)
-                and ns.FormatItem({ itemId = item.itemId, spellId = item.spellId, name = item.name })
+                and ns.FormatItem({
+                    itemId = item.itemId,
+                    spellId = item.spellId,
+                    name = item.name,
+                    bonusIDs = item.bonusIDs,
+                })
             or ""
         if item.count and item.count > 1 then name = name .. "  |cff808080×" .. item.count .. "|r" end
         row.itemText:SetText(name)
@@ -332,6 +337,9 @@ function ns.LayoutTable(content, rows, items, opts)
         row.itemId = item.itemId
         row.spellId = item.spellId
         row.bonusIDs = item.bonusIDs
+        row.catalystItemId = item.catalystItemId
+        row.ejClassID = item.ejClassID
+        row.ejSpecID = item.ejSpecID
         row.altItemId = nil
         row.embItemId = nil
         row.sourceText = item.sourceText

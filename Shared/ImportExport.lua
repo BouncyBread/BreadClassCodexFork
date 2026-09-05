@@ -2,7 +2,7 @@ local _, ns = ...
 
 if not ExportUtil or not C_Traits or not C_ClassTalents then
     function ns.ApplyTalentExportString()
-        return nil, "Required talent APIs not available"
+        return nil, ns.L["talent_apply.apis_unavailable"]
     end
     return
 end
@@ -122,14 +122,14 @@ end
 
 local function ParseExportString(exportString, treeID, expectedSpecID, configID)
     local ok, importStream = pcall(ExportUtil.MakeImportDataStream, exportString)
-    if not ok or not importStream then return nil, "Failed to decode export string" end
+    if not ok or not importStream then return nil, ns.L["talent_apply.decode_failed"] end
 
     local headerValid, version, specID = ReadLoadoutHeader(importStream)
-    if not headerValid then return nil, "Invalid export string" end
-    if version ~= C_Traits.GetLoadoutSerializationVersion() then return nil, "Serialization version mismatch" end
+    if not headerValid then return nil, ns.L["talent_apply.invalid_export"] end
+    if version ~= C_Traits.GetLoadoutSerializationVersion() then return nil, ns.L["talent_apply.version_mismatch"] end
 
     local checkAgainst = expectedSpecID or GetSpecID()
-    if specID ~= checkAgainst then return nil, format("Export is for specID %d, active is %d", specID, checkAgainst) end
+    if specID ~= checkAgainst then return nil, format(ns.L["talent_apply.spec_mismatch"], specID, checkAgainst) end
 
     local loadoutContent = ReadLoadoutContent(importStream, treeID)
     local effectiveConfigID = configID or C_ClassTalents.GetActiveConfigID()
@@ -220,7 +220,7 @@ function ns.HeroFromExportString(exportString)
 end
 
 function ns.ParseLoadoutNodes(exportString)
-    if not exportString or exportString == "" then return nil, "Empty export string" end
+    if not exportString or exportString == "" then return nil, ns.L["talent_apply.empty_export"] end
     local treeID, configID, expectedSpecID
 
     if ns._talentPaneInspect then
@@ -238,7 +238,7 @@ function ns.ParseLoadoutNodes(exportString)
     else
         treeID = GetTreeID()
     end
-    if not treeID then return nil, "Cannot determine talent tree" end
+    if not treeID then return nil, ns.L["talent_apply.no_tree"] end
     return ParseExportString(exportString, treeID, expectedSpecID, configID)
 end
 
@@ -280,7 +280,7 @@ local function ResetAndPurchaseDeferred(configID, treeID, entryInfo, onComplete)
     -- a failed reset leaves the state machine grinding against stale state.
     local resetOK = select(1, pcall(C_Traits.ResetTree, configID, treeID))
     if not resetOK then
-        Msg("|cffff0000Could not reset talent tree — apply aborted, try again in a moment.|r")
+        Msg("|cffff0000" .. ns.L["talent_apply.reset_failed"] .. "|r")
         if onComplete then onComplete() end
         return
     end
@@ -561,7 +561,7 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
             elseif ns.RefreshLoadoutDock then
                 ns.RefreshLoadoutDock()
             end
-            Msg("Talents applied: " .. (pa.buildLabel or "build"))
+            Msg(format(ns.L["talent_apply.applied"], pa.buildLabel or "build"))
             ClearPendingApply()
 
             RunNextFrame(function()
@@ -589,9 +589,9 @@ local function StageAndCommit(targetConfigID, activeConfigID, entryInfo, treeID,
 
             if finalName and C_ClassTalents.RenameConfig and targetConfigID then
                 RenameCCConfig(targetConfigID, finalName, "no-staged-changes")
-                Msg("Renamed loadout to " .. (buildLabel or "Build"))
+                Msg(format(ns.L["talent_apply.renamed"], buildLabel or "Build"))
             else
-                Msg("Already using this build.")
+                Msg(ns.L["talent_apply.already_using"])
             end
             ClearPendingApply()
             return
@@ -612,20 +612,12 @@ local function StageAndCommit(targetConfigID, activeConfigID, entryInfo, treeID,
             local shown = #names > 5 and 5 or #names
             local nameList = table.concat(names, ", ", 1, shown)
             if #names > shown then nameList = nameList .. string.format(" (+%d more)", #names - shown) end
-            Msg(
-                string.format(
-                    "Applying %d of %d nodes — your current level can't fit the rest (%s). Level up and re-apply to fill in the remaining %d.",
-                    applied,
-                    originalNodeCount,
-                    nameList,
-                    remainingNodes
-                )
-            )
+            Msg(string.format(ns.L["talent_apply.nodes_partial"], applied, originalNodeCount, nameList, remainingNodes))
         end
 
         if not C_ClassTalents.CommitConfig(targetConfigID) then
             ns._talentApplyInProgress = false
-            Msg("|cffff0000Commit failed.|r Open talent frame and click Apply Changes.")
+            Msg("|cffff0000" .. ns.L["talent_apply.commit_failed"] .. "|r")
             ClearPendingApply()
             return
         end
@@ -661,39 +653,33 @@ local applyContinuations = 0
 local MAX_APPLY_CONTINUATIONS = 8
 
 function ns.ApplyTalentExportString(exportString, buildLabel, isContinuation)
-    if not exportString or exportString == "" then return Fail("Empty export string") end
+    if not exportString or exportString == "" then return Fail(ns.L["talent_apply.empty_export"]) end
 
-    if pendingApply and not isContinuation then return nil, "Apply already in progress — wait for it to finish." end
+    if pendingApply and not isContinuation then return nil, ns.L["talent_apply.in_progress"] end
 
     if isContinuation then
         applyContinuations = applyContinuations + 1
         if applyContinuations > MAX_APPLY_CONTINUATIONS then
-            return Fail(
-                "Talent apply did not settle after "
-                    .. MAX_APPLY_CONTINUATIONS
-                    .. " attempts — the config system is busy. Try again in a moment."
-            )
+            return Fail(format(ns.L["talent_apply.not_settled"], MAX_APPLY_CONTINUATIONS))
         end
     else
         applyContinuations = 0
     end
 
     local activeConfigID = C_ClassTalents.GetActiveConfigID()
-    if not activeConfigID then return Fail("No active talent configuration") end
+    if not activeConfigID then return Fail(ns.L["talent_apply.no_config"]) end
 
-    if InCombatLockdown and InCombatLockdown() then return Fail("Cannot change talents in combat.") end
+    if InCombatLockdown and InCombatLockdown() then return Fail(ns.L["talent_apply.in_combat"]) end
 
     -- The talent pane blocks applying during an inspect; the character panel
     -- and dock did not, and trait API calls against the inspect config can
     -- hard-crash the client. Guard centrally.
     if PlayerSpellsFrame and PlayerSpellsFrame.IsInspecting and PlayerSpellsFrame:IsInspecting() then
-        return Fail("Cannot apply a build while inspecting another player — close the inspect first.")
+        return Fail(ns.L["talent_apply.inspecting"])
     end
 
     if not isContinuation and C_Traits.ConfigHasStagedChanges and C_Traits.ConfigHasStagedChanges(activeConfigID) then
-        return Fail(
-            "You have unsaved talent changes. Open the talents pane and click Apply Changes (or right-click the loadout name to discard) before applying a Bread Codex build."
-        )
+        return Fail(ns.L["talent_apply.unsaved_changes"])
     end
 
     -- Compare talent signatures before anything else: GetLastSelectedSavedConfigID
@@ -714,9 +700,9 @@ function ns.ApplyTalentExportString(exportString, buildLabel, isContinuation)
                 local ccConfigID = GetStoredConfigID()
                 if ccConfigID and C_ClassTalents.RenameConfig then
                     RenameCCConfig(ccConfigID, CC_NAME .. ": " .. (buildLabel or "Build"), "already-applied")
-                    Msg("Renamed loadout to " .. (buildLabel or "Build"))
+                    Msg(format(ns.L["talent_apply.renamed"], buildLabel or "Build"))
                 else
-                    Msg("Already using this build.")
+                    Msg(ns.L["talent_apply.already_using"])
                 end
                 ClearPendingApply()
                 return true
@@ -725,7 +711,7 @@ function ns.ApplyTalentExportString(exportString, buildLabel, isContinuation)
     end
 
     local treeID = GetTreeID()
-    if not treeID then return Fail("Cannot determine talent tree") end
+    if not treeID then return Fail(ns.L["talent_apply.no_tree"]) end
 
     local entryInfo, parseErr = ParseExportString(exportString, treeID)
     if not entryInfo then return Fail(parseErr) end
@@ -737,12 +723,12 @@ function ns.ApplyTalentExportString(exportString, buildLabel, isContinuation)
     end
     if not ccConfigID then
         if C_ClassTalents.CanCreateNewConfig and not C_ClassTalents.CanCreateNewConfig() then
-            return Fail("No free loadout slots — delete one to use Bread Codex builds")
+            return Fail(ns.L["talent_apply.no_slots_use"])
         end
         C_ClassTalents.RequestNewConfig(CC_NAME)
         SetPendingApply({ exportString = exportString, buildLabel = buildLabel })
         eventFrame:RegisterEvent("TRAIT_CONFIG_CREATED")
-        Msg("Creating loadout slot...")
+        Msg(ns.L["talent_apply.creating_slot"])
         return true
     end
 
@@ -756,9 +742,7 @@ function ns.ApplyTalentExportString(exportString, buildLabel, isContinuation)
             return true
         elseif result == Enum.LoadConfigResult.Error then
             ClearStoredConfigID(specID)
-            return Fail(
-                "Could not load Bread Codex loadout. Open the talents pane and click Apply Changes, then try again."
-            )
+            return Fail(ns.L["talent_apply.could_not_load"])
         end
     end
 
@@ -767,12 +751,12 @@ function ns.ApplyTalentExportString(exportString, buildLabel, isContinuation)
     -- longer matches hard-crashes the client, and treeID is derived from the
     -- active config, so a stale treeID from before the load is exactly that.
     activeConfigID = C_ClassTalents.GetActiveConfigID()
-    if not activeConfigID then return Fail("Talent configuration is still loading — try again in a moment.") end
+    if not activeConfigID then return Fail(ns.L["talent_apply.loading"]) end
     local loadedTreeID = GetTreeID()
     if loadedTreeID and loadedTreeID ~= treeID then
         -- Config changed under us mid-apply (e.g. a load raced a spec/hero
         -- swap): the parsed entryInfo targets the old tree, so bail out.
-        return Fail("Talent tree changed while applying — try again.")
+        return Fail(ns.L["talent_apply.tree_changed"])
     end
 
     return StageAndCommit(
@@ -865,13 +849,15 @@ local function ImportEntryFromTieredNode(results, configID, nodeInfo, idx)
 end
 
 local function ParseImportEntries(exportString, configID, treeID)
-    if not ExportUtil or not ExportUtil.MakeImportDataStream then return nil, "Import not supported by this client." end
+    if not ExportUtil or not ExportUtil.MakeImportDataStream then
+        return nil, ns.L["talent_apply.import_unsupported"]
+    end
     local ok, stream = pcall(ExportUtil.MakeImportDataStream, exportString)
-    if not ok or not stream then return nil, "Failed to decode export string" end
+    if not ok or not stream then return nil, ns.L["talent_apply.decode_failed"] end
     local hok, version = ReadImportHeader(stream)
-    if not hok then return nil, "Bad export string" end
+    if not hok then return nil, ns.L["talent_apply.bad_export"] end
     if C_Traits.GetLoadoutSerializationVersion and version ~= C_Traits.GetLoadoutSerializationVersion() then
-        return nil, "Build string is from a different game version — re-copy it."
+        return nil, ns.L["talent_apply.wrong_version"]
     end
     local content = ReadImportContent(stream, treeID)
     local results = {}
@@ -890,19 +876,17 @@ local function ParseImportEntries(exportString, configID, treeID)
 end
 
 function ns.SaveTalentBuildAsNewLoadout(exportString, buildLabel, userName)
-    if not exportString or exportString == "" then return nil, "Empty export string" end
-    if not userName or userName == "" then return nil, "Loadout name is required" end
+    if not exportString or exportString == "" then return nil, ns.L["talent_apply.empty_export"] end
+    if not userName or userName == "" then return nil, ns.L["talent_apply.name_required"] end
 
-    if IsCCSlotName(userName) then
-        return nil, '"' .. CC_NAME .. '" is reserved for Bread Codex — pick a different name.'
-    end
-    if InCombatLockdown and InCombatLockdown() then return nil, "Cannot change talents in combat." end
-    if not C_ClassTalents.ImportLoadout then return nil, "This game version doesn't support saving loadouts." end
+    if IsCCSlotName(userName) then return nil, format(ns.L["talent_apply.name_reserved"], CC_NAME) end
+    if InCombatLockdown and InCombatLockdown() then return nil, ns.L["talent_apply.in_combat"] end
+    if not C_ClassTalents.ImportLoadout then return nil, ns.L["talent_apply.save_unsupported"] end
     if C_ClassTalents.CanCreateNewConfig and not C_ClassTalents.CanCreateNewConfig() then
-        return nil, "No free loadout slots — delete one to save a new build."
+        return nil, ns.L["talent_apply.no_slots_save"]
     end
     local configID = C_ClassTalents.GetActiveConfigID()
-    if not configID then return nil, "No active talent configuration" end
+    if not configID then return nil, ns.L["talent_apply.no_config"] end
 
     local tf = PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame
     if tf and tf.ImportLoadout and tf.IsShown and tf:IsShown() then
@@ -911,16 +895,16 @@ function ns.SaveTalentBuildAsNewLoadout(exportString, buildLabel, userName)
             if ns.RefreshLoadoutDock then ns.RefreshLoadoutDock() end
             return true
         end
-        if ok and res == false then return nil, "Couldn't save the loadout — check the build string." end
+        if ok and res == false then return nil, ns.L["talent_apply.save_failed"] end
     end
 
     local treeID = GetTreeID()
-    if not treeID then return nil, "Cannot determine talent tree" end
+    if not treeID then return nil, ns.L["talent_apply.no_tree"] end
     local entries, parseErr = ParseImportEntries(exportString, configID, treeID)
     if not entries then return nil, parseErr end
     local ok, importErr = C_ClassTalents.ImportLoadout(configID, entries, userName, exportString)
-    if not ok then return nil, importErr or "Import failed" end
-    Msg("Saved loadout '" .. userName .. "'.")
+    if not ok then return nil, importErr or ns.L["talent_apply.import_failed"] end
+    Msg(format(ns.L["talent_apply.saved"], userName))
     if ns.RefreshLoadoutDock then ns.RefreshLoadoutDock() end
     return true
 end

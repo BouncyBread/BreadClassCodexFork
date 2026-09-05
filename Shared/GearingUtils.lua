@@ -59,10 +59,25 @@ local function GetItemQuality(itemId)
     return cached and cached.quality or nil
 end
 
+-- Quality must reflect the row's bonus ids: M+ and upgrade-track loot renders
+-- purple from its bonuses while the base item is blue. Ask the client for the
+-- exact combo via a bare item string (same layout BuildItemLink emits); base
+-- quality stays the fallback for combos the client hasn't cached yet — rows
+-- re-render once the item data lands.
+local function GetItemQualityWithBonuses(itemRef)
+    local itemId = itemRef and itemRef.itemId
+    local bonusIDs = itemRef and itemRef.bonusIDs
+    if itemId and bonusIDs and #bonusIDs > 0 then
+        local s = "item:" .. itemId .. "::::::::::::" .. #bonusIDs .. ":" .. table.concat(bonusIDs, ":")
+        return select(3, GetItemInfo(s)) or GetItemQuality(itemId)
+    end
+    return GetItemQuality(itemId)
+end
+
 local function FormatItem(itemRef, nameOverride)
     if not itemRef then return "" end
     local name = nameOverride or GetItemName(itemRef)
-    return ns.FormatItemLabel(name, GetItemQuality(itemRef.itemId))
+    return ns.FormatItemLabel(name, GetItemQualityWithBonuses(itemRef))
 end
 
 ns.OnItemLoaded(function()
@@ -110,6 +125,7 @@ local function RequestAllItems(gearData)
         for _, tab in ipairs(gearData.bisGear) do
             for _, g in ipairs(tab.slots) do
                 RequestItemData(g.item.itemId)
+                if g.item.catalyst then RequestItemData(g.item.catalyst.itemId) end
             end
         end
     end
@@ -325,6 +341,48 @@ local function GetLocalizedSpecName(classToken, specKey)
 end
 
 local CLASS_SPEC_COUNT = {}
+
+-- Numeric (classID, specID) for the EJ loot filter, off the addon's
+-- classToken + specKey. Positional lookup assumes the game's spec order
+-- matches our key order — not always true (DH's third spec) — so match by
+-- localized name first (order-independent, like QUI's ej_lootspecs), with
+-- position as fallback. specID nil when nothing resolves; callers then
+-- leave the journal's filter alone.
+function ns.GetSpecIDForKeys(classToken, specKey)
+    local classID = CLASS_ID_BY_TOKEN[classToken]
+    if not classID then return nil, nil end
+    if not (specKey and GetSpecializationInfoForClassID) then return classID, nil end
+
+    local keys = SPEC_KEYS_BY_CLASS[classToken]
+    local wantIndex
+    if keys then
+        for i, k in ipairs(keys) do
+            if k == specKey then
+                wantIndex = i
+                break
+            end
+        end
+    end
+    local wantName = GetLocalizedSpecName(classToken, specKey)
+
+    local numSpecs = (
+        C_SpecializationInfo
+        and C_SpecializationInfo.GetNumSpecializationsForClassID
+        and C_SpecializationInfo.GetNumSpecializationsForClassID(classID)
+    ) or 0
+    if numSpecs > 0 then
+        for i = 1, numSpecs do
+            local id, name = GetSpecializationInfoForClassID(classID, i)
+            if id and name and name == wantName then return classID, id end
+            if id and wantIndex == i then return classID, id end
+        end
+    elseif wantIndex then
+        local id = GetSpecializationInfoForClassID(classID, wantIndex)
+        if id then return classID, id end
+    end
+    return classID, nil
+end
+
 local uggBisLookup = {}
 local icyVeinsBisLookup = {}
 local trinketLookup = {}
@@ -571,6 +629,7 @@ function ns.GetBisGearData(source, classToken, specKey)
                 elseif ctx == "pvp" then
                     item.bonusIDs = PvpItemBonusIds(g.itemId)
                 end
+                if g.catalyst then item.catalyst = g.catalyst end
                 local row = { slot = g.slot, item = item }
                 if g.source then row.source = g.source end
                 if g.pop then row.pop = g.pop end
@@ -717,20 +776,52 @@ end
 --- link is always the BASE version — without the bonuses a BiS pick renders at
 --- its base item level (e.g. 219 instead of the bonus-encoded 344), so chat
 --- links and dressing-room previews must be built from the ids directly.
-function ns.BuildItemLink(itemId, bonusIDs)
+---
+--- Field layout mirrors a REAL in-game link: linkLevel (player level) in field
+--- 9, trailing colon. sourceItemId (catalyst rows) appends the item modifier
+--- the engine itself writes for catalyzed items — "1 modifier, type 64, value
+--- = source item id" (captured from a live conversion:
+--- item:271540:…:5:1558:…:1:64:272239:) — which is what makes the tooltip
+--- apply the conversion's retained source stats.
+function ns.BuildItemLink(itemId, bonusIDs, sourceItemId)
     if not itemId then return nil end
     if bonusIDs and #bonusIDs > 0 then
-        -- 11 empty fields sit between the item id and the bonus count (enchant,
-        -- 4 gems, suffix, unique, linkLevel, spec, modifiers mask, itemContext)
-        -- — 12 colons total, matching the retail item-string layout
-        -- (item:ID:…:50:72::22:COUNT:bonus…). Tooltips only apply the bonuses
-        -- from a COMPLETE hyperlink (|Hitem:…|h[name]|h), not the bare
-        -- "item:…" string.
-        local name, _, quality = GetItemInfo(itemId)
-        if not name then
-            C_Item.RequestLoadItemDataByID(itemId)
-            name = GetItemInfo(itemId)
+        -- 7 empty fields (enchant, 4 gems, suffix, unique), linkLevel, 3 more
+        -- (spec, modifiers mask, itemContext), then the bonus count.
+        local bare
+        if sourceItemId then
+            bare = format(
+                "item:%d::::::::%d::::%d:%s:1:64:%d:",
+                itemId,
+                UnitLevel("player") or MAX_PLAYER_LEVEL,
+                #bonusIDs,
+                table.concat(bonusIDs, ":"),
+                sourceItemId
+            )
+        else
+            bare = format(
+                "item:%d::::::::%d::::%d:%s:",
+                itemId,
+                UnitLevel("player") or MAX_PLAYER_LEVEL,
+                #bonusIDs,
+                table.concat(bonusIDs, ":")
+            )
         end
+        -- Prefer the CLIENT's own link for this exact bonus combo: GetItemInfo
+        -- on an item string returns the engine-sanctioned hyperlink (correct
+        -- color placement, whatever field layout this client build validates
+        -- on send). Hand-built links risk "Invalid escape code in chat
+        -- message" rejections inside C_ChatInfo.SendChatMessage, which does
+        -- no Lua-side validation we could satisfy ourselves.
+        local _, link = GetItemInfo(bare)
+        if not link then
+            C_Item.RequestLoadItemDataByID(itemId)
+            _, link = GetItemInfo(bare)
+        end
+        if link then return link end
+        -- Uncached: hand-build as a fallback (color outside the |H…|h pair,
+        -- matching real client links) until the item data arrives.
+        local name, _, quality = GetItemInfo(itemId)
         if not name then return GetItemLink(itemId) end
         local color = "|cffffffff"
         local ok, r, g, b = pcall(GetItemQualityColor, quality or 1)
@@ -742,17 +833,19 @@ function ns.BuildItemLink(itemId, bonusIDs)
                 math.floor(b * 255 + 0.5)
             )
         end
-        local bare = format("item:%d::::::::::::%d:%s", itemId, #bonusIDs, table.concat(bonusIDs, ":"))
-        return format("|H%s|h%s[%s]|h|r", bare, color, name:gsub("[%[%]]", ""))
+        return format("%s|H%s|h[%s]|h|r", color, bare, name:gsub("[%[%]]", ""))
     end
     return GetItemLink(itemId)
 end
 
 local function HandleItemClick(self)
     if not self.itemId then return end
-    local link = (ns.BuildItemLink and ns.BuildItemLink(self.itemId, self.bonusIDs)) or GetItemLink(self.itemId)
-    if not link then return end
+    local link = (ns.BuildItemLink and ns.BuildItemLink(self.itemId, self.bonusIDs, self.catalystItemId))
+        or GetItemLink(self.itemId)
+    if not link then return end -- uncached item; BuildItemLink already requested the load, next click works
     if IsModifiedClick("CHATLINK") then
+        -- Bag behaviour: insert into the open chat box only; never open chat
+        -- on the user's behalf.
         ChatEdit_InsertLink(link)
     elseif IsModifiedClick("DRESSUP") then
         DressUpItemLink(link)
@@ -878,6 +971,117 @@ local function OpenItemContextMenu(row)
                 AddToAuctionatorList(itemId, name)
             end)
         end
+        -- "View in Dungeon Journal": only where the journal can actually show
+        -- the item. Precedence: a boss NAMED by the source text wins (tier
+        -- pieces drop from several bosses — the index would pick an arbitrary
+        -- one); otherwise the season loot index pins the exact boss by the
+        -- droppable item id (catalyst rows carry the SOURCE item precisely
+        -- for that); a dungeon-only source text is the last resort. Crafted/
+        -- vendor/world-drop rows resolve to nothing and never see the entry.
+        if C_AddOns and C_AddOns.LoadAddOn then
+            pcall(C_AddOns.LoadAddOn, "Blizzard_EncounterJournal")
+        else
+            pcall(LoadAddOn, "Blizzard_EncounterJournal")
+        end
+        local journalItemId = row.catalystItemId or itemId
+        local journalInst, journalEnc
+        if EncounterJournal and ToggleEncounterJournal then
+            local textInst, textEnc
+            if ns.GetJournalTarget then
+                textInst, textEnc = ns.GetJournalTarget(row.sourceText)
+            end
+            if textEnc then
+                journalInst, journalEnc = textInst, textEnc
+            elseif ns.GetJournalLootTarget then
+                journalInst, journalEnc = ns.GetJournalLootTarget(journalItemId)
+            end
+            if not journalInst and textInst then journalInst = textInst end
+        end
+        if journalInst and EncounterJournal_OpenJournal then
+            root:CreateButton(L["item.menu.view_journal"], function()
+                if InCombatLockdown() then return end
+                -- Loot filter goes on BEFORE navigating so the encounter's
+                -- first loot paint already uses it; it is re-asserted after,
+                -- because the journal refreshes loot asynchronously
+                -- (EJ_LOOT_DATA_RECIEVED) and the difficulty switch
+                -- re-renders too — either can race a one-shot filter set.
+                -- The set goes through Blizzard's own global wrapper — the
+                -- exact path a dropdown pick takes — and is verified by
+                -- reading EJ_GetLootFilter back: the C function silently
+                -- ignores invalid (classID, specID) pairs, so a mismatch
+                -- prints instead of failing invisibly.
+                local filterReported
+                local function SetEJLootFilter()
+                    if not (row.ejSpecID and row.ejClassID) then return end
+                    if EncounterJournal and EncounterJournal_SetClassAndSpecFilter then
+                        pcall(EncounterJournal_SetClassAndSpecFilter, EncounterJournal, row.ejClassID, row.ejSpecID)
+                    elseif EJ_SetLootFilter then
+                        pcall(EJ_SetLootFilter, row.ejClassID, row.ejSpecID)
+                        if EncounterJournal_LootUpdate then pcall(EncounterJournal_LootUpdate) end
+                    else
+                        return
+                    end
+                    if not filterReported and EJ_GetLootFilter then
+                        local c, s = EJ_GetLootFilter()
+                        if c ~= row.ejClassID or s ~= row.ejSpecID then
+                            filterReported = true
+                            print(
+                                ("|cffff3333Bread Codex:|r journal loot filter not applied (got %s/%s, wanted %s/%s)"):format(
+                                    tostring(c),
+                                    tostring(s),
+                                    tostring(row.ejClassID),
+                                    tostring(row.ejSpecID)
+                                )
+                            )
+                        end
+                    end
+                end
+                SetEJLootFilter()
+                if not EncounterJournal:IsShown() then ShowUIPanel(EncounterJournal) end
+                -- OpenJournal lands on the right content tab and the
+                -- encounter, and its itemID argument selects the Loot side
+                -- tab — but only with an encounter displayed (without one the
+                -- click would hit a stale loot tab), so the item id rides
+                -- along only when the boss is pinned.
+                local okNav = pcall(
+                    EncounterJournal_OpenJournal,
+                    nil,
+                    journalInst,
+                    journalEnc,
+                    nil,
+                    nil,
+                    journalEnc and journalItemId or nil
+                )
+                local function AssertEJState()
+                    SetEJLootFilter()
+                    -- Mythic loot view, matching what the guides cover;
+                    -- validity-checked against the displayed instance —
+                    -- legacy-pool dungeons don't all offer every difficulty.
+                    if
+                        not (DifficultyUtil and DifficultyUtil.ID and EJ_SetDifficulty and EJ_IsValidInstanceDifficulty)
+                    then
+                        return
+                    end
+                    local mythic = DifficultyUtil.ID.DungeonMythic
+                    if not EJ_IsValidInstanceDifficulty(mythic) then mythic = DifficultyUtil.ID.PrimaryRaidMythic end
+                    if EJ_IsValidInstanceDifficulty(mythic) then EJ_SetDifficulty(mythic) end
+                end
+                AssertEJState()
+                C_Timer.After(0.25, AssertEJState)
+                if not okNav and row.ejSpecID and EJ_SetLootFilter then
+                    -- Navigation failed (pcall'd): at least leave the filter on
+                    -- the browsed spec so the journal is in the right context.
+                    pcall(EJ_SetLootFilter, row.ejClassID, row.ejSpecID)
+                end
+            end)
+        end
+        root:CreateButton((L and L["item.menu.link_chat"]) or "Link in chat", function()
+            local link = (ns.BuildItemLink and ns.BuildItemLink(itemId, row.bonusIDs, row.catalystItemId))
+                or GetItemLink(itemId)
+            if link then
+                if not ChatEdit_InsertLink(link) then ChatFrame_OpenChat(link) end
+            end
+        end)
         root:CreateButton((L and L["item.menu.copy_name"]) or "Copy name", function()
             local text = name or tostring(itemId)
             if ns.ShowCopyPopup then ns.ShowCopyPopup(text, row) end
@@ -898,7 +1102,7 @@ local function SetupItemTooltip(row)
         if button ~= "RightButton" then HandleItemClick(self) end
     end)
     row:SetScript("OnEnter", function(self)
-        GameTooltip:EnableMouse(false)
+        ns.Tooltip.MakeClickThrough()
         if self.spellId then
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:SetSpellByID(self.spellId)
@@ -910,8 +1114,13 @@ local function SetupItemTooltip(row)
         elseif self.itemId then
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             if self.bonusIDs and #self.bonusIDs > 0 then
-                local ok = pcall(GameTooltip.SetHyperlink, GameTooltip, ns.BuildItemLink(self.itemId, self.bonusIDs))
-                if not ok then GameTooltip:SetItemByID(self.itemId) end
+                -- BuildItemLink returns nil while the item is uncached
+                -- (GetItemLink has nothing yet); SetHyperlink(nil) then errors
+                -- later inside the engine's async tooltip handler, beyond the
+                -- pcall. Fall back to SetItemByID, which waits for data cleanly.
+                local link = ns.BuildItemLink(self.itemId, self.bonusIDs, self.catalystItemId)
+                local ok = link and pcall(GameTooltip.SetHyperlink, GameTooltip, link)
+                if not (link and ok) then GameTooltip:SetItemByID(self.itemId) end
             else
                 GameTooltip:SetItemByID(self.itemId)
             end
@@ -921,11 +1130,19 @@ local function SetupItemTooltip(row)
                 ns.Tooltip.Intro("  " .. FormatItem(altRef))
             end
             if self.embItemId then
-                ns.Tooltip.Blank().Muted((L and L["gear.tooltip.embellishment"]) or "Embellishment:")
+                ns.Tooltip.Blank().Muted((L and L["gear.tooltip.embellishment"]) or "Embellished:")
                 local embRef = { itemId = self.embItemId, name = self.embName or "" }
                 ns.Tooltip.Intro("  " .. FormatItem(embRef))
             end
             if self.sourceText then ns.Tooltip.Blank().Double(SOURCE or "Source", self.sourceText, "muted", "title") end
+            if self.catalystItemId then
+                ns.Tooltip.Double(
+                    L["gear.tooltip.catalyst"],
+                    FormatItem({ itemId = self.catalystItemId, bonusIDs = self.bonusIDs }),
+                    "muted",
+                    "title"
+                )
+            end
             if self.popText then
                 ns.Tooltip.Blank().Double(L["tooltip.popularity"] or "Popularity", self.popText, "muted", "title")
             end
@@ -939,6 +1156,7 @@ local function SetupItemTooltip(row)
 end
 
 ns.FormatItem = FormatItem
+ns.CleanItemText = CleanItemText
 ns.IsItemOwned = IsItemOwned
 ns.CreateRowIcon = CreateRowIcon
 ns.SetRowIcon = SetRowIcon

@@ -324,7 +324,11 @@ local function OpenCraftMenu(card)
     local recipeId = card.recipeId or RecipeForItem(itemId)
 
     MenuUtil.CreateContextMenu(card, function(_, root)
-        root:CreateTitle(card.itemText and card.itemText:GetText() or L["tab.crafting"])
+        -- Row text carries quality color and [brackets]; menu titles are plain
+        -- yellow, so strip the markup (same treatment the gear menu gives).
+        local title = ns.CleanItemText
+            and ns.CleanItemText(card.itemText and card.itemText.GetText and card.itemText:GetText())
+        root:CreateTitle(title or L["tab.crafting"])
         if recipeId then
             root:CreateButton(L["crafting.menu.track_materials"], function()
                 if C_TradeSkillUI and C_TradeSkillUI.SetRecipeTracked then
@@ -334,6 +338,12 @@ local function OpenCraftMenu(card)
         else
             root:CreateTitle(L["crafting.menu.no_recipe"])
         end
+        root:CreateButton((L and L["item.menu.link_chat"]) or "Link in chat", function()
+            local link = (ns.BuildItemLink and ns.BuildItemLink(itemId, card.bonusIDs)) or GetItemLink(itemId)
+            if link then
+                if not ChatEdit_InsertLink(link) then ChatFrame_OpenChat(link) end
+            end
+        end)
         root:CreateButton((L and L["item.menu.copy_name"]) or "Copy name", function()
             local name = select(1, GetItemInfo(itemId)) or tostring(itemId)
             if ns.ShowCopyPopup then ns.ShowCopyPopup(name, card) end
@@ -356,7 +366,7 @@ local function MakeCard(parent)
     card.itemText = name
     card:SetScript("OnEnter", function(self)
         if not self.itemId then return end
-        GameTooltip:EnableMouse(false)
+        ns.Tooltip.MakeClickThrough()
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
         C_Item.RequestLoadItemDataByID(self.itemId)
@@ -461,7 +471,7 @@ local function makeViewCog(header, section, ctx)
         ns.Tooltip
             .Open(self, "ANCHOR_RIGHT")
             .Title(L["settings.value.view"] or "View")
-            .Hint("Click to switch view.")
+            .Hint(L["hint.switch_view"])
             .Show()
     end)
     cog:SetScript("OnLeave", function()

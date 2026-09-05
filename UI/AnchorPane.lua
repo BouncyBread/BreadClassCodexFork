@@ -203,6 +203,8 @@ function ns.CreateAnchorPane(opts)
     end
     pane.UpdateTabAppearance = UpdateTabAppearance
 
+    pane._topTabKeys = {}
+    pane._tabsTopY = opts.tabsTopY or -40
     local prev
     for _, t in ipairs(opts.tabs or {}) do
         local tab = CreateSideTab(parent, t.icon, t.tooltip, t.key)
@@ -210,7 +212,7 @@ function ns.CreateAnchorPane(opts)
         if prev then
             tab:SetPoint("TOPLEFT", prev, "BOTTOMLEFT", 0, -SIDE_TAB_GAP)
         else
-            tab:SetPoint("TOPLEFT", parent, "TOPRIGHT", SIDE_TAB_ANCHOR_X, opts.tabsTopY or -40)
+            tab:SetPoint("TOPLEFT", parent, "TOPRIGHT", SIDE_TAB_ANCHOR_X, pane._tabsTopY)
         end
         tab:SetScript("OnClick", function(self)
             if SOUNDKIT and PlaySound then PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB or SOUNDKIT.IG_MAINMENU_OPTION) end
@@ -221,6 +223,7 @@ function ns.CreateAnchorPane(opts)
         end)
         pane.tabByKey[t.key] = tab
         pane.tabOrder[#pane.tabOrder + 1] = t.key
+        pane._topTabKeys[#pane._topTabKeys + 1] = t.key
         prev = tab
     end
 
@@ -245,6 +248,34 @@ function ns.CreateAnchorPane(opts)
     end
 
     function pane:GetActiveTab()
+        return self.activeTab
+    end
+
+    function pane:ApplyTabVisibility(isHidden)
+        local prevTop
+        local firstVisible
+        for _, key in ipairs(self._topTabKeys) do
+            local tab = self.tabByKey[key]
+            if tab then
+                if isHidden and isHidden(key) then
+                    tab:Hide()
+                else
+                    tab:Show()
+                    tab:ClearAllPoints()
+                    if prevTop then
+                        tab:SetPoint("TOPLEFT", prevTop, "BOTTOMLEFT", 0, -SIDE_TAB_GAP)
+                    else
+                        tab:SetPoint("TOPLEFT", parent, "TOPRIGHT", SIDE_TAB_ANCHOR_X, self._tabsTopY)
+                    end
+                    prevTop = tab
+                    firstVisible = firstVisible or key
+                end
+            end
+        end
+        if self.activeTab and isHidden and isHidden(self.activeTab) and firstVisible then
+            self.activeTab = firstVisible
+        end
+        UpdateTabAppearance()
         return self.activeTab
     end
 

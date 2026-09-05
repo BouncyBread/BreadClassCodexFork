@@ -411,6 +411,7 @@ local function InitFrame()
         row:RegisterForClicks("LeftButtonUp")
         row:SetScript("OnEnter", function(self)
             if self.itemId then
+                ns.Tooltip.MakeClickThrough()
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 if self.bonusIDs and #self.bonusIDs > 0 and ns.BuildItemLink then
                     local ok =
@@ -749,10 +750,37 @@ RefreshContextBanner = function()
     UI.sourceButton:Show()
 end
 
+local COMP_TAB_FLAGS = {
+    stats = { "compShowStats" },
+    talents = { "compShowTalents", "compShowOmnium" },
+    rotation = { "compShowRotation" },
+    gear = { "compShowBisGear" },
+    trinkets = { "compShowTrinkets" },
+    enhancements = { "compShowEnchants" },
+    crafting = { "compShowCrafts" },
+}
+
+local function CompTabHidden(key)
+    local flags = COMP_TAB_FLAGS[key]
+    if not flags or not ClassCodexDB then return false end
+    for _, flag in ipairs(flags) do
+        if ClassCodexDB[flag] ~= false then return false end
+    end
+    return true
+end
+
 function ns:UpdateCompendium()
     if not UI.statSection then return end
 
     ns.compOwnClass = selectedClass == select(2, UnitClass("player"))
+
+    local tabRedirected = false
+    if UI.pane and UI.pane.ApplyTabVisibility then
+        local resolved = UI.pane:ApplyTabVisibility(CompTabHidden) or activeTab
+        tabRedirected = resolved ~= activeTab
+        activeTab = resolved
+        if tabRedirected then SaveCompendiumState() end
+    end
 
     UI.statSection:Hide()
     UI.talentSection:Hide()
@@ -801,7 +829,7 @@ function ns:UpdateCompendium()
     if heroLabel then titleParts[#titleParts + 1] = heroLabel end
     titleParts[#titleParts + 1] = GetSpecDisplayName(selectedClass, selectedSpec)
     titleParts[#titleParts + 1] = GetClassDisplayName(selectedClass)
-    UI.frame:SetTitle("Compendium · " .. table.concat(titleParts, " "))
+    UI.frame:SetTitle("Compendium " .. ns.DOT_SEPARATOR .. " " .. table.concat(titleParts, " "))
 
     local gearData = ns.GetSpecGearData(selectedClass, selectedSpec, compSource)
     RequestAllGearItems(gearData)
@@ -812,6 +840,8 @@ function ns:UpdateCompendium()
     self:RenderAllCompendiumSections(specData, heroTalent)
 
     ns:LayoutCompendium()
+
+    if tabRedirected and UI.pane then UI.pane:ScrollToTab(activeTab) end
 end
 
 local function RenderStatPrioritySection(specData, heroTalent)

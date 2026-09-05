@@ -440,7 +440,7 @@ local function OnApplyClicked()
     local build = previewedBuild
     local ok, err = ns.ApplyTalentExportString(build.exportString, BuildLoadoutLabel(build))
     if not ok then
-        print("|cff00ccffBread Codex:|r " .. (err or "Failed to apply talents"))
+        print("|cff00ccffBread Codex:|r " .. (err or ns.L["talent_apply.failed_generic"]))
         return
     end
 
@@ -1255,7 +1255,7 @@ local function EnsureContainer()
         ns.Tooltip
             .Open(self, "ANCHOR_RIGHT")
             .Head("Bread Codex Talent Highlight", "title")
-            .Line("Compare your talents and pull the latest builds from our sources.", "body")
+            .Line(ns.L["talent_pane.compare_hint"], "body")
             .Show()
     end)
     iconBtn:SetScript("OnLeave", function()

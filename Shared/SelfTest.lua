@@ -18,7 +18,7 @@ local function count(t)
 end
 
 local function line(label, ok, detail)
-    print("  " .. (ok and green("OK  ") or red("--  ")) .. label .. (detail and (" — " .. detail) or ""))
+    print("  " .. (ok and green("OK  ") or red("--  ")) .. label .. (detail and (": " .. detail) or ""))
 end
 
 local function specCount(root)

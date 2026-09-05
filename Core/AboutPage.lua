@@ -326,8 +326,8 @@ local function buildSettings(parent, context)
         L["about.all_settings"],
         L["about.settings_tip"],
         ARROW_RIGHT,
-        function()
-            if ns.OpenSettings then ns.OpenSettings() end
+        function(self)
+            if ns.OpenSettings then ns.OpenSettings(self) end
         end,
         GREY,
         GREY,
@@ -466,7 +466,7 @@ function ns.BuildSupporterTiers(parent)
         icon:SetVertexColor(color[1], color[2], color[3])
 
         local header = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        header:SetText(labelText .. "  |cff808080·|r  " .. #names)
+        header:SetText(labelText .. "  " .. ns.DOT_SEPARATOR .. "  " .. #names)
         header:SetTextColor(color[1], color[2], color[3])
         header:SetJustifyH("LEFT")
 

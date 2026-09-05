@@ -68,7 +68,7 @@ function ns.CreateCard(parent, opts)
     heroTex:SetAllPoints(heroBtn)
     heroBtn.tex = heroTex
     heroBtn:SetScript("OnEnter", function(self)
-        if self.tip then ns.Tooltip.Open(self, "ANCHOR_RIGHT").Title(self.tip).Body("Hero talent").Show() end
+        if self.tip then ns.Tooltip.Open(self, "ANCHOR_RIGHT").Title(self.tip).Body(ns.L["card.hero_talent"]).Show() end
     end)
     heroBtn:SetScript("OnLeave", function()
         ns.Tooltip.Hide()
@@ -102,7 +102,7 @@ function ns.CreateCard(parent, opts)
     starTex:SetTexture("Interface\\Common\\FavoritesIcon")
     local starTipTags = nil
     star:SetScript("OnEnter", function(self)
-        local t = ns.Tooltip.Open(self, "ANCHOR_RIGHT").Title("Recommended")
+        local t = ns.Tooltip.Open(self, "ANCHOR_RIGHT").Title(ns.L["talent_pane.recommended"])
         -- Source-authored labels (High Key, Weekly Key, …) ride on the star
         -- instead of cluttering the visible label.
         if starTipTags and #starTipTags > 0 then t.Body(table.concat(starTipTags, ", ")) end
@@ -122,7 +122,7 @@ function ns.CreateCard(parent, opts)
     checkTex:SetAllPoints()
     checkTex:SetTexture("Interface\\RaidFrame\\ReadyCheck-Ready")
     appliedCheck:SetScript("OnEnter", function(self)
-        ns.Tooltip.Open(self, "ANCHOR_RIGHT").Title("Currently applied").Show()
+        ns.Tooltip.Open(self, "ANCHOR_RIGHT").Title(ns.L["card.currently_applied"]).Show()
     end)
     appliedCheck:SetScript("OnLeave", function()
         ns.Tooltip.Hide()
@@ -363,4 +363,27 @@ function ns.CreateCard(parent, opts)
     end
 
     return card
+end
+
+-- Flashes a frame's real backdrop border red once to signal that a click was
+-- refused because of combat protection (e.g. opening settings in combat).
+-- Only frames that own a backdrop take part (rows, the dock); the border
+-- color is captured, set red, and restored one beat later — two setters and
+-- one C_Timer, no loops. Repeated clicks while flashing are ignored so the
+-- captured color is never the flash itself.
+do
+    local FLASH_R, FLASH_G, FLASH_B = 1, 0.08, 0.08
+
+    ns.FlashBlocked = function(frame)
+        if type(frame) ~= "table" then return end
+        if frame._ccBlockedFlashing then return end
+        if not (frame.GetBackdrop and frame.GetBackdropBorderColor and frame:GetBackdrop()) then return end
+        local r, g, b, a = frame:GetBackdropBorderColor()
+        frame._ccBlockedFlashing = true
+        frame:SetBackdropBorderColor(FLASH_R, FLASH_G, FLASH_B, a or 1)
+        C_Timer.After(0.25, function()
+            frame._ccBlockedFlashing = nil
+            if frame.GetBackdropBorderColor then frame:SetBackdropBorderColor(r, g, b, a) end
+        end)
+    end
 end

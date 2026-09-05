@@ -2635,30 +2635,30 @@ ClassCodexSource["wowhead"] = {
         talents = {
           ["shado-pan"] = {
             ["raid-single-target"] = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYM2GmhlZGbzAAAAAAAAAAAAsMMCzwwAmZGmZmZY2GmhZZmAAWMz2MjZmZmBAwGAMLzSzMzsAgBmZAYsMQMgLA", label = "Raid - Single Target", recommended = "Recommended" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYw2MmhlZGbzAAAAAAAAAAAAsMMaGzwwAmxwMzMDz2wMMLzEAwiZ2mZYmZmBAwGAMLzSzMzsAgBmZAglBiB8B", label = "Raid - Single Target", recommended = "Recommended" },
             },
             ["raid-cleave"] = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMYMYbmZ2mxAAAAAAAAAAAALDjwMMMgZMMzMzwsNMDzyMBAsYmtxwYmZAAsBAzys0MzMLADDMzAwYZMEDYA", label = "Raid - Cleave", recommended = "Recommended" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYw2wMsNzYbGAAAAAAAAAAAglhRzYGGGwMGmZmZY2YmhZZmAAWMz2MzYMzMAA2AgZZWamZmFAMwMDAsMQMgB", label = "Raid - Cleave", recommended = "Recommended" },
             },
             mplus = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYAMGbzMz2MAAAAAAAAAAAALDzEmhhBMjhZmZGmNMDzyMBAsYmtZmxMzMDAgNAYWmlmZmZBgZgZGAYZMEDYA", label = "Mythic+ (Weekly Keys)", recommended = "Best" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYAMGbzMz2MAAAAAAAAAAAALDzEmxywAmxwMzMDz2wMMLzEAwiZ2mZGzMzMAA2AgZZWamZmFAMwMDAswQMgB", label = "Mythic+ (Weekly Keys)", recommended = "Best" },
             },
             delves = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYAMGbzMz2MAAAAAAAAAAAALDzEmhhBMjhZmZGmNMDzyMBAsYmtZmxMzMDAgNAYWmlmZmZBgZgZGAYZMEDYA", label = "Delves" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYAMGbzMz2MAAAAAAAAAAAALDzEmxywAmxwMzMDz2wMMLzEAwiZ2mZGzMzMAA2AgZZWamZmFAMwMDAswQMgB", label = "Delves" },
             },
           },
           ["conduit-of-the-celestials"] = {
             ["raid-single-target"] = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYM2GmhlZmZbGAAAAAAAAAAAglhRYGGGwMzwMzMDz2wMMLzEAwiZ2mZMjZmBAwiZWmlxEEAAGAzAMWGImZmFXA", label = "Raid - Single Target (Advanced)", recommended = "Best" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYM2GmhlZmZbGAAAAAAAAAAAglhRzYGGGwMGmZmZY2GmhZZmAAWMz2MzYmZmBAwiZWmlxEEAAGAzAwyAxMzs5BA", label = "Raid - Single Target (Advanced)", recommended = "Best" },
             },
             ["raid-cleave"] = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMgxYZmx2MDAAAAAAAAAAAYZYEmhhBMzMMzMzwsNMDzyMBAsYmtxMGzMDAgFzsMLjJIAghBwMAjlBiZmZzA", label = "Raid - Cleave (Advanced)", recommended = "Best" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYM2GGjlZmZbGAAAAAAAAAAAglhRzYGGGwMGmZmZY2GmhZZmAAWMz2MzYMzMAAWMzysMmgAAMGAzAwyAxMzs5BA", label = "Raid - Cleave (Advanced)", recommended = "Best" },
             },
             mplus = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMgxYZmZ2mBAAAAAAAAAAAYZYEmhhBMjhZmZGmNMDzyMBAswsxMmZmZAAsYmlZZMBBAMzMAmBYsMGiZmZzA", label = "Mythic+ (High Keys)", recommended = "Best" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMgxYZmZ2mBAAAAAAAAAAAYZYEmhhBMjhZmZGmthZYWmJAgFmNmxMzMDAgFzsMLjJIAgZMAmBYsMYiZmZzA", label = "Mythic+ (High Keys)", recommended = "Best" },
             },
             delves = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMgxYZmZ2mBAAAAAAAAAAAYZYEmhhBMjhZmZGmNMDzyMBAswsxMmZmZAAsYmlZZMBBAMzMAmBYsMGiZmZzA", label = "Delves", recommended = "Recommended" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMgxYZmZ2mBAAAAAAAAAAAYZYEmhhBMjhZmZGmthZYWmJAgFmNmxMzMDAgFzsMLjJIAgZMAmBYsMYiZmZzA", label = "Delves", recommended = "Recommended" },
             },
           },
         },
@@ -3755,8 +3755,8 @@ ClassCodexSource["wowhead"] = {
             all = {
               { itemId = 270175, tier = "S", source = "Ula'tek", contexts = { "raid" } },
               { itemId = 270173, tier = "S", source = "The Coiled Altar", contexts = { "raid" } },
-              { itemId = 270164, tier = "A", source = "Mor'zahi", contexts = { "raid" } },
               { itemId = 270165, tier = "A", source = "Breath of Ula'tek", contexts = { "raid" } },
+              { itemId = 270164, tier = "A", source = "Mor'zahi", contexts = { "raid" } },
               { itemId = 273797, tier = "A", source = "Zul'jan", contexts = { "mplus" } },
               { itemId = 250215, tier = "A", source = "Zaen Bladesorrow", contexts = { "mplus" } },
               { itemId = 250214, tier = "B", source = "Lightwarden Ruia", contexts = { "mplus" } },
@@ -5022,5 +5022,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-04", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-09-05", schemaVersion = 1, source = "wowhead" },
 }

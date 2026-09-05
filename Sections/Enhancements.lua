@@ -81,7 +81,7 @@ local function makeViewCog(header, section, ctx)
         ns.Tooltip
             .Open(self, "ANCHOR_RIGHT")
             .Title(L["settings.value.view"] or "View")
-            .Hint("Click to switch view.")
+            .Hint(L["hint.switch_view"])
             .Show()
     end)
     cog:SetScript("OnLeave", function()

@@ -74,7 +74,7 @@ local function makeCtxCog(inst)
         ns.Tooltip
             .Open(self, "ANCHOR_RIGHT")
             .Title(L["section.rotation"] or "Rotation")
-            .Hint("Click to switch rotation.")
+            .Hint(L["rotation.cog_hint"])
             .Show()
     end)
     cog:SetScript("OnLeave", function()
@@ -142,6 +142,7 @@ local function makeStepRow(parent)
     iconFrame:SetScript("OnEnter", function(self)
         local row = self:GetParent()
         if row.itemId then
+            ns.Tooltip.MakeClickThrough()
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:SetItemByID(row.itemId)
             GameTooltip:Show()
@@ -159,6 +160,7 @@ local function makeStepRow(parent)
         local itemId = tonumber(link and link:match("^item:(%d+)"))
         local spellId = tonumber(link and link:match("^spell:(%d+)"))
         if itemId or spellId then
+            if itemId then ns.Tooltip.MakeClickThrough() end
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             if itemId then
                 GameTooltip:SetItemByID(itemId)
@@ -181,6 +183,7 @@ local function makeStepRow(parent)
         local itemId = tonumber(link and link:match("^item:(%d+)"))
         local spellId = tonumber(link and link:match("^spell:(%d+)"))
         if itemId or spellId then
+            if itemId then ns.Tooltip.MakeClickThrough() end
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             if itemId then
                 GameTooltip:SetItemByID(itemId)
@@ -245,7 +248,7 @@ local function render(inst, args)
     if inst.header and inst.header.label then
         local base = inst.baseTitle or L["section.rotation"] or "Rotation"
         if showCtx and inst.currentContext and inst.currentContext ~= "" then
-            inst.header.label:SetText(base .. " · " .. inst.currentContext)
+            inst.header.label:SetText(base .. " " .. ns.DOT_SEPARATOR .. " " .. inst.currentContext)
         else
             inst.header.label:SetText(base)
         end

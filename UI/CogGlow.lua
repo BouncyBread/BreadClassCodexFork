@@ -7,7 +7,7 @@ local _, ns = ...
 local GLOW_COLOR = { 1, 0.82, 0 }
 local FADE_TIME = 0.25
 
-local LABEL_SEPARATOR = " · "
+local LABEL_SEPARATOR = ns.DOT_SEPARATOR
 
 -- Context menus open at the cursor regardless of owner. When the menu is
 -- opened from a region other than the cog (label suffix, page title),
@@ -181,8 +181,15 @@ function ns.MakeLabelMenuHotspot(header, cog)
 
     local function Update()
         local text = header.label:GetText() or ""
-        local prefix = text:match("^(.-" .. LABEL_SEPARATOR .. ")")
-        if not prefix or #prefix >= #text then
+        -- Plain find, not a pattern: the separator is a texture escape whose
+        -- backslashes pattern-match differently across Lua versions.
+        local sepAt = text:find(LABEL_SEPARATOR, 1, true)
+        if not sepAt then
+            hotspot:Hide()
+            return
+        end
+        local prefix = text:sub(1, sepAt + #LABEL_SEPARATOR - 1)
+        if #prefix >= #text then
             hotspot:Hide()
             return
         end

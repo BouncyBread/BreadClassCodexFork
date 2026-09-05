@@ -327,6 +327,16 @@ function ns.RegisterSettings()
                 if ns.SetFloating then ns.SetFloating(on) end
             end
         )
+        panels.charCheck(
+            "ccFloatEscClose",
+            "floatEscClose",
+            L["settings.label.float_esc"],
+            L["settings.tooltip.float_esc"],
+            false,
+            function(on)
+                if ns.isFloating and ns.isFloating() and ns.SetEscapeClose then ns.SetEscapeClose(on) end
+            end
+        )
         local function refreshFloat()
             ns.UpdatePanelIfVisible("floating")
         end
@@ -554,7 +564,14 @@ function ns.RegisterSettings()
         ns.settingsCategory = category
     end)
 
-    function ns.OpenSettings()
+    function ns.OpenSettings(frame)
+        -- OpenToCategory reaches the protected OpenSettingsPanel, which is
+        -- blocked in combat (ADDON_ACTION_BLOCKED); flash the clicked
+        -- element instead of failing silently.
+        if InCombatLockdown() then
+            if ns.FlashBlocked then ns.FlashBlocked(frame) end
+            return
+        end
         if Settings and Settings.OpenToCategory and ns.settingsCategory then
             Settings.OpenToCategory(ns.settingsCategory:GetID())
         end

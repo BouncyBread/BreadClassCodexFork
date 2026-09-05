@@ -764,10 +764,10 @@ local function BuildOptionsMenu(_, root)
         return MenuResponse.Refresh
     end)
     root:CreateButton(l["loadout_dock.all_settings"], function()
-        if ns.loadoutDockSettingsCategory and Settings and Settings.OpenToCategory then
+        if not InCombatLockdown() and ns.loadoutDockSettingsCategory and Settings and Settings.OpenToCategory then
             Settings.OpenToCategory(ns.loadoutDockSettingsCategory:GetID())
         elseif ns.OpenSettings then
-            ns.OpenSettings()
+            ns.OpenSettings(dock)
         end
     end)
 end
