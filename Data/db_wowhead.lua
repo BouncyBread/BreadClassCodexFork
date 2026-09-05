@@ -175,7 +175,7 @@ ClassCodexSource["wowhead"] = {
         talents = {
           deathbringer = {
             raid = {
-              { export = "CsPAAAAAAAAAAAAAAAAAAAAAAMAmZMjZAz2MzMzMLzMjMjxYYmxgZmZmZmZmZAAAAAAAAAYMbDMgFwywEyYBzMmZGYAYYmBYmBD", label = "Raid" },
+              { export = "CsPAAAAAAAAAAAAAAAAAAAAAAMAmZMjZAz2MzMzMLzMjMjxYYmxgZmZmZmZmZAAAAAAAAAYMbDMgFwywEyYBzMmZGYAYYmBYmBD", label = "Raid", recommended = "Best" },
             },
             mplus = {
               { export = "CsPAAAAAAAAAAAAAAAAAAAAAAMAzMMjZAz2MzMzMLzMjMjxYYmxgZmZmZmZmZAAAAAAAAAYMbDMgFwywEyYBzMmZGYAYYmBYmBD", label = "Mythic+", recommended = "Best" },
@@ -186,7 +186,7 @@ ClassCodexSource["wowhead"] = {
           },
           ["rider-of-the-apocalypse"] = {
             raid = {
-              { export = "CsPAAAAAAAAAAAAAAAAAAAAAAMDwMjZMDY2mZmZmZZmZkZMGDzMGMjZmZmZmZAAAAAAAAAAsZWMMwAzmGaYDzMmZGYAYAYmZmBD", label = "Raid", recommended = "Best" },
+              { export = "CsPAAAAAAAAAAAAAAAAAAAAAAMDwMjZMDY2mZmZmZZmZkZMGDzMGMjZmZmZmZAAAAAAAAAAsZWMMwAzmGaYDzMmZGYAYAYmZmBD", label = "Raid" },
             },
             mplus = {
               { export = "CsPAAAAAAAAAAAAAAAAAAAAAAMAmhZMDY2mZmZmZZmZ0MjxYYmxgZmZmZmZmZAAAAAAAAAAsZWMMwAzmGaYDzMmZGYAYAYmZmBD", label = "Mythic+" },
@@ -240,7 +240,7 @@ ClassCodexSource["wowhead"] = {
           all = {
             all = {
               flask = { 241326 },
-              potions = { 241308 },
+              potions = { 241288 },
               healthPotion = { 241304 },
               weaponBuff = { 243734 },
               augmentRune = { 259085 },
@@ -2777,8 +2777,8 @@ ClassCodexSource["wowhead"] = {
               { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAAwyMzMjZMzMbGzYYZsZmFz0EDjZmhxslBgBMsB2YZGDACAYmZZZx2MDbAwmhxMmhBgZGAmxY0A", label = "Raid - Faith" },
             },
             mplus = {
-              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAAD2GzMzMjZmZBmZYZsZmFjmYYMzMMmtMAMAsB2YZmZAQAAzMLLL2mZYDYG2MwMmhZAMzAwMGjGA", label = "M+ - Virtue" },
-              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAADWGzMzMjZmZZwYYZsZmFz0EDjZmhxslBgBgNwGLzMDACAYmZZZx2MDbAzwmBmxMMAMzAwMGjGA", label = "M+ - Faith" },
+              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAAD2GwMzyMzsYMzMsY2MziZaihxMzwY2yAwAwGYjFzMAIAgZmllFbzMsxGmhNDMjZwAYmBgZMGNA", label = "M+ - Virtue" },
+              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAADWGwMzyMzsMjZMsY2MziZaihxMzwY2yAwAwGYjFzMAIAgZmllFbzMsxGmhNDMjZwAYmBgZMGNA", label = "M+ - Faith" },
             },
             delves = {
               { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAADMmZmZGzMzixMmxyYzMLGNxwYMDjZLDADAbgNWmZGAEAwMz22ilZG2AzMsZgZYYAYmBgZMGNA", label = "Delves", recommended = "Recommended" },
@@ -2790,7 +2790,6 @@ ClassCodexSource["wowhead"] = {
             all = {
               steps = {
                 "Spend {53576} procs",
-                "Cast {20473} on an Ally",
                 "Cast {82326} as needed and as mana allows",
                 "Cast {20271}",
                 "Cast {19750}",
@@ -4174,10 +4173,32 @@ ClassCodexSource["wowhead"] = {
           },
           totemic = {
             raid = {
-              { export = "CgQAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAzMzsssNjZGjZGzMDjFYDmxiGbDIzAbmhZw2YMTz2yMzmZMLsYegZGzwsMAAAwMzgZGAYwM", label = "Raid", recommended = "Best" },
+              { export = "CgQAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAzMzsssNjZGjZGzMDjFYDmxmGbDIzAbmhZw2YMTz2yMzmZMLsYegZGzwsMAAAwMzgZGAYwM", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "CgQAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAzMzsstMzMzMjZGjZgFYDmxiGbDIzAbMzMY2mZMa2WmZ2MjZhFjZGDLzyAAAAzMDmZAgBzA", label = "Mythic+", recommended = "Best" },
+              { export = "CgQAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAzMzsstMzMzMjZGjZgFYDmxmGbDIzAbMzMY2mZMa2WmZ2MjZhFjZGDLzyAAAAzMDmZAgBzA", label = "Mythic+", recommended = "Best" },
+            },
+            delves = {
+              { export = "CgQAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAzMzsstMzMzMjZGjZgFYDmxiGbDIzAbMzMY2mZMa2WmZ2MjZhFjZGDLzyAAAAzMDmZAgBzA", label = "Delves", recommended = "Best" },
+            },
+          },
+          farseer = {
+            raid = {
+              { export = "CgQAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAzMzsssNjZGjZGzMMWMzGMgJY2YCMWMDzgtxYmmtlZmNzYWYxMzMmhZZAAAgZmBAzMwgZA", label = "Raid" },
+            },
+            mplus = {
+              { export = "CgQAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAzMzsssNzMzMjZGjZMWMzCMgJYWYCMWwMDmtZGjmtlZmNzYWYxYmxwysMAAAwMzAgZGYwM", label = "Mythic+" },
+            },
+            delves = {
+              { export = "CgQAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAzMzsssNzMzMjZGjZMWMzCMgJYWYCMWwMDmtZGjmtlZmNzYWYxYmxwysMAAAwMzAgZGYwM", label = "Delves" },
+            },
+          },
+          totemic = {
+            raid = {
+              { export = "CgQAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAzMzsssNjZGjZGzMDjFYDmxmGbDIzAbmhZw2YMTz2yMzmZMLsYegZGzwsMAAAwMzgZGAYwM", label = "Raid", recommended = "Best" },
+            },
+            mplus = {
+              { export = "CgQAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAzMzsstMzMzMjZGjZgFYDmxmGbDIzAbMzMY2mZMa2WmZ2MjZhFjZGDLzyAAAAzMDmZAgBzA", label = "Mythic+", recommended = "Best" },
             },
             delves = {
               { export = "CgQAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAzMzsstMzMzMjZGjZgFYDmxiGbDIzAbMzMY2mZMa2WmZ2MjZhFjZGDLzyAAAAzMDmZAgBzA", label = "Delves", recommended = "Best" },
