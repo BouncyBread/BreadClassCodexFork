@@ -268,7 +268,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 268259, slot = "Belt", source = "The Coiled Altar" },
               { itemId = 271878, slot = "Legs", source = "Ula'tek" },
               { itemId = 237828, slot = "Boots", source = "Crafting" },
-              { itemId = 273792, slot = "Ring", source = "Altar of Fangs" },
+              { itemId = 268249, slot = "Ring", source = "Vashnik" },
               { itemId = 252258, slot = "Ring", source = "Voidscar Arena" },
               { itemId = 270175, slot = "Trinket", source = "Ula'tek" },
               { itemId = 270173, slot = "Trinket", source = "The Coiled Altar" },
@@ -326,10 +326,10 @@ ClassCodexSource["wowhead"] = {
           },
           sanlayn = {
             ["san-st"] = {
-              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMDDz2MzMTjZmxYGDAAAAAAAAzDMMGAsMDzsZmxMzYgBmxiGLbA2mYDAzAYmZmZMDmZwMzYA", label = "Single Target/Cleave" },
+              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMDDz2MzMTjZmxYGDAAAAAAAAzMMGAsMjZmtZmxMzYgBmxiGLbA2mYDAzAwYmZMDmZwMzYA", label = "Single Target/Cleave" },
             },
             ["san-aoe"] = {
-              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMDDz2MzMTzmZmZMjBAAAAAAAg5BGDDAWmhZ2MzYMjBGYGbassAYZiNMgZAMzMzMmBzMYGjB", label = "M+/Delves", recommended = "Best" },
+              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAYmhZMGDz2MzMTzyMzYMjBAAAAAAAgZGDDAWmxMzmZGzMjBGYGbassAYbiNMgZAYMzMmBzMYMjB", label = "M+/Delves", recommended = "Best" },
             },
           },
         },
@@ -3445,7 +3445,7 @@ ClassCodexSource["wowhead"] = {
           all = {
             all = {
               { itemId = 271093, slot = "Weapon", source = "Ula'tek" },
-              { itemId = 237837, slot = "Offhand", source = "Crafting/Misc" },
+              { itemId = 275070, slot = "Offhand", source = "Altar of Fangs" },
               { itemId = 271510, slot = "Head", source = "Ula'tek" },
               { itemId = 268265, slot = "Neck", source = "Ula'tek" },
               { itemId = 271508, slot = "Shoulders", source = "Voidscar Arena" },
@@ -3455,7 +3455,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 271511, slot = "Gloves", source = "Entombed Sentinels" },
               { itemId = 268256, slot = "Belt", source = "The Coiled Altar" },
               { itemId = 271509, slot = "Legs", source = "The Coiled Altar" },
-              { itemId = 251153, slot = "Boots", source = "Den of Nalorakk" },
+              { itemId = 244569, slot = "Boots", source = "Crafted" },
               { itemId = 273792, slot = "Ring", source = "Altar of Fangs" },
               { itemId = 268249, slot = "Ring", source = "Vashnik the Malignant" },
               { itemId = 270175, slot = "Trinket", source = "Ula'tek" },
@@ -5043,5 +5043,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-05", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-09-06", schemaVersion = 1, source = "wowhead" },
 }
