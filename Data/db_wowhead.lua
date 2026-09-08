@@ -1538,7 +1538,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 252258, slot = "Ring", source = "Voidscar Arena" },
               { itemId = 270173, slot = "Trinket", source = "The Coiled Altar" },
               { itemId = 270175, slot = "Trinket", source = "Ula'tek" },
-              { itemId = 270165, slot = "Trinket (Raid only)", source = "Entombed Sentinels" },
+              { itemId = 270168, slot = "Trinket (Situationally)", source = "Ula'tek" },
             },
           },
         },
@@ -1547,8 +1547,8 @@ ClassCodexSource["wowhead"] = {
             all = {
               { itemId = 270173, tier = "S", source = "The Coiled Altar", contexts = { "raid" } },
               { itemId = 270175, tier = "S", source = "Ula'tek", contexts = { "raid" } },
-              { itemId = 270165, tier = "S", source = "Entombed Sentinels", contexts = { "raid" } },
-              { itemId = 270168, tier = "A", source = "Ula'tek", contexts = { "raid" } },
+              { itemId = 270168, tier = "S", source = "Ula'tek", contexts = { "raid" } },
+              { itemId = 270165, tier = "A", source = "Breath of Ula'tek", contexts = { "raid" } },
               { itemId = 159617, tier = "A", source = "The Golden Serpent", contexts = { "mplus" } },
               { itemId = 273796, tier = "A", source = "Rav'i", contexts = { "mplus" } },
               { itemId = 270164, tier = "A", source = "Mor'zahi", contexts = { "raid" } },
@@ -2774,11 +2774,11 @@ ClassCodexSource["wowhead"] = {
           lightsmith = {
             raid = {
               { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAAw2MzMjZMzYxYmZYZwMLmpJGGzMDjZLDADYYDsxyMGAEAwMzyyitZG2AgNDjZMDzAYmBgZMGNA", label = "Raid - Virtue" },
-              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAAwyMzMjZMzMbGzYYZsZmFz0EDjZmhxslBgBMsB2YZGDACAYmZZZx2MDbAwmhxMmhBgZGAmxY0A", label = "Raid - Faith" },
+              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAAwyMzMjZ2mZmNYMsM2MzmZaihxMzwY2yAwAG2AbsMjBABAMzsssYbmhNAYzwYGzwMAmZAYGjRDA", label = "Raid - Faith" },
             },
             mplus = {
               { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAAD2GwMzyMzsYMzMsY2MziZaihxMzwY2yAwAwGYjFzMAIAgZmllFbzMsxGmhNDMjZwAYmBgZMGNA", label = "M+ - Virtue" },
-              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAADWGwMzyMzsMjZMsY2MziZaihxMzwY2yAwAwGYjFzMAIAgZmllFbzMsxGmhNDMjZwAYmBgZMGNA", label = "M+ - Faith" },
+              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAADWGwMzyMzsMjZMsY2MziZaihxMzwY2yAwAwGYjFzMAIAgZmllFbzMsxGmhNDMjZwAYmBgZMGNA", label = "M+ - Faith" },
             },
             delves = {
               { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAADMmZmZGzMzixMmxyYzMLGNxwYMDjZLDADAbgNWmZGAEAwMz22ilZG2AzMsZgZYYAYmBgZMGNA", label = "Delves", recommended = "Recommended" },
@@ -4345,7 +4345,7 @@ ClassCodexSource["wowhead"] = {
                 "Cast {1257052}.",
                 "Cast {205180}.",
                 "Cast {442726}.",
-                "Cast as many {316099} as possible.",
+                "Cast as many {1259790} as possible.",
                 "Cast {1261149}.",
               },
             },
@@ -5043,5 +5043,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-06", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-09-08", schemaVersion = 1, source = "wowhead" },
 }
