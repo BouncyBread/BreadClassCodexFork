@@ -182,12 +182,16 @@ function ns.HeroFromExportString(exportString)
     if not treeID or not configID then return nil end
 
     local result = false
+    local retryWhenReady = false
     local ok, stream = pcall(ExportUtil.MakeImportDataStream, exportString)
     if ok and stream then
         local headerValid, version, specID = ReadLoadoutHeader(stream)
         if headerValid
             and version == C_Traits.GetLoadoutSerializationVersion()
             and specID == activeSpecID then
+            -- A valid export can be read before the tree's node/subtree data
+            -- is ready. Do not permanently cache that temporary failure.
+            retryWhenReady = true
             local okContent, content = pcall(ReadLoadoutContent, stream, treeID)
             if okContent and type(content) == "table" then
                 local treeNodes = C_Traits.GetTreeNodes(treeID)
@@ -214,7 +218,7 @@ function ns.HeroFromExportString(exportString)
             end
         end
     end
-    heroByExport[key] = result
+    if result ~= false or not retryWhenReady then heroByExport[key] = result end
     if result == false then return nil end
     return result
 end

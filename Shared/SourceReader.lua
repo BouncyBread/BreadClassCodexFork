@@ -467,9 +467,8 @@ ns.WowheadZoneFor = wowheadZone
 -- and the overview rows land in the middle of the bosses. Order: overviews
 -- first, then encounters by name, then the source's own pick ahead of its
 -- alternatives, then by popularity.
+local BUILD_TIE_FIELDS = { "zoneKind", "difficulty", "label", "hero", "contextId", "exportString" }
 local function sortBuilds(out)
-    local order = {}
-    for i, b in ipairs(out) do order[b] = i end
     table.sort(out, function(x, y)
         local xa, ya = x.encounterLabel == nil, y.encounterLabel == nil
         if xa ~= ya then return xa end
@@ -480,9 +479,13 @@ local function sortBuilds(out)
         end
         local xp, yp = x.pickrate or -1, y.pickrate or -1
         if xp ~= yp then return xp > yp end
-        -- Stable tiebreak: table.sort is not a stable sort, and equal keys
-        -- would otherwise reorder run to run for the same reason.
-        return (order[x] or 0) < (order[y] or 0)
+        -- Input order comes from pairs(), so preserving it preserves the
+        -- reload-dependent shuffle. Break ties using the build's own data.
+        for _, field in ipairs(BUILD_TIE_FIELDS) do
+            local xv, yv = tostring(x[field] or ""), tostring(y[field] or "")
+            if xv ~= yv then return xv < yv end
+        end
+        return false
     end)
     return out
 end
