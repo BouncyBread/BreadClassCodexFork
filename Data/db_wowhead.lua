@@ -1139,7 +1139,7 @@ ClassCodexSource["wowhead"] = {
           all = {
             all = {
               { itemId = 271528, slot = "Helm", source = "Ula'tek (Raid) & Catalyst" },
-              { itemId = 268251, slot = "Neck", source = "The Twin Fangs (Raid)" },
+              { itemId = 268265, slot = "Neck", source = "Ula'tek (Raid)" },
               { itemId = 244572, slot = "Shoulders", source = "Leatherworking" },
               { itemId = 268253, slot = "Cape", source = "The Coiled Alter (Raid)" },
               { itemId = 271531, slot = "Chest", source = "Nek'zali the Soulcoiler (Raid) & Catalyst" },
@@ -1201,7 +1201,7 @@ ClassCodexSource["wowhead"] = {
               { export = "CkGAAAAAAAAAAAAAAAAAAAAAAYMmZZmZMzMmthZwsZsNmBAAAAAAAAAAbDa2YMNzY4BMLzMzMDDzAAAAAAAAAAIAAgZbmlmtZ2sxYmZwMwoZAAmZAYA", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "CkGAAAAAAAAAAAAAAAAAAAAAAMMmZZMjZmxsNMMmlZsZbGAAAAAAAAAAsMoZzw0MjZwsYmZmZZGGDAAAAAAAGAACAAYWmZrZbmFbMmZgZ2ANDAwMDADA", label = "Mythic+", recommended = "Best" },
+              { export = "CkGAAAAAAAAAAAAAAAAAAAAAAMMmZZMjZmxsNMMmlZsZbGAAAAAAAAAAsMoZzw0MjZwsYmZmZZGGDAAAAAAAGAACAAYWmZrZbmFbMmZgZWANDAwMDADA", label = "Mythic+", recommended = "Best" },
             },
             delves = {
               { export = "CkGAAAAAAAAAAAAAAAAAAAAAAMMmZZMjZmxsNzMgFzsZbGAAAAAAAAAAsNoZzw0MmZMmFzMzMLzwYAAAAAAAwAAQAAAzyMbNLzsYDm5BwMWANDAwMDADA", label = "Delves", recommended = "Best" },
@@ -5043,5 +5043,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-08", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-09-09", schemaVersion = 1, source = "wowhead" },
 }
