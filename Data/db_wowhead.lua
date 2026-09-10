@@ -2777,8 +2777,8 @@ ClassCodexSource["wowhead"] = {
               { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAAwyMzMjZ2mZmNYMsM2MzmZaihxMzwY2yAwAG2AbsMjBABAMzsssYbmhNAYzwYGzwMAmZAYGjRDA", label = "Raid - Faith" },
             },
             mplus = {
-              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAAD2GwMzyMzsYMzMsY2MziZaihxMzwY2yAwAwGYjFzMAIAgZmllFbzMsxGmhNDMjZwAYmBgZMGNA", label = "M+ - Virtue" },
-              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAADWGwMzyMzsMjZMsY2MziZaihxMzwY2yAwAwGYjFzMAIAgZmllFbzMsxGmhNDMjZwAYmBgZMGNA", label = "M+ - Faith" },
+              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAAD2GwMzyMzsYMzMsY2MziZaihxMzwY2yAwAwGYjFzMAIAgZmllFLzMsxGmhNDMjZwAYmBgZMGNA", label = "M+ - Virtue" },
+              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAADWGwMzyMzsMjZMsY2MziZaihxMzwY2yAwAwGYjFzMAIAgZmllFLzMsxGmhNDMjZwAYmBgZMGNA", label = "M+ - Faith" },
             },
             delves = {
               { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAADMmZmZGzMzixMmxyYzMLGNxwYMDjZLDADAbgNWmZGAEAwMz22ilZG2AzMsZgZYYAYmBgZMGNA", label = "Delves", recommended = "Recommended" },
@@ -5043,5 +5043,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-09", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-09-10", schemaVersion = 1, source = "wowhead" },
 }
