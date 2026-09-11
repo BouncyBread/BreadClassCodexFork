@@ -1483,28 +1483,27 @@ ClassCodexSource["wowhead"] = {
         enchants = {
           all = {
             all = {
-              Weapon = { { itemId = 244031 } },
+              Weapon = { { itemId = 273072 } },
               Helm = { { itemId = 243951 } },
               Shoulders = { { itemId = 244021 } },
               Chest = { { itemId = 243977 } },
               Legs = { { itemId = 240155 } },
               Boots = { { itemId = 243983 } },
-              Ring = { { itemId = 243959 } },
+              Ring = { { itemId = 243957 } },
             },
           },
         },
         gems = {
           all = {
             all = {
-              { primary = 240983, secondary = { 240900 } },
+              { primary = 240983, secondary = { 240900, 240908 } },
             },
           },
         },
         consumables = {
           all = {
             all = {
-              flask = { 241322 },
-              potions = { 241288, 241300 },
+              potions = { 241288 },
               healthPotion = { 241304 },
               weaponBuff = { 243734 },
               augmentRune = { 259085 },
@@ -1662,9 +1661,9 @@ ClassCodexSource["wowhead"] = {
               { itemId = 271493, slot = "Gloves", source = "Catalyst the Ruby Life Pools Gloves" },
               { itemId = 244581, slot = "Belt", source = "Crafting/Misc" },
               { itemId = 271491, slot = "Legs", source = "Catalyst the The Coiled Altar Legs" },
-              { itemId = 268233, slot = "Boots", source = "Sszorak" },
+              { itemId = 268258, slot = "Boots", source = "The Lost Explorers" },
               { itemId = 251136, slot = "Ring", source = "Murder Row" },
-              { itemId = 268249, slot = "Ring", source = "Vashnik the Malignant" },
+              { itemId = 158366, slot = "Ring", source = "Temple of Sethraliss" },
             },
           },
         },
@@ -5043,5 +5042,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-10", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-09-11", schemaVersion = 1, source = "wowhead" },
 }
