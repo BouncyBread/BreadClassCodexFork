@@ -526,6 +526,12 @@ L["talent_apply.renamed"] = "已将配置重命名为 %s"
 L["talent_apply.already_using"] = "已在使用此构筑。"
 L["talent_apply.creating_slot"] = "正在创建配置槽……"
 L["talent_apply.saved"] = "已保存配置 '%s'。"
+L["talent_apply.saving"] = "正在保存配置 '%s'……"
+L["talent_apply.save_in_progress"] = "已有配置保存正在进行中。请等待其完成。"
+L["talent_apply.unsaved_changes_save"] =
+    "你有未保存的天赋改动。保存配置前，请打开天赋面板并点击应用更改（或右键点击配置名称以放弃）。"
+L["talent_apply.apply_needed"] =
+    "配置 '%s' 尚未提交。请打开天赋窗口并点击应用更改以完成保存。"
 L["talent_apply.reset_failed"] = "无法重置天赋树。已中止应用，请稍后重试。"
 L["talent_apply.commit_failed"] = "提交失败。请打开天赋窗口并点击应用更改。"
 L["talent_apply.in_combat"] = "战斗中无法更改天赋。"

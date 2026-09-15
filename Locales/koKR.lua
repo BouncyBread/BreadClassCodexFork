@@ -548,6 +548,13 @@ L["talent_apply.renamed"] = "로드아웃 이름을 %s(으)로 변경했습니�
 L["talent_apply.already_using"] = "이미 이 빌드를 사용 중입니다."
 L["talent_apply.creating_slot"] = "로드아웃 슬롯을 생성하는 중입니다..."
 L["talent_apply.saved"] = "로드아웃 '%s'을(를) 저장했습니다."
+L["talent_apply.saving"] = "로드아웃 '%s'을(를) 저장하는 중입니다..."
+L["talent_apply.save_in_progress"] =
+    "이미 로드아웃 저장이 진행 중입니다. 완료될 때까지 기다리세요."
+L["talent_apply.unsaved_changes_save"] =
+    "저장하지 않은 특성 변경 사항이 있습니다. 로드아웃을 저장하기 전에 특성 패널을 열고 변경 사항 적용을 클릭하세요(또는 로드아웃 이름을 우클릭해 취소하세요)."
+L["talent_apply.apply_needed"] =
+    "로드아웃 '%s'이(가) 대기 중입니다. 특성 창을 열고 변경 사항 적용을 클릭해 저장을 완료하세요."
 L["talent_apply.reset_failed"] =
     "특성 트리를 초기화할 수 없습니다. 적용을 중단했습니다. 잠시 후 다시 시도하세요."
 L["talent_apply.commit_failed"] =

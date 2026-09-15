@@ -88,7 +88,7 @@ local function buildCardList(args)
                     recommended = b.recommended,
                     heroTalent = b.hero,
                     exportString = b.exportString,
-                    saveLabel = (b.provider or "Build") .. " - " .. (b.hero or "") .. " " .. (b.label or ""),
+                    saveLabel = ns.BuildLoadoutName(b),
                     provider = b.provider,
                     icon = icon,
                     portrait = portrait,

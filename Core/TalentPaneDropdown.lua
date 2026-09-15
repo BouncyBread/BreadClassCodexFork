@@ -402,31 +402,23 @@ local function ShowCopyPopup(exportString)
 end
 
 local function BuildLoadoutLabel(build)
-    local source
+    -- Pane records carry the IV name in buildLabel (it replaces the context),
+    -- while u.gg/pvp records carry it as a raid difficulty suffix.
+    local label, difficulty = build.context or "Build", nil
     if build._ivSource then
-        source = "Icy Veins"
-    elseif build._uggSource then
-        source = "U.GG"
-    elseif build._pvpSource then
-        source = "PvP"
-    elseif build._genericSource then
-        source = build._genericSource
+        label = build.buildLabel or label
+    elseif build.buildLabel and build.buildLabel ~= "" then
+        difficulty = build.buildLabel
     end
-
-    local hero = build.heroTalent or "All"
-    local ctx = build.context or "Build"
-    local bl = build.buildLabel
-    local body
-    if build._ivSource then
-        body = (bl and bl ~= "" and bl ~= source) and bl or ctx
-    else
-        body = ctx
-        if bl and bl ~= "" and bl ~= ctx and bl ~= source then body = body .. " " .. bl end
-    end
-    local name = (hero ~= "All") and (hero .. " " .. body) or body
-
-    if source and source ~= "" then return source .. " - " .. name end
-    return name
+    return ns.BuildLoadoutName({
+        provider = build._ivSource and "Icy Veins"
+            or build._pvpSource and "PvP"
+            or (build._uggSource and "u.gg" or nil)
+            or build._genericSource,
+        hero = build.heroTalent,
+        label = label,
+        difficulty = difficulty,
+    })
 end
 
 local function OnApplyClicked()

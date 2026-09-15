@@ -546,6 +546,12 @@ L["talent_apply.renamed"] = "Vorlage umbenannt in %s"
 L["talent_apply.already_using"] = "Dieser Build wird bereits verwendet."
 L["talent_apply.creating_slot"] = "Vorlagen-Slot wird erstellt..."
 L["talent_apply.saved"] = "Vorlage '%s' gespeichert."
+L["talent_apply.saving"] = "Vorlage '%s' wird gespeichert..."
+L["talent_apply.save_in_progress"] = "Es wird bereits eine Vorlage gespeichert. Warte, bis es abgeschlossen ist."
+L["talent_apply.unsaved_changes_save"] =
+    "Du hast nicht gespeicherte Talentänderungen. Öffne das Talentpanel und klicke auf Änderungen anwenden (oder rechtsklicke auf den Vorlagennamen zum Verwerfen), bevor du eine Vorlage speicherst."
+L["talent_apply.apply_needed"] =
+    "Vorlage '%s' ist vorgemerkt. Öffne das Talentfenster und klicke auf Änderungen anwenden, um das Speichern abzuschließen."
 L["talent_apply.reset_failed"] =
     "Der Talentbaum konnte nicht zurückgesetzt werden. Anwenden abgebrochen, versuche es gleich erneut."
 L["talent_apply.commit_failed"] =

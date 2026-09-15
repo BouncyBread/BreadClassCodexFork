@@ -879,6 +879,52 @@ local function ParseImportEntries(exportString, configID, treeID)
     return results
 end
 
+local pendingSave = nil
+local saveFrame = CreateFrame("Frame")
+saveFrame:SetScript("OnEvent", function(_, _, arg1)
+    if not pendingSave then return end
+    if type(arg1) ~= "table" then return end
+    if arg1.type ~= Enum.TraitConfigType.Combat then return end
+    local savedName = arg1.name or pendingSave.userName
+    pendingSave = nil
+    saveFrame:UnregisterEvent("TRAIT_CONFIG_CREATED")
+    if arg1.ID and C_ClassTalents.UpdateLastSelectedSavedConfigID then
+        local specID = GetSpecID()
+        if specID then C_ClassTalents.UpdateLastSelectedSavedConfigID(specID, arg1.ID) end
+    end
+    Msg(format(ns.L["talent_apply.saved"], savedName))
+    if ns.RefreshLoadoutDock then ns.RefreshLoadoutDock() end
+end)
+
+local function AbandonPendingSave(userName)
+    pendingSave = nil
+    saveFrame:UnregisterEvent("TRAIT_CONFIG_CREATED")
+    Msg(format(ns.L["talent_apply.apply_needed"], userName))
+end
+
+local function FinalizeLoadoutImport(configID, userName)
+    local mySave = { userName = userName }
+    pendingSave = mySave
+    saveFrame:RegisterEvent("TRAIT_CONFIG_CREATED")
+    Msg(format(ns.L["talent_apply.saving"], userName))
+
+    local attempt = 0
+    local function Try()
+        if pendingSave ~= mySave then return end
+        attempt = attempt + 1
+        if InCombatLockdown and InCombatLockdown() then return AbandonPendingSave(userName) end
+        if C_ClassTalents.CommitConfig(configID) then
+            C_Timer.After(20, function()
+                if pendingSave == mySave then AbandonPendingSave(userName) end
+            end)
+            return
+        end
+        if attempt < 5 then return C_Timer.After(2, Try) end
+        AbandonPendingSave(userName)
+    end
+    Try()
+end
+
 function ns.SaveTalentBuildAsNewLoadout(exportString, buildLabel, userName)
     if not exportString or exportString == "" then return nil, ns.L["talent_apply.empty_export"] end
     if not userName or userName == "" then return nil, ns.L["talent_apply.name_required"] end
@@ -886,20 +932,14 @@ function ns.SaveTalentBuildAsNewLoadout(exportString, buildLabel, userName)
     if IsCCSlotName(userName) then return nil, format(ns.L["talent_apply.name_reserved"], CC_NAME) end
     if InCombatLockdown and InCombatLockdown() then return nil, ns.L["talent_apply.in_combat"] end
     if not C_ClassTalents.ImportLoadout then return nil, ns.L["talent_apply.save_unsupported"] end
+    if pendingSave then return nil, ns.L["talent_apply.save_in_progress"] end
     if C_ClassTalents.CanCreateNewConfig and not C_ClassTalents.CanCreateNewConfig() then
         return nil, ns.L["talent_apply.no_slots_save"]
     end
     local configID = C_ClassTalents.GetActiveConfigID()
     if not configID then return nil, ns.L["talent_apply.no_config"] end
-
-    local tf = PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame
-    if tf and tf.ImportLoadout and tf.IsShown and tf:IsShown() then
-        local ok, res = pcall(tf.ImportLoadout, tf, exportString, userName)
-        if ok and res ~= false then
-            if ns.RefreshLoadoutDock then ns.RefreshLoadoutDock() end
-            return true
-        end
-        if ok and res == false then return nil, ns.L["talent_apply.save_failed"] end
+    if C_Traits.ConfigHasStagedChanges and C_Traits.ConfigHasStagedChanges(configID) then
+        return nil, ns.L["talent_apply.unsaved_changes_save"]
     end
 
     local treeID = GetTreeID()
@@ -908,7 +948,6 @@ function ns.SaveTalentBuildAsNewLoadout(exportString, buildLabel, userName)
     if not entries then return nil, parseErr end
     local ok, importErr = C_ClassTalents.ImportLoadout(configID, entries, userName, exportString)
     if not ok then return nil, importErr or ns.L["talent_apply.import_failed"] end
-    Msg(format(ns.L["talent_apply.saved"], userName))
-    if ns.RefreshLoadoutDock then ns.RefreshLoadoutDock() end
+    FinalizeLoadoutImport(configID, userName)
     return true
 end

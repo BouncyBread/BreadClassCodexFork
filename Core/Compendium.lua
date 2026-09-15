@@ -879,6 +879,13 @@ function ns:UpdateCompendiumRotation(specData, heroTalent)
         currentContext = currentRotContext or rotContext,
         rotation = rotation,
         heroTalent = heroTalent,
+        -- Talent-spell conditions only evaluate against this player's spells,
+        -- so they apply solely when the browsed spec is the player's own.
+        playerSpec = (function()
+            if not ns.GetSpecData then return false end
+            local _, playerClass, playerSpecKey = ns.GetSpecData()
+            return selectedClass == playerClass and selectedSpec == playerSpecKey
+        end)(),
         source = compSource,
         hasAnyRotation = specData.rotation and #specData.rotation > 0 or false,
         textAreaWidth = CompContentWidth() - 42,

@@ -1927,7 +1927,7 @@ local function EnsureSaveAsPopup()
     saveAsEdit:SetSize(260, 18)
     saveAsEdit:SetPoint("TOP", label, "BOTTOM", 0, -10)
     saveAsEdit:SetAutoFocus(true)
-    saveAsEdit:SetMaxLetters(32)
+    saveAsEdit:SetMaxLetters(75)
 
     saveAsError = saveAsPopup:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     saveAsError:SetPoint("TOPLEFT", saveAsEdit, "BOTTOMLEFT", 0, -6)
@@ -2319,6 +2319,7 @@ function ns:UpdatePanel()
         currentContext = currentRotationContext,
         rotation = rotation,
         heroTalent = currentHeroTalent,
+        playerSpec = true, -- docked pane always renders the player's spec
         hasAnyRotation = specData.rotation and #specData.rotation > 0,
         textAreaWidth = GetPanelWidth() - CONTENT_INSET * 2 - 42,
         helpers = {

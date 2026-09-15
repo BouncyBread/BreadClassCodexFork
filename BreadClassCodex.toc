@@ -47,6 +47,7 @@ Shared\ReduceTaint.lua
 Shared\PvPTalents.lua
 Shared\OmniumFolio.lua
 Shared\TalentBuildList.lua
+Shared\TalentNames.lua
 Shared\UggContext.lua
 Shared\SpecData.lua
 Shared\RotationFormat.lua

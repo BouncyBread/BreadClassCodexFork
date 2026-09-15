@@ -547,6 +547,13 @@ L["talent_apply.renamed"] = "Configuration renommée en %s"
 L["talent_apply.already_using"] = "Ce build est déjà actif."
 L["talent_apply.creating_slot"] = "Création d'un emplacement de configuration..."
 L["talent_apply.saved"] = "Configuration '%s' enregistrée."
+L["talent_apply.saving"] = "Enregistrement de la configuration '%s'..."
+L["talent_apply.save_in_progress"] =
+    "Un enregistrement de configuration est déjà en cours. Attendez qu'il se termine."
+L["talent_apply.unsaved_changes_save"] =
+    "Vous avez des modifications de talents non enregistrées. Ouvrez le panneau de talents et cliquez sur Appliquer les modifications (ou faites un clic droit sur le nom de la configuration pour les abandonner) avant d'enregistrer une configuration."
+L["talent_apply.apply_needed"] =
+    "La configuration '%s' est en attente. Ouvrez le panneau de talents et cliquez sur Appliquer les modifications pour terminer l'enregistrement."
 L["talent_apply.reset_failed"] =
     "Impossible de réinitialiser l'arbre de talents. Application annulée, réessayez dans un instant."
 L["talent_apply.commit_failed"] =

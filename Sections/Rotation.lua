@@ -271,6 +271,9 @@ local function render(inst, args)
     local h = makeStepHelpers(args.helpers or {})
     local rotation = args.rotation
     local hero = args.heroTalent
+    -- Talent-spell conditions compare against the player's learned spells, so
+    -- they only apply when the rendered rotation is the player's own spec.
+    local spellFilter = args.playerSpec == true
     local textW = (args.textAreaWidth or 200) - RIGHT_PAD
 
     if rotation then
@@ -301,6 +304,33 @@ local function render(inst, args)
                 if heroOk and hero and step.heroExcluded then
                     for _, banned in ipairs(step.heroExcluded) do
                         if banned == hero then
+                            heroOk = false
+                            break
+                        end
+                    end
+                end
+                -- Talent-spell conditions (variant steps pair required/excluded
+                -- on one talent): on the player's spec, IsPlayerSpell decides
+                -- which variant matches their talents. Browsing other specs we
+                -- can't know their talent picks, so we assume the recommended
+                -- build and keep the "with talent" variant, dropping the
+                -- "excluded" ones.
+                if step.spellExcluded and #step.spellExcluded > 0 then
+                    -- On other specs we can't know their talent picks: assume
+                    -- the recommended build (talent taken) and drop the
+                    -- excluded variant.
+                    local taken = not spellFilter
+                    for _, id in ipairs(step.spellExcluded) do
+                        if IsPlayerSpell(id) then
+                            taken = true
+                            break
+                        end
+                    end
+                    if taken then heroOk = false end
+                end
+                if heroOk and spellFilter and step.spellRequired and #step.spellRequired > 0 then
+                    for _, id in ipairs(step.spellRequired) do
+                        if not IsPlayerSpell(id) then
                             heroOk = false
                             break
                         end

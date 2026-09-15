@@ -544,6 +544,12 @@ L["talent_apply.renamed"] = "Configurazione rinominata in %s"
 L["talent_apply.already_using"] = "Stai già usando questa build."
 L["talent_apply.creating_slot"] = "Creazione slot configurazione..."
 L["talent_apply.saved"] = "Configurazione '%s' salvata."
+L["talent_apply.saving"] = "Salvataggio della configurazione '%s'..."
+L["talent_apply.save_in_progress"] = "C'è già un salvataggio di configurazione in corso. Attendi il completamento."
+L["talent_apply.unsaved_changes_save"] =
+    "Hai modifiche ai talenti non salvate. Apri il pannello dei talenti e clicca Applica modifiche (o fai clic destro sul nome della configurazione per annullarle) prima di salvare una configurazione."
+L["talent_apply.apply_needed"] =
+    "La configurazione '%s' è in sospeso. Apri la finestra dei talenti e clicca Applica modifiche per completare il salvataggio."
 L["talent_apply.reset_failed"] =
     "Impossibile reimpostare l'albero dei talenti. Applicazione annullata, riprova tra un momento."
 L["talent_apply.commit_failed"] = "Conferma non riuscita. Apri la finestra dei talenti e clicca Applica modifiche."

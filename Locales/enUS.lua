@@ -516,6 +516,12 @@ L["talent_apply.renamed"] = "Renamed loadout to %s"
 L["talent_apply.already_using"] = "Already using this build."
 L["talent_apply.creating_slot"] = "Creating loadout slot..."
 L["talent_apply.saved"] = "Saved loadout '%s'."
+L["talent_apply.saving"] = "Saving loadout '%s'..."
+L["talent_apply.save_in_progress"] = "A loadout save is already in progress. Wait for it to finish."
+L["talent_apply.unsaved_changes_save"] =
+    "You have unsaved talent changes. Open the talents pane and click Apply Changes (or right-click the loadout name to discard) before saving a loadout."
+L["talent_apply.apply_needed"] =
+    "Loadout '%s' is staged. Open the talents pane and click Apply Changes to finish saving it."
 L["talent_apply.reset_failed"] = "Could not reset the talent tree. Apply aborted, try again in a moment."
 L["talent_apply.commit_failed"] = "Commit failed. Open the talent frame and click Apply Changes."
 L["talent_apply.in_combat"] = "Cannot change talents in combat."

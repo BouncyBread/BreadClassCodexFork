@@ -549,6 +549,12 @@ L["talent_apply.renamed"] = "Configuración renombrada a %s"
 L["talent_apply.already_using"] = "Ya estás usando esta build."
 L["talent_apply.creating_slot"] = "Creando espacio de configuración..."
 L["talent_apply.saved"] = "Configuración '%s' guardada."
+L["talent_apply.saving"] = "Guardando configuración '%s'..."
+L["talent_apply.save_in_progress"] = "Ya hay un guardado de configuración en curso. Espera a que termine."
+L["talent_apply.unsaved_changes_save"] =
+    "Tienes cambios de talentos sin guardar. Abre el panel de talentos y haz clic en Aplicar cambios (o haz clic derecho en el nombre de la configuración para descartarlos) antes de guardar una configuración."
+L["talent_apply.apply_needed"] =
+    "La configuración '%s' está pendiente. Abre la ventana de talentos y haz clic en Aplicar cambios para terminar de guardarla."
 L["talent_apply.reset_failed"] =
     "No se pudo restablecer el árbol de talentos. Aplicación cancelada. Inténtalo de nuevo en un momento."
 L["talent_apply.commit_failed"] = "Error al confirmar. Abre la ventana de talentos y haz clic en Aplicar cambios."
