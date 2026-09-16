@@ -3,7 +3,7 @@ ClassCodexSource = ClassCodexSource or {}
 ClassCodexSource["archongg"] = {
   meta = {
     buildId = "xn5E0n5bRVi4YdB8B39BS",
-    generated = "2026-09-16T14:29:57Z",
+    generated = "2026-09-16T15:22:04Z",
     lastUpdated = "2026-09-16T12:00:00Z",
   },
   data = {
