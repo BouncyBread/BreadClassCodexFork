@@ -367,9 +367,9 @@ ClassCodexSource["icyveins"] = {
         gear={
           all={
             all={
-              {bonusIDs={13847,12854},itemId=271474,slot="Head",source="Twin Fangs"},
-              {bonusIDs={13708,13848},itemId=268265,slot="Neck",source="Ula'tek"},
-              {catalyst={bonusIDs={12854},itemId=239037},itemId=271472,slot="Shoulders",source="Catalyst from Temple of Sethraliss"},
+              {bonusIDs={12854},itemId=271474,slot="Head",source="Twin Fangs"},
+              {bonusIDs={13848},itemId=268265,slot="Neck",source="Ula'tek"},
+              {catalyst={bonusIDs={12854},itemId=251138},itemId=271472,slot="Shoulders",source="Catalyst from Murder Row"},
               {bonusIDs={13848},itemId=268253,slot="Back",source="Coiled Altar"},
               {catalyst={bonusIDs={13848},itemId=268222},itemId=271477,slot="Chest",source="Catalyst from Coiled Altar"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=237834,slot="Wrist",source="Crafted by Blacksmithing"},
@@ -377,7 +377,7 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={13848},itemId=268259,slot="Waist",source="Coiled Altar"},
               {catalyst={bonusIDs={13848},itemId=271878},itemId=271473,slot="Legs",source="Catalyst from Ula'tek"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=237828,slot="Feet",source="Crafted by Blacksmithing"},
-              {bonusIDs={12854},itemId=273792,slot="Finger 1",source="Altar of Fangs"},
+              {bonusIDs={12854},itemId=268249,slot="Finger 1",source="Vashnik the Malignant"},
               {bonusIDs={12854},itemId=252258,slot="Finger 2",source="Voidscar Arena"},
               {bonusIDs={13848},itemId=270175,slot="Trinket 1",source="Ula'tek"},
               {bonusIDs={13848},itemId=270173,slot="Trinket 2",source="Coiled Altar"},
@@ -385,11 +385,11 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={13848},itemId=268202,slot="Off Hand",source="Ula'tek"},
             },
             mplus={
-              {catalyst={bonusIDs={12854},itemId=251229},itemId=271474,slot="Head",source="Catalyst from Voidscar Arena"},
-              {bonusIDs={12854},itemId=251234,slot="Neck",source="Voidscar Arena"},
-              {catalyst={bonusIDs={239037},itemId=239037},itemId=271472,slot="Shoulders",source="Catalyst from Temple of Sethraliss"},
+              {catalyst={bonusIDs={12854},itemId=251126},itemId=271474,slot="Head",source="Catalyst from Murder Row"},
+              {bonusIDs={13708,12854},itemId=251234,slot="Neck",source="Voidscar Arena"},
+              {catalyst={bonusIDs={12854},itemId=251138},itemId=271472,slot="Shoulders",source="Catalyst from Murder Row"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=239656,slot="Back",source="Crafted by Tailoring"},
-              {catalyst={bonusIDs={12854},itemId=239036},itemId=271477,slot="Chest",source="Catalyst from Temple of Sethraliss"},
+              {catalyst={bonusIDs={12854},itemId=193753},itemId=271477,slot="Chest",source="Catalyst from"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=237834,slot="Wrist",source="Crafted by Blacksmithing"},
               {catalyst={bonusIDs={12854},itemId=159413},itemId=271475,slot="Hands",source="Catalyst from King's Rest"},
               {bonusIDs={12854},itemId=159418,slot="Waist",source="King's Rest"},
@@ -397,7 +397,7 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={12854},itemId=159412,slot="Feet",source="King's Rest"},
               {bonusIDs={12854},itemId=273792,slot="Finger 1",source="Altar of Fangs"},
               {bonusIDs={12854},itemId=252258,slot="Finger 2",source="Voidscar Arena"},
-              {bonusIDs={12854},itemId=250238,slot="Trinket 1",source="The Blinding Vale"},
+              {bonusIDs={12854},itemId=273797,slot="Trinket 1",source="Altar of Fangs"},
               {bonusIDs={12854},itemId=250228,slot="Trinket 2",source="Murder Row"},
               {bonusIDs={12854},itemId=158373,slot="Main Hand",source="Temple of Sethraliss"},
               {bonusIDs={12854},itemId=158373,slot="Off Hand",source="Temple of Sethraliss"},
@@ -439,7 +439,7 @@ ClassCodexSource["icyveins"] = {
             },
           },
         },
-        gems={all={all={{primary=240983,secondary={240906,240908}}},pvp={{primary=240917,secondary={240916,241144}}}}},
+        gems={all={all={{primary=240983,secondary={240908}}},pvp={{primary=240917,secondary={240916,241144}}}}},
         links={
           bis="https://www.icy-veins.com/wow/frost-death-knight-pve-dps-gear-best-in-slot",
           leveling="https://www.icy-veins.com/wow/frost-death-knight-leveling-guide",
@@ -560,17 +560,29 @@ ClassCodexSource["icyveins"] = {
         },
         talents={
           deathbringer={
+            delve={
+              {
+                export="CsPAAAAAAAAAAAAAAAAAAAAAAMAzMMzMDY2MzMzMLzMjMjxYYmxgZmZmZmZmZAAAAAAAAAYMbDMgFwywEYsgZGzMDMAMMzAMzgB",
+                label="Delves",
+                recommended=true,
+              },
+            },
             mplus={
               {
-                export="CsPAAAAAAAAAAAAAAAAAAAAAAMDYmZMzMzYY2mZmZmZxMjMjxYYMGMzMzMzMzMDAAAAAAAAAjZbgBsAWGmAjFMzYmZgBghZGAgB",
+                export="CsPAAAAAAAAAAAAAAAAAAAAAAMAzMMjZAz2MzMzMLzMjMjxYYmxgZmZmZmZmZAAAAAAAAAYMbDMgFwywEYsgZGzMDMAMMzAMzgB",
                 label="Mythic+",
-                labels={"DW Breath of Sindragosa","AoE"},
                 recommended=true,
-                tags={"Weekly Key","High Key"},
               },
               {
                 export="CsPAAAAAAAAAAAAAAAAAAAAAAMDYmZMzMzYY2mZmZmZxMjMjxwMjxgxMzMzMzMDAAAAAAAAAjZbgBsAWGmAjFMzYmZgBghZGAgB",
                 label="DW Frostbane",
+              },
+              {
+                export="CsPAAAAAAAAAAAAAAAAAAAAAAMDYmZMzMzYY2mZmZmZxMjMjxYYMGMzMzMzMzMDAAAAAAAAAjZbgBsAWGmAjFMzYmZgBghZGAgB",
+                label="DW Breath of Sindragosa",
+                labels={"AoE"},
+                recommended=true,
+                tags={"Weekly Key","High Key"},
               },
             },
             pvp={
@@ -584,7 +596,8 @@ ClassCodexSource["icyveins"] = {
             raid={
               {
                 export="CsPAAAAAAAAAAAAAAAAAAAAAAMDwMjZmZGDz2MzMzMLmZmMjxYYmxgZMzMzMzMDAAAAAAAAAjZbgBsAWGmAjFMzYmZgBghZGAgB",
-                label="Raid",
+                label="Raidl",
+                recommended=true,
               },
             },
           },
@@ -600,7 +613,6 @@ ClassCodexSource["icyveins"] = {
                 export="CsPAAAAAAAAAAAAAAAAAAAAAAMDYmZMzMzYY2mZmZmZxMjMjxYYMGMzMzMzMzMDAAAAAAAAAgNzihBGY2YohNMzYmZgBgBgZGgB",
                 label="Mythic+",
                 labels={"Delves","DW Breath Sindragosa"},
-                recommended=true,
               },
               {
                 export="CsPAAAAAAAAAAAAAAAAAAAAAAMDYmZMzMzYY2mZmZmZxMjMjxwMjxgxMzMzMzMDAAAAAAAAAgNzihBGY2YohNMzYmZgBgBgZGgB",
@@ -621,7 +633,6 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CsPAAAAAAAAAAAAAAAAAAAAAAMDwMjZmZGDz2MzMzMLmZmMjxYYmxgZMzMzMzMDAAAAAAAAAgNzihBGY2YohNMzYmZgBgBgZGgB",
                 label="Raid",
-                recommended=true,
               },
             },
           },
@@ -701,7 +712,7 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={13708,12854},itemId=251234,slot="Neck",source="Voidscar Arena"},
               {catalyst={bonusIDs={12854},itemId=251138},itemId=271472,slot="Shoulders",source="Catalyst from Murder Row"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=239656,slot="Back",source="Crafted by Tailoring"},
-              {catalyst={bonusIDs={12854},itemId=268222},itemId=271477,slot="Chest",source="Catalyst from The Coiled Altar"},
+              {catalyst={bonusIDs={12854},itemId=193753},itemId=271477,slot="Chest",source="Catalyst from"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=237834,slot="Wrist",source="Crafted by Blacksmithing"},
               {catalyst={bonusIDs={12854},itemId=159413},itemId=271475,slot="Hands",source="Catalyst from King's Rest"},
               {bonusIDs={12854},itemId=159418,slot="Waist",source="King's Rest"},
@@ -1433,7 +1444,7 @@ ClassCodexSource["icyveins"] = {
               Shoulders={{id=243990}},
             },
             pvp={
-              Chest={{id=244002}},
+              Chest={{id=243977}},
               Feet={{id=244008}},
               Head={{id=243950}},
               Legs={{id=244640}},
@@ -2523,24 +2534,24 @@ ClassCodexSource["icyveins"] = {
             },
             pvp={
               {
-                export="CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWoMLNjxMDwsZmZmZjxwMLjlZMjZGjlZMzMD2wAgBYbbshpZmlBAAAAbmZmZGsZYMGAmZAgBA",
+                export="CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWoMLNjxMDwsZmZmZjxwMLjlZMjZYmlZMzMD2wAgBYbbshpZmlBAAAAbmZmZGsZYMGAmZAgBA",
                 label="Best 3v3",
                 recommended=true,
               },
               {
-                export="CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWoMLNjxMDwsZmZmZhxgZZsMjZmZGjlZWmZmBbYAwAstN2w0MzyAAAAgNzMzMD2MMGDAzMAwA",
+                export="CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGlZpZMmZAmNzMzMLgZmZZsMWGmx2MLzYmZGshBADw22YDTzMbDAAAA2MzMzMYzwYMAMzAADA",
                 label="Best Battleground Blitz",
                 labels={"Best"},
                 recommended=true,
               },
               {
-                export="CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAziZMmZAmNzMzMbMGmZZsMjZMzYsMjZmZwmBADw22YDjZmlBAAAAbmZmZGsZYMGAmZAgBA",
+                export="CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAziZMmZAmNzMzMbMGmZZsMjZMDzsMjZmZwmBADw22YDjZmlBAAAAbmZmZGsZYMGAmZAgBA",
                 honor={209740,200931,354541},
                 label="3v3",
               },
               {
-                export="CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAziZMmZAmNzMzMLMGMLjlZMzMzYsMzyMzMYzAgBYbbshxMzyAAAAgNzMzMD2MMGDAzMAwA",
-                honor={209740,200931,354541},
+                export="CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGYWMjxMDwsZmZmZBMzMLjlxywM2mZZGzMzgNDAGgttxGGzMbDAAAA2MzMzMYzwYMAMzAADA",
+                honor={209740,354541,356517},
                 label="Blitz",
               },
             },
@@ -2900,23 +2911,23 @@ ClassCodexSource["icyveins"] = {
             },
             pvp={
               {
-                export="CcGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZWYmZmZGz2CLzsMjZMzMAAAAsEMbGYmZqZMbmZmZWGz8AGAAAAAAgBAAAAAY2mZpZbmlNYmZAWYwAAYmBAD",
+                export="CcGAAAAAAAAAAAAAAAAAAAAAAAAAAAAwYMzCDzMzY2WYZmlZmZMzMAAAAsEMbGYmZqZMbmZmZWGz8AGAAAAAAgBAAAAAY2mZpZbmlNYmZAWYwAAYmBAD",
                 label="Best 3v3",
                 recommended=true,
               },
               {
-                export="CcGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZWYMzMzY2WYZmlZMzMzMAAAAsEMbGYmZqZMbmZmZWGz8AGAAAAAAgBAAAAAY2mZpZbmlNYmZAWYwAAYmBAD",
+                export="CcGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZWYMzMzY2WYZmlZMzMzMAAAAsEMbGYmZqZMbmZmZWGzMGAAAAAAgBAAAAAY2mZpZbmlNwMDwCDGAAzMAYA",
                 label="Best Battleground Blitz",
                 labels={"Best"},
                 recommended=true,
               },
               {
-                export="CcGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZWYmZmZGz2CLzsMjZMzMAAAAsAmNDMzMMjZzMzMzyYmHwAAAAAAADAAAAAwsNziZbmlNYmZAWYwAAYmBAD",
+                export="CcGAAAAAAAAAAAAAAAAAAAAAAAAAAAAwYMzCDzMzY2WYZmlZmZMzMAAAAsAmNDMzMMjZzMzMzyYmHwAAAAAAADAAAAAwsNziZbmlNYmZAWYwAAYmBAD",
                 honor={203242,200931,236019},
                 label="3v3",
               },
               {
-                export="CcGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZWYMzMzY2WYZmlZMzMzMAAAAsAmNDMzMMjZzMzMzyYmHwAAAAAAADAAAAAwsNziZbmlNYmZAWYwAAYmBAD",
+                export="CcGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZWYMzMzY2WYZmlZMzMzMAAAAsAmNDMzMMjZzMzMzyYmxAAAAAAADAAAAAwsNziZbmlNwMDwCDGAAzMAYA",
                 honor={203242,377801,236019},
                 label="Blitz",
               },
@@ -3384,14 +3395,19 @@ ClassCodexSource["icyveins"] = {
             },
             pvp={
               {
-                export="CkGAAAAAAAAAAAAAAAAAAAAAAMMmZhZMzMmlxMjxsxsYbAAAAAAAAAAglZIMjpZmZgZzMzMziBzAAAAAYAAjBstNWw0MzyAAAAYhxMzwM2ANDAmZAADA",
+                export="CkGAAAAAAAAAAAAAAAAAAAAAAMMmZBjxMzsMmZMmNmNLzAAAAAAAAAAglZIMjpZmZgZzMzMziBzAAAAAYAAMgttxCmmZWGAAAALMmZGmxGoZAwMDAYA",
                 label="Best 3v3",
-                labels={"Best Battleground Blitz","Best"},
+                labels={"Best Battleground Blitz"},
                 recommended=true,
               },
               {
-                export="CkGAAAAAAAAAAAAAAAAAAAAAAMMmZhZMzMmlxMjxsxsYbAAAAAAAAAAglZAmxYmZGY2MzMzsYwMAAAAAGAMGw22YBjZmlBAAAwCjZmhZsBMDAmZAADA",
-                honor={473909,1217474,203624},
+                export="CkGAAAAAAAAAAAAAAAAAAAAAAMMmZBjxMzsMmZMmNmNLzAAAAAAAAAAglZIMjpZmZgZzMzMziBDAAAAADAgBstNWw0MzyAAAAYhxMzwM2woZAwMDAYA",
+                label="Best",
+                recommended=true,
+              },
+              {
+                export="CkGAAAAAAAAAAAAAAAAAAAAAAMMmZBjxMzsMmZMmNmNLzAAAAAAAAAAglZAmxYmZGY2MzMzsYwMAAAAAGAwA22GLYMzsMAAAAWYMzMMjNgZAwMDAYA",
+                honor={1246126,1217474,203624},
                 label="3v3",
                 labels={"Blitz"},
               },
@@ -13595,7 +13611,7 @@ ClassCodexSource["icyveins"] = {
       },
     },
   },
-  meta={contentHash="5bc2f5601cca2f81",generatedAt="2026-09-12T18:01:41.973Z",schemaVersion=1,source="icyveins"},
+  meta={contentHash="83fdc2840b1a7a05",generatedAt="2026-09-15T22:36:14.236Z",schemaVersion=1,source="icyveins"},
   reference={
     heroNames={
       ["aldrachi-reaver"]="Aldrachi Reaver",

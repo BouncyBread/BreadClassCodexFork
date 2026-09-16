@@ -829,7 +829,7 @@ ClassCodexSource["wowhead"] = {
               { export = "CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWoMbNjxMDwsMzMzMYYGjZWmhxMWYZmlZGjZ2wAgx2yMDGz2IwEAAAgFzMzMD2MMGzAAYmBLDA", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWoMbNMmZgxsMzMzMLMgxMLzsYmZswyMLjxMjNMAYstNzgxsNCMBAAAYhZmZGsZMjxAAwMDWGA", label = "Mythic+", recommended = "Best" },
+              { export = "CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWoMbNMmZgxsMzMzMLMgZZmlZWYmxGLzsMGzM2wAgx22MDGz2IwEAAAgFmZmZwmxMGDAAzMYZA", label = "Mythic+", recommended = "Best" },
             },
             delves = {
               { export = "CYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWoMbNMmZgxsMzMzMLMgxMLzsYMzswyMLjxMjNMAYstNzgxsNCMBAAAYhZmZGsZMjxAAwMDWGA", label = "Delves" },
@@ -2772,12 +2772,12 @@ ClassCodexSource["wowhead"] = {
           },
           lightsmith = {
             raid = {
-              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAAw2MzMjZMzYxYmZYZwMLmpJGGzMDjZLDADYYDsxyMGAEAwMzyyitZG2AgNDjZMDzAYmBgZMGNA", label = "Raid - Virtue" },
-              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAAwyMzMjZ2mZmNYMsM2MzmZaihxMzwY2yAwAG2AbsMjBABAMzsssYbmhNAYzwYGzwMAmZAYGjRDA", label = "Raid - Faith" },
+              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAAw2MzMjZ2mZsYMzMsMYmFz0EDjZmhxslBgBMsB2YZGDACAYmZZZx2MDbAwmhxMmhBgZGAmxY0A", label = "Raid - Virtue" },
+              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAAwyMzMjZMzMbGzYYZsZmFz0EDjZmhxslBgBMsB2YZGDACAYmZZZx2MDbAwmhxMmhBgZGAmxY0A", label = "Raid - Faith" },
             },
             mplus = {
-              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAAD2GwMzyMzsYMzMsY2MziZaihxMzwY2yAwAwGYjFzMAIAgZmllFLzMsxGmhNDMjZwAYmBgZMGNA", label = "M+ - Virtue" },
-              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAAbAwMAADWGwMzyMzsMjZMsY2MziZaihxMzwY2yAwAwGYjFzMAIAgZmllFLzMsxGmhNDMjZwAYmBgZMGNA", label = "M+ - Faith" },
+              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAAD2GwMz2MzsMjZmhFzmZWMTTMMmZGGzWGAGA2AbsYmBABAMzsssYZmhN2wMsZgZMDAYmBgZMGNA", label = "M+ - Virtue" },
+              { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAADWGwMz2MzsMjZMsMzmZWMTTMMmZGGzWGAGA2AbsYmBABAMzsssYZmhN2wMsZgZMDAYmBgZMGNA", label = "M+ - Faith" },
             },
             delves = {
               { export = "CEEAAAAAAAAAAAAAAAAAAAAAAAAAALAwMAADMmZmZGzMzixMmxyYzMLGNxwYMDjZLDADAbgNWmZGAEAwMz22ilZG2AzMsZgZYYAYmBgZMGNA", label = "Delves", recommended = "Recommended" },
@@ -2886,10 +2886,10 @@ ClassCodexSource["wowhead"] = {
         talents = {
           templar = {
             raid = {
-              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsNzYWmZYGzM2WGDLzithBAYAAAAAAQamZxMmZGjZrNAMgBMYbAAgZm2mZWmBAYzyGzYAMmhxAAsNDwMDyYD", label = "Raid", recommended = "Best" },
+              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsNzYWmZYGzM2WGDLzithBAYAAAAAAQamZxMmZGjZrNAMgBMYbAAgZm2mZWmBAYzyGzYAMmhxAAsNDwMDyYD", label = "Raid" },
             },
             mplus = {
-              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsZeAzyYGzYmZWWGjZZWmlZMAADAAAAAAaamhZMzwY2aDADMgZw2AAAzMtNzsMDAwmlFMAgZYMAALzAmZGkxC", label = "Mythic+", recommended = "Best" },
+              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsZeAzyYGzYmZWWGjZZWmlZMAADAAAAAAaamhZMzwY2aDADMgZw2AAAzMtNzsMDAwmlFMAgZYMAALzAmZGkxC", label = "Mythic+" },
             },
             delves = {
               { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsZeAzyYGzYmZWWGjZZWmlZMAADAAAAAAaamhZMzwY2aDADMgZw2AAAzMtNzsMDAwmlFMAgZYMAALzAmZGkxC", label = "Delves", recommended = "Best" },
@@ -2897,7 +2897,7 @@ ClassCodexSource["wowhead"] = {
           },
           lightsmith = {
             raid = {
-              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsNzYWmZYGzM2WGDLzithBAYAAAAAAQamZxMmZGjZrNAMgBMYbAAAEgZmttlWmZsYZjZMAGzwYAwMDAmZQGb", label = "Raid" },
+              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsNDzyYmHYmZmx2yYMLzithBAYAAAAAAQamZxMmZGjZrNAMgBMYbAAAEgZmttlWmZsYZjZMAGzwYAwMDAmZQGL", label = "Raid", recommended = "Best" },
             },
             mplus = {
               { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsZsNLjZMjZmZZbMmlZZWmxAAMAAAAAAopZGmxMDjZrNAMwAmBbDAAgAMzstt0yMjFLLYAAzwYAwMDAzMDyYB", label = "Mythic+", recommended = "Best" },
@@ -5042,5 +5042,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-11", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-09-16", schemaVersion = 1, source = "wowhead" },
 }
