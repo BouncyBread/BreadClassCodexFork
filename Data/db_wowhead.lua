@@ -5042,5 +5042,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-16", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-09-17", schemaVersion = 1, source = "wowhead" },
 }
