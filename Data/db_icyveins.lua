@@ -389,7 +389,7 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={13708,12854},itemId=251234,slot="Neck",source="Voidscar Arena"},
               {catalyst={bonusIDs={12854},itemId=251138},itemId=271472,slot="Shoulders",source="Catalyst from Murder Row"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=239656,slot="Back",source="Crafted by Tailoring"},
-              {catalyst={bonusIDs={12854},itemId=193753},itemId=271477,slot="Chest",source="Catalyst from"},
+              {catalyst={bonusIDs={12854},itemId=193753},itemId=271477,slot="Chest",source="Catalyst from Ruby Life Pools"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=237834,slot="Wrist",source="Crafted by Blacksmithing"},
               {catalyst={bonusIDs={12854},itemId=159413},itemId=271475,slot="Hands",source="Catalyst from King's Rest"},
               {bonusIDs={12854},itemId=159418,slot="Waist",source="King's Rest"},
@@ -596,7 +596,7 @@ ClassCodexSource["icyveins"] = {
             raid={
               {
                 export="CsPAAAAAAAAAAAAAAAAAAAAAAMDwMjZmZGDz2MzMzMLmZmMjxYYmxgZMzMzMzMDAAAAAAAAAjZbgBsAWGmAjFMzYmZgBghZGAgB",
-                label="Raidl",
+                label="Raid",
                 recommended=true,
               },
             },
@@ -712,7 +712,7 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={13708,12854},itemId=251234,slot="Neck",source="Voidscar Arena"},
               {catalyst={bonusIDs={12854},itemId=251138},itemId=271472,slot="Shoulders",source="Catalyst from Murder Row"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=239656,slot="Back",source="Crafted by Tailoring"},
-              {catalyst={bonusIDs={12854},itemId=193753},itemId=271477,slot="Chest",source="Catalyst from"},
+              {catalyst={bonusIDs={12854},itemId=268222},itemId=271477,slot="Chest",source="Catalyst from The Coiled Altar"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=237834,slot="Wrist",source="Crafted by Blacksmithing"},
               {catalyst={bonusIDs={12854},itemId=159413},itemId=271475,slot="Hands",source="Catalyst from King's Rest"},
               {bonusIDs={12854},itemId=159418,slot="Waist",source="King's Rest"},
@@ -5182,14 +5182,17 @@ ClassCodexSource["icyveins"] = {
             },
             pvp={
               {
-                export="C4PAAAAAAAAAAAAAAAAAAAAAAYzsMwAGwMsFYWAAAAAAAAAzwYGLGzMzMjhRzYmxsZbGjZmZG2GzsMYAAAmZMzMzMDILYGgFmZZGD",
+                export="C4PAAAAAAAAAAAAAAAAAAAAAAYzsMwAGwMsFYWAAAAAAAAAzwYmllZMzMmxwoZMzY2sNjxMzMDbjZWGMAAAzwMzMzMgsgZAWYmlZMA",
                 label="Black Arrow Arena",
-                recommended=true,
               },
               {
                 export="C4PAAAAAAAAAAAAAAAAAAAAAAYzsMwAGwMsEYWAAAAAAAAAzwYGLGzMzMDMaGDmtFzMzMzMzM2YmlhZGAAwMjZmZmZAZhlZAWYmFzA",
                 label="General",
                 recommended=true,
+              },
+              {
+                export="C4PAAAAAAAAAAAAAAAAAAAAAAYzsMwAGwMsBMLAAAAAAAAgZYMjFjZmZmxwwMmZMb2mxYmZmhtxMLDGAAgZGzMzMzAYBzAswMLzYA",
+                label="Black Arrow Arena (Tar Trap)",
               },
             },
             raid={
@@ -5229,12 +5232,17 @@ ClassCodexSource["icyveins"] = {
             },
             pvp={
               {
-                export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGNWGAzgNAAAAAAAAwMMmxixMzMzYY0MzMzMb2mBzMzMmtxMLDzAAAMDzMAMjtFMDwCzsMjB",
+                export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGNWGAzgNAAAAAAAAwMMmZZZGzMjZMMaGzMzsZbGjZmZGz2YmlhZAAAmhZGAmx2CmBYhZWMG",
                 label="Arena",
+                recommended=true,
               },
               {
                 export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGNWGAzgNAAAAAAAAwMMmxixMzMzAjmxMjZbxMzMzMMjtxYZYmBAAMzYmZGgZstwyMALMziZA",
                 label="General",
+              },
+              {
+                export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGGLDgZwGAAAAAAAAYGGzYxYmZmZMMMzMzMzmtZwMzMjZbMzywMAAAzwMDAzYbBzAswMLzYA",
+                label="Arena (Tar Trap)",
               },
             },
             raid={
@@ -5598,6 +5606,11 @@ ClassCodexSource["icyveins"] = {
             },
             mplus={
               {
+                export="C8PAAAAAAAAAAAAAAAAAAAAAAMWgBmxoxyAYGwmxMzYYZAAAAAAYGzYmFzYMjZwYaGAAAgBAzYZZmZWYmZmxMzAgZssBjxMzmBA",
+                label="Raid AoE / Cleave",
+                recommended=true,
+              },
+              {
                 export="C8PAAAAAAAAAAAAAAAAAAAAAAMWgBmxoxyAYGw2MzMzMjZbeAAAAAAAzYmZGbzYMjZYZMNDAAAwAAjllZGLYmZ8AjxAwM2AjxMzmBA",
                 label="Mythic+",
                 labels={"Dungeon"},
@@ -5620,6 +5633,11 @@ ClassCodexSource["icyveins"] = {
               {
                 export="C8PAAAAAAAAAAAAAAAAAAAAAAMWgBmxoxyAYGw2MmZGjZZAAAAAAYGzYmFzYMjZwYaGAAAgBAzYZZmZWMmZmxMzAgZssBjhxmBA",
                 label="Single-Target",
+                recommended=true,
+              },
+              {
+                export="C8PAAAAAAAAAAAAAAAAAAAAAAMWgBmxoxyAYGwmxMzYYZAAAAAAYGzYmFzYMjZwYaGAAAgBAzYZZmZWYmZmxMzAgZssBjxMzmBA",
+                label="Raid AoE / Cleave",
                 recommended=true,
               },
             },
@@ -5858,17 +5876,6 @@ ClassCodexSource["icyveins"] = {
             },
             pvp={
               {
-                export="C4DAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZzmZGaGmBAAwAAAAzMzssNzELAAsMMzMGLWmZmxMzYMzMzYhZMjZAAGAAAzsAAjBADDD",
-                label="Best 3v3",
-                recommended=true,
-              },
-              {
-                export="C4DAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZzmZGaGmBAAwAAAAzMzssNzELAAsgZmxYxyMzMLzMjxMzMjFmxMmBAYAAAMzCAMGAMMM",
-                label="Best Battleground Blitz",
-                labels={"Best"},
-                recommended=true,
-              },
-              {
                 export="C4DAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZzmZGMDzAAAYAAAgZmZW2mZwCAALDzMjxilZmZMzMGzMzMWYGzYGAgBAAwMLAwYAwwwA",
                 honor={235711,1220739,415945},
                 label="3v3",
@@ -5911,6 +5918,14 @@ ClassCodexSource["icyveins"] = {
                 labels={"Dungeon"},
                 recommended=true,
                 tags={"Weekly Key","High Key"},
+              },
+            },
+            pvp={
+              {
+                export="C4DAAAAAAAAAAAAAAAAAAAAAAMstMzyMzMbYmhmZMDAAgBAMzMNLLLzAAYDAgFYmBbWmZmxMGzMzMzYhZmZMDAwAAAMAzMwYAwwYG",
+                label="Best 3v3",
+                labels={"Best Battleground Blitz","Best"},
+                recommended=true,
               },
             },
             raid={
@@ -6219,12 +6234,6 @@ ClassCodexSource["icyveins"] = {
             },
             pvp={
               {
-                export="C8DAAAAAAAAAAAAAAAAAAAAAAMstMzyMzMb2MzIzwMAAAmZZGzMLzCAAAYxMjZbMzMjFAAAAAsYmZmBAAGmZmhxMzyMwMDIjBGmhBA",
-                label="Best 3v3",
-                labels={"Best Battleground Blitz","Best"},
-                recommended=true,
-              },
-              {
                 export="C8DAAAAAAAAAAAAAAAAAAAAAAMstMzyMzMb2MzgZYGAAAzsMjZmlZBAAAsYmxsNmZmxCAAAAAWMzMzAAADzMzwYmZZGYmBwYghZYA",
                 honor={410248,415945,1220739},
                 label="3v3",
@@ -6268,6 +6277,19 @@ ClassCodexSource["icyveins"] = {
               {
                 export="C8DAAAAAAAAAAAAAAAAAAAAAAYGGLzMzsgZGZmZGAAAAAmZmmltlZAA2MzM2mZmZmHYDAAAAAbmZMzAAgZMmZmZMzsAgZGMjxAmhxA",
                 label="Dungeon",
+              },
+            },
+            pvp={
+              {
+                export="C8DAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZDzMyMMDAAgBAMzMNbLLzAAsZmxsNmZmZWAAAAAwiZmZAAAzYMDGzMLzAYmBGzAMDDA",
+                label="Best 3v3",
+                recommended=true,
+              },
+              {
+                export="C8DAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZzmZGZGmBAAwAAmZmmtllZAA2MzY2mxYmZBAAAAALmZmBAAMjxMYYmlZAMzAjxwwMMA",
+                label="Best Battleground Blitz",
+                labels={"Best"},
+                recommended=true,
               },
             },
             raid={
@@ -6561,7 +6583,12 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CAEAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZDzMxMMzMzMzsYmZGzYGAAAYmZmllZm2AAgFAAAwGAbLjZmBsMPgxMjFAAAmZBYGGzAGMA",
                 label="Best 3v3",
-                labels={"Best Battleground Blitz","Best"},
+                recommended=true,
+              },
+              {
+                export="CAEAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZzmZmYGmZmZmZWMzMjZMDAAAMzMzyyMTbAAwCAAAYDgtlxMzAWmHwYmxCAAAzsAMDjBYwAA",
+                label="Best Battleground Blitz",
+                labels={"Best"},
                 recommended=true,
               },
               {
@@ -13611,7 +13638,7 @@ ClassCodexSource["icyveins"] = {
       },
     },
   },
-  meta={contentHash="83fdc2840b1a7a05",generatedAt="2026-09-15T22:36:14.236Z",schemaVersion=1,source="icyveins"},
+  meta={contentHash="a8391ca9eaedc6ef",generatedAt="2026-09-17T12:39:54.374Z",schemaVersion=1,source="icyveins"},
   reference={
     heroNames={
       ["aldrachi-reaver"]="Aldrachi Reaver",
