@@ -68,7 +68,7 @@ ClassCodexSource["wowhead"] = {
               { export = "CoPAAAAAAAAAAAAAAAAAAAAAAwYWmZmxMmZmhZZmZmmZxYMmxAAAAAmZmZmZmZYGjZAYMzMzAAAYgBmxiGLLgsMgNAzwAAAmZghB", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "CoPAAAAAAAAAAAAAAAAAAAAAAwYWmZmxMmZmhZZmZmmZxYMmxAAAAAmxMzMzMDzYMAYMzMzAAAYgBmxiGLLgsMgNAzYmBAAmZghB", label = "Mythic+", recommended = "Best" },
+              { export = "CoPAAAAAAAAAAAAAAAAAAAAAAwMzyMzMmxMzMMLzMz0MLGjxMGAAAAwMmZmZmZYGDAYmZmZGAAADMwMW0YZBklBsBYGzAAAmZghB", label = "Mythic+", recommended = "Best" },
             },
             delves = {
               { export = "CoPAAAAAAAAAAAAAAAAAAAAAAwYWmZmxMmZmhZZmZmmZxYMmxAAAAAmxMzMzMDzYMAYMzMzAAAYgBmxiGLLgsMgNAzYmBAAmZwgB", label = "Delves" },
@@ -1148,7 +1148,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 268256, slot = "Belt", source = "The Coiled Alter (Raid)" },
               { itemId = 271527, slot = "Legs", source = "The Coiled Alter (Raid) & Catalyst" },
               { itemId = 244569, slot = "Boots", source = "Leatherworking" },
-              { itemId = 268266, slot = "Ring", source = "Nymrissa Wavebinder (Raid)" },
+              { itemId = 240949, slot = "Ring", source = "Jewelcrafting (Crafted)" },
               { itemId = 252258, slot = "Ring", source = "Voidscar Arena" },
               { itemId = 270167, slot = "Trinkets", source = "Nymrissa Wavebinder (Raid)" },
               { itemId = 270162, slot = "Trinkets", source = "Nek'zali the Soulcoiler (Raid)" },
@@ -1282,8 +1282,8 @@ ClassCodexSource["wowhead"] = {
               { itemId = 270170, tier = "A", source = "Vexhul", contexts = { "raid" } },
               { itemId = 250215, tier = "A", source = "Zaen Bladesorrow", contexts = { "mplus" } },
               { itemId = 250214, tier = "A", source = "Lightwarden Ruia", contexts = { "mplus" } },
+              { itemId = 270169, tier = "A", source = "Hex Lord Malacrass", contexts = { "raid" } },
               { itemId = 273796, tier = "B", source = "Rav'i", contexts = { "raid" } },
-              { itemId = 270169, tier = "B", source = "Hex Lord Malacrass", contexts = { "raid" } },
               { itemId = 250259, tier = "B", source = "Ziekket", contexts = { "mplus" } },
               { itemId = 273794, tier = "B", source = "The Writhing Coil", contexts = { "mplus" } },
               { itemId = 246304, tier = "B", source = "Crafting", contexts = { "crafting" } },
@@ -1835,7 +1835,7 @@ ClassCodexSource["wowhead"] = {
               { export = "C8PAAAAAAAAAAAAAAAAAAAAAAMWgBmxoxyAYmgNjZmxwyAAAAAAwMmZmhZMmxMYMNDAAAwAgZstMzMLmZmZGzMzAwMWAjxMWMAA", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "C8PAAAAAAAAAAAAAAAAAAAAAAMWgBmxoxyAYmgtZmZmxMz2MAAAAAAmxMzMMjxMmBjpZAAAAGAgltZGLzYmxYMzAwM2wixwMLGAA", label = "Mythic+", recommended = "Best" },
+              { export = "C8PAAAAAAAAAAAAAAAAAAAAAAMWgBmxoxyAYmgtZmZmxMz28AAAAAAAmxMzMMjxMmBjpZAAAAGAgltZGLzYmZGjZGAmxGWMGmZxAA", label = "Mythic+", recommended = "Best" },
               { export = "C8PAAAAAAAAAAAAAAAAAAAAAAMWgBmxoxyAYmgtZmZmxMz2MAAAAAAmxMzMMjxMmBjpZAAAAGAgltZGbzYmxYMzAwM2wixwMLGAA", label = "Mythic+ Pre Tier-set", recommended = "Best" },
             },
             delves = {
@@ -5042,5 +5042,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-18", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-09-23", schemaVersion = 1, source = "wowhead" },
 }
