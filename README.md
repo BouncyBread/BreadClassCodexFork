@@ -3,10 +3,6 @@
 A fork of **Class Codex** by jfstn that adds **Wowhead** and **archon.gg** data alongside
 the original's Icy Veins and u.gg, and keeps it working on current retail.
 
-> **Licensing:** this release is based on Class Codex **1.0.3**, which ships only inside the
-> Icy Veins desktop app and carries **no license file**. Redistribution terms are unresolved —
-> see [NOTICE](NOTICE). The MIT text in `LICENSE` covers the older 0.40.14-based lineage only.
-
 Not affiliated with or endorsed by jfstn. **Please don't report issues with this fork
 upstream.**
 
