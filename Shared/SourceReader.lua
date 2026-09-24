@@ -572,9 +572,14 @@ local function archonTalentBuilds(class, spec)
         if type(byCtx) == "table" then
             for ctx, list in pairs(byCtx) do
                 if type(list) == "table" then
-                    -- "mplus", "mplus:altar-of-fangs", "raid:heroic:the-twin-fangs"
+                    -- "mplus", "mplus:altar-of-fangs", "raid:heroic:the-twin-fangs",
+                    -- and archon's High Keys slice: "mplus-high", "mplus-high:altar-of-fangs"
                     local zone, seg2, seg3 = ctx:match("^([^:]+):?([^:]*):?(.*)$")
                     local zoneKind = (zone == "raid") and "raid" or (zone == "pvp" and "pvp" or "mplus")
+                    -- Every archon M+ row is tagged with its key range so the
+                    -- "Key levels" pick can show one slice without the two
+                    -- interleaving. nil (raid/pvp, other sources) passes any pick.
+                    local keyRange = (zone == "mplus-high") and "high" or (zoneKind == "mplus" and "all" or nil)
                     local diffLabel, encounter
                     if zone == "raid" then
                         if seg3 ~= "" then
@@ -634,6 +639,7 @@ local function archonTalentBuilds(class, spec)
                                 recommended = isPick,
                                 pickrate = pick,
                                 zoneKind = zoneKind,
+                                keyRange = keyRange,
                                 -- difficulty deliberately left nil: Archon raid
                                 -- data is Heroic, and the pane defaults to
                                 -- Mythic, which would filter every row away.
@@ -664,6 +670,27 @@ local function archonTalentBuilds(class, spec)
         end
     end
     return sortBuilds(out)
+end
+
+-- Whether archon shipped High Keys talents for this spec. The key-level pick is
+-- only offered when it is true, so choosing it can never empty the list.
+function ns.ArchonHasHighKeys(class, spec)
+    local sd = ns.RawSourceSpec and ns.RawSourceSpec("archongg", class, spec)
+    if not (sd and sd.talents) then return false end
+    for _, byCtx in pairs(sd.talents) do
+        if type(byCtx) == "table" then
+            for ctx in pairs(byCtx) do
+                if type(ctx) == "string" and ctx:match("^mplus%-high") then return true end
+            end
+        end
+    end
+    return false
+end
+
+-- Label and loadout-name suffix for an archon key range; nil for the default.
+function ns.KeyRangeLabel(keyRange)
+    if keyRange == "high" then return "High Keys" end
+    return nil
 end
 
 function ns.GetTalentBuilds(class, spec, source)

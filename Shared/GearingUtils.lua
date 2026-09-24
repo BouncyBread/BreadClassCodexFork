@@ -228,13 +228,14 @@ local function GetSpecGearData(classToken, specKey, trinketSourceOverride, conte
             local list = {}
             local function mk(e)
                 if not e then return nil end
-                if e.spellId then
-                    local mapped = ClassCodexGameData
-                        and ClassCodexGameData.enchants
-                        and ClassCodexGameData.enchants[e.spellId]
-                    return { enchantId = e.id, itemId = mapped, spellId = e.spellId, pop = e.pop }
-                end
-                return { itemId = e.id, pop = e.pop }
+                local mapped = e.spellId
+                    and ClassCodexGameData
+                    and ClassCodexGameData.enchants
+                    and ClassCodexGameData.enchants[e.spellId]
+                -- u.gg's own enchant item wins; the id itself is only a
+                -- SpellItemEnchantment id (PvE) and renders as "Item N" if
+                -- nothing else resolved.
+                return { enchantId = e.id, itemId = e.itemId or mapped or e.id, spellId = e.spellId, pop = e.pop }
             end
             for slot, entries in pairs(ench) do
                 if entries[1] then
@@ -1262,7 +1263,9 @@ end
 
 function ns.ResolveEnchantId(entry)
     if not entry then return nil end
-    if entry.enchantId then return entry.enchantId end
+    -- The item's application spell mapped through the source data is exact;
+    -- enchantId is only as good as the payload's id convention (a SpellItem
+    -- Enchantment id for PvE, an item id for u.gg PvP v2), so it goes last.
     if entry.itemId then
         local spellId
         if GetItemSpell then
@@ -1271,7 +1274,7 @@ function ns.ResolveEnchantId(entry)
         end
         if spellId and enchantSpellToId and enchantSpellToId[spellId] then return enchantSpellToId[spellId] end
     end
-    return nil
+    return entry.enchantId
 end
 
 function ns.IsEnchantApplied(entry, slot)

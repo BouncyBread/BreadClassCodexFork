@@ -43,6 +43,7 @@ local setupDone = false
 local selectedSource
 local selectedContent
 local selectedDifficulty = "mythic"
+local selectedKeyRange = "all"
 local lastSpecKey
 local selectedUggHero
 local selectedBuildKey
@@ -673,8 +674,23 @@ local function GenericBuilds()
     return ns.GetTalentBuilds(class, spec, selectedSource) or {}
 end
 
+-- Archon's M+ "Levels" pick is only offered for a spec that shipped High Keys
+-- data, and only while viewing Archon's Mythic+ builds.
+local function KeyLevelSectionVisible()
+    if selectedSource ~= "archongg" or selectedContent ~= "mplus" then return false end
+    local class, spec = CurrentClassSpec()
+    return (class and spec and ns.ArchonHasHighKeys and ns.ArchonHasHighKeys(class, spec)) and true or false
+end
+
+-- A remembered "high" pick falls back to all keys wherever it is not on offer.
+local function EffectiveKeyRange()
+    if selectedKeyRange == "high" and KeyLevelSectionVisible() then return "high" end
+    return "all"
+end
+
 local function GenericBuildEntries()
     local wantZone = ZoneKindFromState()
+    local wantKeys = EffectiveKeyRange()
     local list, seen = {}, {}
     for i, b in ipairs(GenericBuilds()) do
         -- nil zoneKind means "unclassified", which shows under every PvE
@@ -683,7 +699,8 @@ local function GenericBuildEntries()
         -- Sections/Talents.lua.
         local zoneOk = (not b.zoneKind and wantZone ~= "pvp") or b.zoneKind == wantZone
         local heroOk = selectedUggHero == HERO_ALL or not b.hero or b.hero == selectedUggHero
-        if zoneOk and heroOk and b.exportString and b.exportString ~= "" then
+        local keyOk = not b.keyRange or b.keyRange == wantKeys
+        if zoneOk and heroOk and keyOk and b.exportString and b.exportString ~= "" then
             local key = tostring(b.contextId or b.label or i) .. "\0" .. tostring(b.hero or "")
             if not seen[key] then
                 seen[key] = true
@@ -696,7 +713,10 @@ local function GenericBuildEntries()
                         _generic = true,
                         zoneType = b.zoneKind or wantZone,
                         encounterLabel = b.encounterLabel,
-                        difficultyLabel = b.difficulty,
+                        -- High Keys rides the difficulty slot so the saved
+                        -- loadout name carries it, as a raid row's does.
+                        difficultyLabel = b.difficulty
+                            or (ns.KeyRangeLabel and ns.KeyRangeLabel(b.keyRange)),
                     },
                     build = {
                         heroTalent = b.hero or HERO_ALL,
@@ -953,6 +973,13 @@ local function DifficultySectionVisible()
     return selectedContent == "raid" and selectedSource ~= "icyveins"
 end
 
+-- Which optional sections (raid Difficulty, archon Levels) the menu shows. A
+-- pick that changes this has to reopen the menu, since MenuResponse.Refresh
+-- only re-evaluates radio states and never adds or removes a section.
+local function OptionalSectionsKey()
+    return (DifficultySectionVisible() and "d" or "") .. (KeyLevelSectionVisible() and "k" or "")
+end
+
 local function ContextMenuBuilder(owner, root)
     root:CreateTitle("Source")
     -- Was a hardcoded { "icyveins", "ugg" }. Registering a source in
@@ -973,9 +1000,9 @@ local function ContextMenuBuilder(owner, root)
         root:CreateRadio(ns.SourceLabelText(key), function()
             return selectedSource == key
         end, function()
-            local difficultyWasVisible = DifficultySectionVisible()
+            local sectionsBefore = OptionalSectionsKey()
             OnSourcePicked(key)
-            if DifficultySectionVisible() ~= difficultyWasVisible and owner and owner.ReopenGrowDown then
+            if OptionalSectionsKey() ~= sectionsBefore and owner and owner.ReopenGrowDown then
                 -- Keep the menu open (no blink); the deferred reopen replaces
                 -- it in place with the Difficulty section added/removed.
                 owner:ReopenGrowDown()
@@ -994,14 +1021,14 @@ local function ContextMenuBuilder(owner, root)
             root:CreateRadio(label, function()
                 return selectedContent == o.value
             end, function()
-                local difficultyWasVisible = DifficultySectionVisible()
+                local sectionsBefore = OptionalSectionsKey()
                 OnContentPicked(o.value)
                 -- MenuResponse.Refresh only re-evaluates radio states; it does
                 -- not rebuild the menu, so a content pick that toggles the
                 -- raid Difficulty section must reopen the menu to show it.
                 -- The menu stays open until the reopen replaces it, so the
                 -- swap doesn't blink.
-                if DifficultySectionVisible() ~= difficultyWasVisible and owner and owner.ReopenGrowDown then
+                if OptionalSectionsKey() ~= sectionsBefore and owner and owner.ReopenGrowDown then
                     owner:ReopenGrowDown()
                 end
                 return MenuResponse.Refresh
@@ -1035,6 +1062,20 @@ local function ContextMenuBuilder(owner, root)
             RefreshAll()
             return MenuResponse.Refresh
         end)
+    end
+    if KeyLevelSectionVisible() then
+        root:CreateDivider()
+        root:CreateTitle("Levels")
+        for _, opt in ipairs({ { v = "all", l = "All Keys" }, { v = "high", l = "High Keys" } }) do
+            root:CreateRadio(opt.l, function()
+                return EffectiveKeyRange() == opt.v
+            end, function()
+                selectedKeyRange = opt.v
+                selectedBuildKey = nil
+                RefreshAll()
+                return MenuResponse.Refresh
+            end)
+        end
     end
 end
 
@@ -1082,6 +1123,7 @@ PersistPanelState = function()
         content = selectedContent,
         hero = selectedUggHero,
         difficulty = selectedDifficulty,
+        keyRange = selectedKeyRange,
         buildKey = selectedBuildKey,
     }
 end
@@ -1359,6 +1401,7 @@ local function RestorePanelState()
             selectedContent = st.content
             selectedUggHero = st.hero or HERO_ALL
             if st.difficulty then selectedDifficulty = st.difficulty end
+            selectedKeyRange = (st.keyRange == "high") and "high" or "all"
             selectedBuildKey = st.buildKey
         end
     end

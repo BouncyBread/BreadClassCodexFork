@@ -16,11 +16,21 @@ local function resolveContentType(args)
     return ct
 end
 
+-- Archon's M+ "Levels" pick. "high" only takes effect for a spec that actually
+-- shipped High Keys data, so a stale pick can never empty the list.
+local function effectiveKeyRange(args)
+    if args.source ~= "archongg" then return "all" end
+    if not (ClassCodexDB and ClassCodexDB.mplusKeyRange == "high") then return "all" end
+    if not (ns.ArchonHasHighKeys and ns.ArchonHasHighKeys(args.class, args.spec)) then return "all" end
+    return "high"
+end
+
 local function buildCardList(args)
     local raw = (ns.GetTalentBuilds and ns.GetTalentBuilds(args.class, args.spec, args.source)) or {}
     local ct = resolveContentType(args)
     local diff = (ClassCodexDB and ClassCodexDB.raidDifficulty) or "mythic"
     if diff ~= "heroic" and diff ~= "mythic" then diff = "mythic" end
+    local keyRange = effectiveKeyRange(args)
     local recommendedMode = ClassCodexDB and ClassCodexDB.talentRecommended and true or false
     local activeHero = args.activeHero
     if activeHero == nil and ns.GetActiveHero then activeHero = ns.GetActiveHero() end
@@ -38,7 +48,8 @@ local function buildCardList(args)
         local contentOk = (not b.zoneKind and ct ~= "pvp") or b.zoneKind == ct
             or (b.leveling and ct ~= "pvp")
         local diffOk = (not b.difficulty) or b.difficulty == diff
-        if contentOk and diffOk then
+        local keyOk = (not b.keyRange) or b.keyRange == keyRange
+        if contentOk and diffOk and keyOk then
             local keep
             if recommendedMode then
                 keep = b.recommended
@@ -88,7 +99,14 @@ local function buildCardList(args)
                     recommended = b.recommended,
                     heroTalent = b.hero,
                     exportString = b.exportString,
-                    saveLabel = ns.BuildLoadoutName(b),
+                    -- A High Keys build names its loadout as such, the way a
+                    -- raid row carries its difficulty.
+                    saveLabel = ns.BuildLoadoutName(b.keyRange == "high" and {
+                        provider = b.provider,
+                        hero = b.hero,
+                        label = b.label,
+                        difficulty = ns.KeyRangeLabel and ns.KeyRangeLabel("high"),
+                    } or b),
                     provider = b.provider,
                     icon = icon,
                     portrait = portrait,
@@ -169,6 +187,9 @@ local function render(inst, args)
 
     local list = buildCardList(args)
     if inst.cogSetShown then inst.cogSetShown(#list > 0) end
+    -- The cog menu offers the key-level pick only for a spec with High Keys
+    -- data, and the menu has no args of its own.
+    inst.lastClass, inst.lastSpec = args.class, args.spec
 
     -- The subheader carries the build choice as a suffix on u.gg views — raid
     -- shows "· Heroic/Mythic" (prefixed with "Recommended" while that filter
@@ -187,6 +208,9 @@ local function render(inst, args)
                 if isRec then suffix = "Recommended " .. suffix end
             else
                 suffix = isRec and "Recommended" or nil
+                if effectiveKeyRange(args) == "high" then
+                    suffix = (suffix and (suffix .. " ") or "") .. ns.KeyRangeLabel("high")
+                end
             end
             if suffix then
                 inst.header.label:SetText(base .. " " .. ns.DOT_SEPARATOR .. " " .. suffix)
@@ -348,8 +372,28 @@ local function makeCog(inst, refresh)
         if not (MenuUtil and MenuUtil.CreateContextMenu) then return end
         local ct = (inst.contentType and inst.contentType()) or (ns.Context and ns.Context.contentType()) or "mplus"
         if type(ct) == "string" and ct:sub(1, 4) == "pvp:" then ct = "pvp" end
-        local isUgg = (inst.source and inst.source() or "icyveins") ~= "icyveins"
+        local src = inst.source and inst.source() or "icyveins"
+        local isUgg = src ~= "icyveins"
+        local offerKeys = src == "archongg" and ct == "mplus" and ns.ArchonHasHighKeys
+            and ns.ArchonHasHighKeys(inst.lastClass, inst.lastSpec)
         MenuUtil.CreateContextMenu(self, function(_, root)
+            if offerKeys then
+                root:CreateTitle("Key levels")
+                for _, opt in ipairs({
+                    { v = "all", l = "All Keys" },
+                    { v = "high", l = "High Keys" },
+                }) do
+                    root:CreateRadio(opt.l, function()
+                        local cur = (ClassCodexDB and ClassCodexDB.mplusKeyRange == "high") and "high" or "all"
+                        return cur == opt.v
+                    end, function()
+                        if ClassCodexDB then ClassCodexDB.mplusKeyRange = opt.v end
+                        if refresh then refresh() end
+                        return MenuResponse.Refresh
+                    end)
+                end
+                root:CreateDivider()
+            end
             if isUgg and ct == "raid" then
                 root:CreateTitle("Raid difficulty")
                 for _, opt in ipairs({
