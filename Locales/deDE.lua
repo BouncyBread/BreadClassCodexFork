@@ -147,6 +147,11 @@ L["settings.label.gear_source"] = "Gegenstandsquelle anzeigen"
 L["settings.hint.gear_source_no_icons"] = "Wird in der Tabellen- und Listenansicht angezeigt."
 L["settings.tooltip.gear_source"] =
     "Zeigt, woher jeder Best-in-Slot-Gegenstand stammt, etwa Fundort oder Herstellung. Erscheint in der Listenansicht unter dem Gegenstandsnamen und in der Tabellenansicht als eigene Spalte. Die Symbolansicht behält die Angabe im Tooltip des Gegenstands. Jedes Panel merkt sich diese Wahl separat. Nur mit Icy-Veins-Daten."
+L["settings.label.gear_ticks"] = "Aufwertungsspur-Ticks anzeigen"
+L["settings.hint.gear_ticks"] =
+    "Ticks zeigen die Aufwertungsspur des getragenen Gegenstands in jedem Best-in-Slot-Platz. Grün bedeutet, dass er der empfohlenen Spur entspricht. Gelb bedeutet, dass er darunter liegt."
+L["settings.tooltip.gear_ticks"] =
+    "Versieht jeden Best-in-Slot-Eintrag mit der Aufwertungsspur des getragenen Gegenstands. Ein grüner Tick bedeutet, dass er der empfohlenen Spur entspricht. Ein gelber Tick bedeutet, dass der Best-in-Slot-Gegenstand getragen, aber unterhalb der empfohlenen Spur ist. Jedes Panel merkt sich diese Wahl separat."
 L["settings.hint.gear_source_no_icons"] = "Wird in der Tabellen- und Listenansicht angezeigt."
 L["settings.label.minimap_button"] = "Minikarten-Button"
 L["settings.label.login_message"] = "Anmeldenachricht"

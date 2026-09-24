@@ -148,6 +148,11 @@ L["settings.label.gear_source"] = "Mostrar la fuente del objeto"
 L["settings.hint.gear_source_no_icons"] = "Aparece en las vistas de tabla y lista."
 L["settings.tooltip.gear_source"] =
     "Muestra de dónde proviene cada objeto de mejor equipo, como su lugar de obtención o una fabricación. Aparece bajo el nombre del objeto en la vista de lista y como columna en la vista de tabla. La vista de iconos lo mantiene en la descripción emergente. Cada panel recuerda esta elección por separado. Solo con datos de Icy Veins."
+L["settings.label.gear_ticks"] = "Mostrar marcas de ruta de mejora"
+L["settings.hint.gear_ticks"] =
+    "Las marcas muestran la ruta de mejora del objeto equipado en cada hueco de mejor equipo. Verde significa que coincide con la ruta recomendada. Amarillo significa que está por debajo."
+L["settings.tooltip.gear_ticks"] =
+    "Marca cada fila de mejor equipo con la ruta de mejora del objeto equipado. Una marca verde significa que coincide con la ruta recomendada. Una marca amarilla significa que el objeto de mejor equipo está equipado pero por debajo de la ruta recomendada. Cada panel recuerda esta elección por separado."
 L["settings.hint.gear_source_no_icons"] = "Aparece en las vistas de tabla y lista."
 L["settings.label.minimap_button"] = "Botón del minimapa"
 L["settings.label.login_message"] = "Mensaje de inicio de sesión"

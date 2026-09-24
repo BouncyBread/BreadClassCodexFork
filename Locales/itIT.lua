@@ -148,6 +148,11 @@ L["settings.label.gear_source"] = "Mostra la fonte dell'oggetto"
 L["settings.hint.gear_source_no_icons"] = "Appare nelle viste tabella ed elenco."
 L["settings.tooltip.gear_source"] =
     "Mostra da dove proviene ogni oggetto Best in Slot, come il luogo del drop o una creazione. Appare sotto il nome dell'oggetto nella vista elenco e come colonna nella vista tabella. La vista icone la mantiene nella descrizione dell'oggetto. Ogni pannello ricorda questa scelta separatamente. Solo con dati di Icy Veins."
+L["settings.label.gear_ticks"] = "Mostra tacche traccia di potenziamento"
+L["settings.hint.gear_ticks"] =
+    "Le tacche mostrano la traccia di potenziamento dell'oggetto equipaggiato in ogni slot Best in Slot. Verde significa che corrisponde alla traccia consigliata. Giallo significa che è al di sotto."
+L["settings.tooltip.gear_ticks"] =
+    "Contrassegna ogni riga Best in Slot con la traccia di potenziamento dell'oggetto equipaggiato. Una tacca verde significa che corrisponde alla traccia consigliata. Una tacca gialla significa che l'oggetto Best in Slot è equipaggiato ma al di sotto della traccia consigliata. Ogni pannello ricorda questa scelta separatamente."
 L["settings.hint.gear_source_no_icons"] = "Appare nelle viste tabella ed elenco."
 L["settings.label.minimap_button"] = "Pulsante minimappa"
 L["settings.label.login_message"] = "Messaggio di accesso"

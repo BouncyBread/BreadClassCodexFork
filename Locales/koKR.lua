@@ -150,6 +150,11 @@ L["settings.label.gear_source"] = "아이템 획득처 표시"
 L["settings.hint.gear_source_no_icons"] = "표 보기와 목록 보기에 표시됩니다."
 L["settings.tooltip.gear_source"] =
     "각 최적 장비 아이템의 획득처(획득 위치 또는 제작 등)를 표시합니다. 목록 보기에서는 아이템 이름 아래에, 표 보기에서는 열로 나타납니다. 아이콘 보기에서는 아이템 툴팁에 표시됩니다. 각 패널은 이 선택을 개별적으로 저장합니다. Icy Veins 데이터에만 적용됩니다."
+L["settings.label.gear_ticks"] = "업그레이드 단계 표시"
+L["settings.hint.gear_ticks"] =
+    "각 최적 장비 슬롯에 착용한 아이템의 업그레이드 단계를 표시합니다. 초록색은 권장 단계와 일치한다는 뜻이고, 노란색은 권장 단계에 미친다는 뜻입니다."
+L["settings.tooltip.gear_ticks"] =
+    "각 최적 장비 항목에 착용한 아이템의 업그레이드 단계를 표시합니다. 초록색 표시는 권장 단계와 일치한다는 뜻입니다. 노란색 표시는 최적 장비 아이템을 착용했지만 권장 단계에 미친다는 뜻입니다. 각 패널은 이 선택을 개별적으로 저장합니다."
 L["settings.hint.gear_source_no_icons"] = "표 보기와 목록 보기에 표시됩니다."
 L["settings.label.minimap_button"] = "미니맵 버튼"
 L["settings.label.login_message"] = "로그인 메시지"

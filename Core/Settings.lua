@@ -315,6 +315,15 @@ function ns.RegisterSettings()
                 ns.UpdatePanelIfVisible("docked")
             end
         )
+        panels.check(
+            "gearTicks_dock",
+            L["settings.label.gear_ticks"],
+            L["settings.tooltip.gear_ticks"],
+            true,
+            function()
+                ns.UpdatePanelIfVisible("docked")
+            end
+        )
 
         panels.header(L["settings.header.floating_panel"])
         panels.charCheck(
@@ -359,6 +368,13 @@ function ns.RegisterSettings()
             false,
             refreshFloat
         )
+        panels.check(
+            "gearTicks_float",
+            L["settings.label.gear_ticks"],
+            L["settings.tooltip.gear_ticks"],
+            true,
+            refreshFloat
+        )
 
         panels.header(L["settings.header.tab_order"])
         panels.button(L["settings.label.reorder_tabs"], L["settings.value.reorder"], function()
@@ -383,6 +399,15 @@ function ns.RegisterSettings()
             L["settings.label.gear_source"],
             L["settings.tooltip.gear_source"],
             false,
+            function()
+                if ns.UpdateCompendium then ns:UpdateCompendium() end
+            end
+        )
+        compendium.check(
+            "gearTicks_comp",
+            L["settings.label.gear_ticks"],
+            L["settings.tooltip.gear_ticks"],
+            true,
             function()
                 if ns.UpdateCompendium then ns:UpdateCompendium() end
             end

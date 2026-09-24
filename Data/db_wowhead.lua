@@ -1401,7 +1401,7 @@ ClassCodexSource["wowhead"] = {
               Chest = { { itemId = 243977 } },
               Legs = { { itemId = 240133 } },
               Boots = { { itemId = 243953 } },
-              Rings = { { itemId = 243987 } },
+              Rings = { { itemId = 243957 } },
             },
           },
         },
@@ -3127,7 +3127,7 @@ ClassCodexSource["wowhead"] = {
               { export = "CAQAAAAAAAAAAAAAAAAAAAAAAADsMGWmZmBDmZbmtZmZmxMDAAAAAAAAAgZYZGMzMDmxMgpZamBYmNMEGzyAMGsAAAjxMjBzAMzMTwA", label = "Raid" },
             },
             mplus = {
-              { export = "CAQAAAAAAAAAAAAAAAAAAAAAAADsMDWmZMmBmZbmtZmZmxMDAAAAAAAAAgxYZGMzMjNjZGsZamYAmZDDhxsMAjBLAAwYmZGDmBYmZEMD", label = "Mythic+", recommended = "Best" },
+              { export = "CAQAAAAAAAAAAAAAAAAAAAAAAADsMDWmZMmBmZbmtZmZmxMDAAAAAAAAAgxYZGMzMjNjZGsZamYAmZDDhxsMAjBLAAwYmZGDmBYmZEMD", label = "Mythic+" },
             },
           },
           voidweaver = {
@@ -3135,7 +3135,7 @@ ClassCodexSource["wowhead"] = {
               { export = "CAQAAAAAAAAAAAAAAAAAAAAAAADsMmxyYmBzgZbmtZmZmZmBAAAAAAAAAgZYZGMzMDzwMgpZamBzMAIAmtZbBM2MAAMGzMGmZwMDGBD", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "CAQAAAAAAAAAAAAAAAAAAAAAAADsMzMWYMGzgZzsNzMzMzMDAAAAAAAAAgxYZGMzMjNjZGsZamYwMDACgZb2WAjNDAAjZmZMYGMzgRwM", label = "Mythic+" },
+              { export = "CAQAAAAAAAAAAAAAAAAAAAAAAADsMzMWYMGzgZzsNzMzMzMDAAAAAAAAAgxYZGMzMjNjZGsZamYwMDACgZb2WAjNDAAjZmZMYGMzgRwM", label = "Mythic+", recommended = "Best" },
             },
             delves = {
               { export = "CAQAAAAAAAAAAAAAAAAAAAAAAADsMzMWYMGzgZzsNzMzMzMDAAAAAAAAAgxYZGMzMjNjZGsZamYwMDACgZb2WAjNDAAjZmZMYGMzgRwM", label = "Delves" },
@@ -3254,7 +3254,7 @@ ClassCodexSource["wowhead"] = {
               { export = "CEQAAAAAAAAAAAAAAAAAAAAAAADAAAAAAYBmZWGzMmZMMDzsMzYGAAAAzYWmBzMzwMMDgZqBwMbYIMmlBYMwiZmZBQzYMGDzMAzMzAD", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "CEQAAAAAAAAAAAAAAAAAAAAAAADAAAAAAgZmxsMmZMzYYGYZmZmBAAAwYmlZwMzM2mxMDgZKAmZDDhxsMAjBWMzMLAaGzMGDmBYmZAD", label = "Mythic+", recommended = "Best" },
+              { export = "CEQAAAAAAAAAAAAAAAAAAAAAAwYAAAAAAAMzMmlxMjZGDzALzMzMAAAAGzsMDmZmxmxMD2wMFAzshhwYWGgxALGzsAoZMzYMYGgZmBMA", label = "Mythic+", recommended = "Best" },
             },
           },
         },

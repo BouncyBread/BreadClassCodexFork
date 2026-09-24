@@ -138,6 +138,13 @@ local function SetTierColor(textWidget, tier)
     end
 end
 
+-- Trinkets live in either inventory slot; "Trinket 1" maps to the pair.
+local function resolveTick(inst, ticksOn, t)
+    if not ticksOn then return nil end
+    if inst.gateOwned and not ns.compOwnClass then return nil end
+    return ns.GearTickForEntry("Trinket 1", t.itemId, t.bonusIDs)
+end
+
 local function makeCog(inst, ctx)
     if not (inst.header and inst.header.AddHeaderWidget) then return end
     local cog = CreateFrame("Button", nil, inst.header)
@@ -210,6 +217,31 @@ local function makeCog(inst, ctx)
                 Trinkets.SetViewMode("icons", ctx)
                 return MenuResponse.Refresh
             end)
+            local gear = ns.Sections.Gear
+            if gear and gear.IsTrackTicksShown then
+                root:CreateDivider()
+                local tickCheck = root:CreateCheckbox(
+                    L["settings.label.gear_ticks"] or "Show Upgrade Track Ticks",
+                    function()
+                        return gear.IsTrackTicksShown(ctx)
+                    end,
+                    function()
+                        gear.SetTrackTicksShown(not gear.IsTrackTicksShown(ctx), ctx)
+                        if inst.onRefresh then inst.onRefresh() end
+                        return MenuResponse.Refresh
+                    end
+                )
+                if tickCheck and tickCheck.SetTooltip then
+                    tickCheck:SetTooltip(function(tip)
+                        ns.Tooltip.MenuTip(
+                            tip,
+                            L["settings.label.gear_ticks"] or "Show Upgrade Track Ticks",
+                            L["settings.hint.gear_ticks"]
+                                or "Ticks compare your equipped item with each Best in Slot or Trinkets row. Green means it has reached the row's item level. Yellow means it is below."
+                        )
+                    end)
+                end
+            end
         end)
     end)
     cog:Hide()
@@ -350,6 +382,8 @@ local function render(inst, args)
     if inst.contextCog then inst.contextCog:Show() end
 
     local hidden = LoadHiddenTiers()
+    local gear = ns.Sections.Gear
+    local ticksOn = gear and gear.IsTrackTicksShown and gear.IsTrackTicksShown(args._viewCtx)
 
     if inst.header and inst.header.label then
         local base = L["tab.trinkets"] or "Trinkets"
@@ -394,7 +428,10 @@ local function render(inst, args)
                     row.icon:SetItem(t.itemId)
                     local owned = ns.IsItemOwned(t.itemId)
                     if inst.gateOwned then owned = owned and ns.compOwnClass end
+                    local tick = resolveTick(inst, ticksOn, t)
+                    if tick then owned = true end
                     row.icon:ToggleMarker("owned", owned and true or false)
+                    row.icon:SetMarkerColor("owned", tick)
                     row:ClearAllPoints()
                     row:SetPoint("TOPLEFT", inst.content, "TOPLEFT", 0, -(rowIdx - 1) * LIST_ROW_H)
                     row:SetPoint("RIGHT", inst.content, "RIGHT", 0, 0)
@@ -421,6 +458,7 @@ local function render(inst, args)
                         or nil,
                     popText = t.popularity and (t.popularity .. "%") or nil,
                     isOwned = ns.IsItemOwned(t.itemId),
+                    tickColor = resolveTick(inst, ticksOn, t),
                     label = t.tier,
                     labelColor = tierColor and { tierColor.r, tierColor.g, tierColor.b } or nil,
                 }
@@ -480,7 +518,10 @@ local function render(inst, args)
                 ic.popText = t.popularity and (t.popularity .. "%") or nil
                 local owned = ns.IsItemOwned(t.itemId)
                 if inst.gateOwned then owned = owned and ns.compOwnClass end
+                local tick = resolveTick(inst, ticksOn, t)
+                if tick then owned = true end
                 ic:ToggleMarker("owned", owned and true or false)
+                ic:SetMarkerColor("owned", tick)
                 ic:Show()
             end
 

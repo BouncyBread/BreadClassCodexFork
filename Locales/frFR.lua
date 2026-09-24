@@ -147,6 +147,11 @@ L["settings.label.gear_source"] = "Afficher la source des objets"
 L["settings.hint.gear_source_no_icons"] = "Apparaît en vue tableau et liste."
 L["settings.tooltip.gear_source"] =
     "Indique la provenance de chaque objet Best in Slot, comme son lieu d'obtention ou un artisanat. Apparaît sous le nom de l'objet en vue liste et sous forme de colonne en vue tableau. La vue icônes la conserve dans l'infobulle de l'objet. Chaque panneau mémorise ce choix séparément. Données Icy Veins uniquement."
+L["settings.label.gear_ticks"] = "Afficher les coches de piste d'amélioration"
+L["settings.hint.gear_ticks"] =
+    "Les coches affichent la piste d'amélioration de l'objet équipé dans chaque emplacement Best in Slot. Vert signifie qu'il correspond à la piste recommandée. Jaune signifie qu'il est en dessous."
+L["settings.tooltip.gear_ticks"] =
+    "Marque chaque ligne Best in Slot avec la piste d'amélioration de l'objet équipé. Une coche verte signifie qu'il correspond à la piste recommandée. Une coche jaune signifie que l'objet Best in Slot est équipé mais en dessous de la piste recommandée. Chaque panneau mémorise ce choix séparément."
 L["settings.hint.gear_source_no_icons"] = "Apparaît en vue tableau et liste."
 L["settings.label.minimap_button"] = "Bouton minicarte"
 L["settings.label.login_message"] = "Message de connexion"

@@ -160,6 +160,11 @@ L["settings.label.gear_source"] = "Show Item Source"
 L["settings.hint.gear_source_no_icons"] = "Appears in the table and list views."
 L["settings.tooltip.gear_source"] =
     "Show where each Best in Slot item comes from, like its drop location or a craft. It appears under the item name in the list view and as a column in the table view. Icon view keeps it in the item tooltip. Each panel remembers this choice separately. Icy Veins data only."
+L["settings.label.gear_ticks"] = "Show Upgrade Track Ticks"
+L["settings.hint.gear_ticks"] =
+    "Ticks compare your owned copies of each Best in Slot or Trinkets item with the listed item level. Green means a copy has reached it. Yellow means every copy is below it."
+L["settings.tooltip.gear_ticks"] =
+    "Ticks compare the copies you own of each Best in Slot or Trinkets item with the row's item level, including copies in your bags, bank, and warband bank. A green tick means a copy has reached the listed level. A yellow tick means every copy is below the listed level. Each panel remembers this choice separately."
 L["settings.label.minimap_button"] = "Minimap Button"
 L["settings.label.login_message"] = "Login Message"
 L["settings.label.pin_talent_source"] = "Pin Talent Source"

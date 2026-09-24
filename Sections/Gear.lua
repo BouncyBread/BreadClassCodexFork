@@ -85,6 +85,20 @@ function Gear.ToggleSource(context)
     Gear.SetSourceShown(not Gear.IsSourceShown(context), context)
 end
 
+-- Upgrade-track ticks default on; the key only exists once turned off.
+function Gear.IsTrackTicksShown(context)
+    context = viewContext(context)
+    local shown = ClassCodexDB and ClassCodexDB["gearTicks_" .. context]
+    return shown ~= false
+end
+
+function Gear.SetTrackTicksShown(shown, context)
+    context = viewContext(context)
+    if not ClassCodexDB then ClassCodexDB = {} end
+    ClassCodexDB["gearTicks_" .. context] = shown and true or false
+    refreshView(context)
+end
+
 local function FindTabByLabel(tabs, label)
     if not label then return nil end
     for _, tab in ipairs(tabs) do
@@ -116,6 +130,12 @@ local function ResolveStatIds(entry, bonusIDs)
     local cat = entry.item and entry.item.catalyst
     if cat then return cat.bonusIDs, cat.itemId end
     return bonusIDs, nil
+end
+
+local function resolveTick(inst, ticksOn, entry, rowBonus, catalystItemId)
+    if not ticksOn then return nil end
+    if inst.gateOwned and not ns.compOwnClass then return nil end
+    return ns.GearTickForEntry(entry.slot, entry.item.itemId, rowBonus, catalystItemId)
 end
 
 local CONTENT_LABEL = { mplus = "Mythic+", raid = "Raid", pvp = "PvP" }
@@ -189,6 +209,26 @@ local function makeCog(inst, ctx)
                         tip,
                         L["settings.label.gear_source"] or "Show Item Source",
                         L["settings.hint.gear_source_no_icons"] or "Appears in the table and list views."
+                    )
+                end)
+            end
+            local tickCheck = root:CreateCheckbox(
+                L["settings.label.gear_ticks"] or "Show Upgrade Track Ticks",
+                function()
+                    return Gear.IsTrackTicksShown(ctx)
+                end,
+                function()
+                    Gear.SetTrackTicksShown(not Gear.IsTrackTicksShown(ctx), ctx)
+                    return MenuResponse.Refresh
+                end
+            )
+            if tickCheck and tickCheck.SetTooltip then
+                tickCheck:SetTooltip(function(tip)
+                    ns.Tooltip.MenuTip(
+                        tip,
+                        L["settings.label.gear_ticks"] or "Show Upgrade Track Ticks",
+                        L["settings.hint.gear_ticks"]
+                            or "Ticks compare your equipped item with each Best in Slot or Trinkets row. Green means it has reached the row's item level. Yellow means it is below."
                     )
                 end)
             end
@@ -266,6 +306,7 @@ local function layoutGrid(content, icons, items)
         ic.sourceText = item.sourceText
         ic.popText = item.popText
         ic:ToggleMarker("owned", item.isOwned and true or false)
+        ic:SetMarkerColor("owned", item.tickColor)
         ic:Show()
     end
 
@@ -418,6 +459,7 @@ local function render(inst, args)
     local count = math.min(#selectedSlots, MAX_ROWS)
     local viewMode = Gear.GetViewMode(args._viewCtx)
     local showSource = Gear.IsSourceShown(args._viewCtx)
+    local ticksOn = Gear.IsTrackTicksShown(args._viewCtx)
 
     if viewMode == "icons" then
         local items = {}
@@ -427,6 +469,8 @@ local function render(inst, args)
             local rowBonus, catalystItemId = ResolveStatIds(entry, bonusIDs)
             local owned = ns.IsItemOwned(entry.item.itemId)
             if inst.gateOwned then owned = owned and ns.compOwnClass end
+            local tick = resolveTick(inst, ticksOn, entry, rowBonus, catalystItemId)
+            if tick then owned = true end
             items[#items + 1] = {
                 itemId = entry.item.itemId,
                 bonusIDs = rowBonus,
@@ -450,6 +494,7 @@ local function render(inst, args)
             local rowBonus, catalystItemId = ResolveStatIds(entry, bonusIDs)
             local owned = ns.IsItemOwned(entry.item.itemId)
             if inst.gateOwned then owned = owned and ns.compOwnClass end
+            local tick = resolveTick(inst, ticksOn, entry, rowBonus, catalystItemId)
             items[#items + 1] = {
                 itemId = entry.item.itemId,
                 bonusIDs = rowBonus,
@@ -459,6 +504,7 @@ local function render(inst, args)
                 sourceText = (source ~= "" and source) or nil,
                 popText = entry.pop and (entry.pop .. "%") or nil,
                 isOwned = owned,
+                tickColor = tick,
                 label = entry.slot,
             }
         end
@@ -506,7 +552,10 @@ local function render(inst, args)
             row.icon:SetItem(entry.item.itemId)
             local owned = ns.IsItemOwned(entry.item.itemId)
             if inst.gateOwned then owned = owned and ns.compOwnClass end
+            local tick = resolveTick(inst, ticksOn, entry, rowBonus, catalystItemId)
+            if tick then owned = true end
             row.icon:ToggleMarker("owned", owned and true or false)
+            row.icon:SetMarkerColor("owned", tick)
             row:ClearAllPoints()
             row:SetPoint("TOPLEFT", 0, -(i - 1) * CARD_HEIGHT)
             row:SetPoint("RIGHT", 0, 0)

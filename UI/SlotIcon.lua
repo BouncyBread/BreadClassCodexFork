@@ -7,6 +7,7 @@ local DEFAULT_MARKER_SIZE = 20
 local DEFAULT_MARKER_INSET = 7
 local EMPTY_ATLAS = "auctionhouse-itemicon-empty"
 local SLOT_TEXTURE = "Interface\\Buttons\\UI-Quickslot2"
+local OWNED_CHECK_GREEN = { 0.4, 1.0, 0.4 }
 
 local function AtlasExists(name)
     if not name then return false end
@@ -37,6 +38,9 @@ ns.SlotIconMarkers = {
             atlas = "common-icon-checkmark",
             texture = "Interface\\Buttons\\UI-CheckBox-Check",
             size = 16,
+            -- The atlas is green; desaturating it makes the vertex tint work.
+            desaturate = true,
+            vertexColor = { 0.4, 1.0, 0.4 },
         },
     },
 }
@@ -70,7 +74,13 @@ local function RepositionMarker(icon, tex, corner, offsetX, offsetY)
     )
 end
 
-local function ApplySpec(tex, spec)
+-- Green tints pass through the green atlas untouched, which keeps the
+-- owned green vivid; other tints need the desaturated grayscale base.
+local function IsGreenTint(color)
+    return not color or (color[2] >= color[1] and color[2] >= color[3])
+end
+
+local function ApplySpec(tex, spec, vertexColor)
     if not spec then
         tex:Hide()
         return
@@ -89,7 +99,10 @@ local function ApplySpec(tex, spec)
     end
     if spec.size then tex:SetSize(spec.size, spec.size) end
     tex:SetAlpha(spec.alpha or 1)
-    if spec.vertexColor then
+    tex:SetDesaturated(spec.desaturate and not IsGreenTint(vertexColor or spec.vertexColor) and true or false)
+    if vertexColor then
+        tex:SetVertexColor(vertexColor[1], vertexColor[2], vertexColor[3], vertexColor[4] or 1)
+    elseif spec.vertexColor then
         tex:SetVertexColor(spec.vertexColor[1], spec.vertexColor[2], spec.vertexColor[3], spec.vertexColor[4] or 1)
     else
         tex:SetVertexColor(1, 1, 1, 1)
@@ -161,12 +174,19 @@ function SlotIconAPI:SetMarkerByName(name)
         tex = CreateMarkerTexture(self, preset.corner, offset and offset.x or 0, offset and offset.y or 0)
         self.markers[name] = tex
     end
-    ApplySpec(tex, preset.spec)
+    ApplySpec(tex, preset.spec, self._markerColors[name])
 end
 
 function SlotIconAPI:ClearMarkerByName(name)
     local tex = self.markers[name]
     if tex then tex:Hide() end
+end
+
+function SlotIconAPI:SetMarkerColor(name, color)
+    self._markerColors[name] = color
+    local tex = self.markers[name]
+    local preset = ns.SlotIconMarkers[name]
+    if tex and preset then ApplySpec(tex, preset.spec, color) end
 end
 
 function SlotIconAPI:ClearAllMarkers()
@@ -205,6 +225,7 @@ function ns.CreateSlotIcon(parent, opts)
     }
     btn.markers = {}
     btn._markerOffsets = {}
+    btn._markerColors = {}
 
     local empty = btn:CreateTexture(nil, "ARTWORK", nil, -1)
     empty:SetAtlas(EMPTY_ATLAS)
@@ -252,7 +273,7 @@ function ns.MakeTableRow(content)
     check:SetSize(14, 14)
     check:SetPoint("RIGHT", row, "RIGHT", -4, 0)
     check:SetAtlas("common-icon-checkmark")
-    check:SetVertexColor(0.4, 1.0, 0.4)
+    check:SetVertexColor(unpack(OWNED_CHECK_GREEN))
     check:Hide()
     row.checkmark = check
 
@@ -346,7 +367,16 @@ function ns.LayoutTable(content, rows, items, opts)
         row.popText = item.popText
 
         row.icon:ToggleMarker("owned", false)
-        row.checkmark:SetShown(item.isOwned and true or false)
+        local checkDesat
+        if item.tickColor then
+            checkDesat = not IsGreenTint(item.tickColor)
+            row.checkmark:SetVertexColor(item.tickColor[1], item.tickColor[2], item.tickColor[3])
+        else
+            checkDesat = false
+            row.checkmark:SetVertexColor(unpack(OWNED_CHECK_GREEN))
+        end
+        row.checkmark:SetDesaturated(checkDesat)
+        row.checkmark:SetShown((item.isOwned or item.tickColor) and true or false)
 
         row:ClearAllPoints()
         row:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -(i - 1) * ns.TABLE_ROW_HEIGHT)

@@ -330,14 +330,7 @@ ClassCodexSource["icyveins"] = {
       },
       frost={
         consumables={
-          all={
-            all={
-              augmentRune={259085},
-              flask={241326,241322,241325},
-              food={255846,255845,255847,242275},
-              potions={241288,193701,241308,271883},
-            },
-          },
+          all={all={augmentRune={259085},flask={241326,241322,241325},food={255846,255845,255847,242275},potions={241288,271883}}},
         },
         crafting={
           all={
@@ -649,13 +642,13 @@ ClassCodexSource["icyveins"] = {
               {itemId=270165,tier="A"},
               {itemId=249343,tier="A"},
               {itemId=246305,tier="B"},
-              {bonusIDs={12854},itemId=250238,tier="B"},
+              {itemId=250238,tier="B"},
               {bonusIDs={12854},itemId=250228,tier="B"},
               {itemId=273796,tier="B"},
               {bonusIDs={657,10358,5871,7981},itemId=193762,tier="C"},
               {itemId=250229,tier="C"},
               {bonusIDs={657,10358,5871,7981},itemId=193757,tier="C"},
-              {itemId=273797,tier="C"},
+              {bonusIDs={12854},itemId=273797,tier="C"},
               {itemId=270163,tier="C"},
             },
             pvp={{itemId=270605,tier="S"},{itemId=270603,tier="S"}},
@@ -712,7 +705,7 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={13708,12854},itemId=251234,slot="Neck",source="Voidscar Arena"},
               {catalyst={bonusIDs={12854},itemId=251138},itemId=271472,slot="Shoulders",source="Catalyst from Murder Row"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=239656,slot="Back",source="Crafted by Tailoring"},
-              {catalyst={bonusIDs={12854},itemId=268222},itemId=271477,slot="Chest",source="Catalyst from The Coiled Altar"},
+              {catalyst={bonusIDs={12854},itemId=193753},itemId=271477,slot="Chest",source="Catalyst from"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=237834,slot="Wrist",source="Crafted by Blacksmithing"},
               {catalyst={bonusIDs={12854},itemId=159413},itemId=271475,slot="Hands",source="Catalyst from King's Rest"},
               {bonusIDs={12854},itemId=159418,slot="Waist",source="King's Rest"},
@@ -4034,17 +4027,17 @@ ClassCodexSource["icyveins"] = {
           flameshaper={
             mplus={
               {
-                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZwMjZGzMgBjZamZmJzM2mxMzwYmZGwMmxYmZZmZwMwMmBWALgZYCsBWGGAzMDD",
+                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzYMzMzMzwMwMYMTzYmJjxywMzwYmZGwMmxYmZbmZwMwMmBWAbgZYCsBWGmBYmZYA",
                 label="Mythic+",
               },
               {
                 export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAz8ADmZMzwMwMYMTjZmJjxyMzMzwYmZGwMmZGzMLzMDmBmxMwCYDMDTgNwywAYmZYA",
-                label="Mythic+ (Arcane Intensity)",
+                label="Mythic+ (Eternity Surge)",
               },
             },
             raid={
               {
-                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMDmZYGzMgBjZamZmJzM2GmZGmZmZGwMmxYmZZmZwMwMmBWALgZYCsBWGGAzMDD",
+                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZGmZYGmBMYMTjZmJjxyYmZGmZmZGwMmZGzMbzMDmBmxMwCYBMDTgNwywAYmZGD",
                 label="Raid",
               },
             },
@@ -4052,11 +4045,9 @@ ClassCodexSource["icyveins"] = {
           scalecommander={
             delve={
               {
-                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZgZYGzMgBjZamZmpZmx2MMzMzMzMzAmxMGzMLzMDMwYwGsMGN2GAzAwGGYmBDD",
-                label="Mythic+",
-                labels={"Raid Cleave / Delve","AoE"},
+                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZwMDzwMgBjZaMzMNzM2mZmZmZmZmZGwMmZGzMbzMDMwYwGsMGN2GAzAwGGYmBz4BA",
+                label="Raid Cleave / Delve",
                 recommended=true,
-                tags={"Weekly Key","High Key"},
               },
             },
             leveling={
@@ -4067,16 +4058,21 @@ ClassCodexSource["icyveins"] = {
             },
             mplus={
               {
-                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZgZYGzMgBjZamZmpZmx2MMzMzMzMzAmxMGzMLzMDMwYwGsMGN2GAzAwGGYmBDD",
-                label="Mythic+",
-                labels={"Raid Cleave / Delve","AoE"},
+                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZwMDzwMgBjZaMzMNzM2mZmZmZmZmZGwMmZGzMbzMDMwYwGsMGN2GAzAwGGYmBz4BA",
+                label="Raid Cleave / Delve",
                 recommended=true,
-                tags={"Weekly Key","High Key"},
               },
               {
-                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZAMzwMwMYMTjZmpZmZ2mhZmZmZmZGwMzMGzMLzMDMwYwGsMGN2GAzAwGGYmBDD",
+                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZwgZGmBGYMTjZmpZmZ2mZmZmZmZmZGwMzMzYmZbmZgBGD2glxox2AYGA2wMYmBDPA",
                 label="Mythic+",
                 recommended=true,
+              },
+              {
+                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZgZYGzMgBjZamZmpZmx2MMzMzMzMzAmxMGzMLzMDMwYwGsMGN2GAzAwGGYmBDD",
+                label="Mythic+ (Weekly Key)",
+                labels={"AoE"},
+                recommended=true,
+                tags={"Weekly Key","High Key"},
               },
             },
             pvp={
@@ -4095,17 +4091,18 @@ ClassCodexSource["icyveins"] = {
             },
             raid={
               {
-                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMDMDzwMgBjZaMzMNjx2wMzMzMzMzAmZmxYmZZmZgBGD2glxox2AYGA2wMYmBDD",
+                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZGjxYGmBMYMTjZmpZM2GmZmZmZmZGwMmZGzMbzMDMwYwGsMGN2GAzAwGGYmBzYA",
                 label="Single-Target Raid",
-                labels={"Single-Target"},
                 recommended=true,
               },
               {
-                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZgZYGzMgBjZamZmpZmx2MMzMzMzMzAmxMGzMLzMDMwYwGsMGN2GAzAwGGYmBDD",
-                label="Mythic+",
-                labels={"Raid Cleave / Delve","AoE"},
+                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjZwMDzwMgBjZaMzMNzM2mZmZmZmZmZGwMmZGzMbzMDMwYwGsMGN2GAzAwGGYmBz4BA",
+                label="Raid Cleave / Delve",
                 recommended=true,
-                tags={"Weekly Key","High Key"},
+              },
+              {
+                export="CsbBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMDMDzwMgBjZaMzMNjx2wMzMzMzMzAmZmxYmZZmZgBGD2glxox2AYGA2wMYmBDD",
+                label="Single-Target",
               },
             },
           },
@@ -4407,7 +4404,7 @@ ClassCodexSource["icyveins"] = {
     },
     HUNTER={
       ["beast-mastery"]={
-        consumables={all={all={augmentRune={259085},flask={241322},food={255846,255845,242747},potions={241288,241308,271883}}}},
+        consumables={all={all={augmentRune={259085},flask={241322},food={255846,255845,242747},potions={241288,241308,271886,271883}}}},
         crafting={all={all={crafts={265337,244581,244584,244582},embellishments={273060,240167}}}},
         enchants={
           all={
@@ -5190,10 +5187,6 @@ ClassCodexSource["icyveins"] = {
                 label="General",
                 recommended=true,
               },
-              {
-                export="C4PAAAAAAAAAAAAAAAAAAAAAAYzsMwAGwMsBMLAAAAAAAAgZYMjFjZmZmxwwMmZMb2mxYmZmhtxMLDGAAgZGzMzMzAYBzAswMLzYA",
-                label="Black Arrow Arena (Tar Trap)",
-              },
             },
             raid={
               {
@@ -5239,10 +5232,6 @@ ClassCodexSource["icyveins"] = {
               {
                 export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGNWGAzgNAAAAAAAAwMMmxixMzMzAjmxMjZbxMzMzMMjtxYZYmBAAMzYmZGgZstwyMALMziZA",
                 label="General",
-              },
-              {
-                export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGGLDgZwGAAAAAAAAYGGzYxYmZmZMMMzMzMzmtZwMzMjZbMzywMAAAzwMDAzYbBzAswMLzYA",
-                label="Arena (Tar Trap)",
               },
             },
             raid={
@@ -5874,18 +5863,6 @@ ClassCodexSource["icyveins"] = {
                 label="Mythic+",
               },
             },
-            pvp={
-              {
-                export="C4DAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZzmZGMDzAAAYAAAgZmZW2mZwCAALDzMjxilZmZMzMGzMzMWYGzYGAgBAAwMLAwYAwwwA",
-                honor={235711,1220739,415945},
-                label="3v3",
-              },
-              {
-                export="C4DAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZzmZGMDzAAAYAAAgZmZW2mZwCAALYmZMWsMzMzyMzYMzMzYhZMjZAAGAAAzsAAjBADDD",
-                honor={235711,352278,415945},
-                label="Blitz",
-              },
-            },
             raid={
               {
                 export="C4DAAAAAAAAAAAAAAAAAAAAAAYGGLzMzswMDamZGAAAGAAAYmZmllZmYBAAYmZmxmlZmZWmxYMzMYjZMzMDAwAAAMzsAAmBADzMD",
@@ -5926,6 +5903,12 @@ ClassCodexSource["icyveins"] = {
                 label="Best 3v3",
                 labels={"Best Battleground Blitz","Best"},
                 recommended=true,
+              },
+              {
+                export="C4DAAAAAAAAAAAAAAAAAAAAAAMstMzyMzMbYmBzMmBAAwAAmZGzyyyMAA2AAYBmZwmlZmZMjxMzMzMWYmZGzAAMAAADwMDMGAMMmB",
+                honor={235711,1220739,415945},
+                label="3v3",
+                labels={"Blitz"},
               },
             },
             raid={
@@ -6232,14 +6215,6 @@ ClassCodexSource["icyveins"] = {
                 label="Mythic+ (Greater Invisibility)",
               },
             },
-            pvp={
-              {
-                export="C8DAAAAAAAAAAAAAAAAAAAAAAMstMzyMzMb2MzgZYGAAAzsMjZmlZBAAAsYmxsNmZmxCAAAAAWMzMzAAADzMzwYmZZGYmBwYghZYA",
-                honor={410248,415945,1220739},
-                label="3v3",
-                labels={"Blitz"},
-              },
-            },
             raid={
               {
                 export="C8DAAAAAAAAAAAAAAAAAAAAAAYGGLzMzswMDZmZGAAAmZZGzMLzCAAAYxMDbzMzMjNAAAAAsZmxMDAAmZYmxMzMzCwMDIMGDmhxA",
@@ -6290,6 +6265,16 @@ ClassCodexSource["icyveins"] = {
                 label="Best Battleground Blitz",
                 labels={"Best"},
                 recommended=true,
+              },
+              {
+                export="C8DAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZDzMYGmBAAwAAmZGz2yyMAAbmZMbjZmZmFAAAAAsYmZGAAwMGzgxMzyMAmZgxMAzwA",
+                honor={410248,415945,1220739},
+                label="3v3",
+              },
+              {
+                export="C8DAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZzmZGMDzAAAYAAzMjZbZZGAgNzMmtZMmZWAAAAAwiZmZAAAzYMDGmZZGAzMwYMMMDDA",
+                honor={352278,415945,1220739},
+                label="Blitz",
               },
             },
             raid={
@@ -6595,7 +6580,11 @@ ClassCodexSource["icyveins"] = {
                 export="CAEAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZDzMYGmZmZmZWMzMjZMDAAAMzMzyyMjNAAYBAAAsBw2yYmZALzDYMzYBAAgZWAmhxMgBDA",
                 honor={415945,410248,1220739},
                 label="3v3",
-                labels={"Blitz"},
+              },
+              {
+                export="CAEAAAAAAAAAAAAAAAAAAAAAAMmtlZWmZmZzmZGMDzMzMzMLmZmxMmBAAAmZmZZZmxGAAsAAAA2AYbZMzMgl5BMmZsAAAwMLAzwYAGMA",
+                honor={415945,352278,1220739},
+                label="Blitz",
               },
             },
             raid={
@@ -8123,12 +8112,24 @@ ClassCodexSource["icyveins"] = {
                 "{384376}",
                 "{375576}",
                 {heroRequired={"Templar"},text="{429826}"},
-                {heroRequired={"Lightsmith"},text="{53600}"},
-                {spellRequired={1267215},text="{31935}"},
-                {spellRequired={1267215},text="{53600}"},
-                "{1241288}",
-                {spellRequired={1267215},text="{53600}"},
-                "{1241288}",
+                {heroRequired={"Lightsmith"},spellRequired={1277162},text="{53600}"},
+                {heroRequired={"Lightsmith"},spellExcluded={1277162},text="{53600}"},
+                {spellRequired={1277162},text="{1241288}"},
+                {spellRequired={1267215,1277162},text="{31935}"},
+                {spellExcluded={1277162},text="{1241288}"},
+                {spellExcluded={1277162},spellRequired={1267215},text="{53600}"},
+                {spellRequired={1267215,1277162},text="{53600}"},
+                {spellExcluded={1277162},text="{1241288}"},
+                {spellRequired={1277162},text="{1241288}"},
+                {spellExcluded={1277162},spellRequired={1267215},text="{31935}"},
+                {spellRequired={1267215,1277162},text="{31935}"},
+                {spellExcluded={1277162},spellRequired={1267215},text="{53600}"},
+                {spellRequired={1267215,1277162},text="{53600}"},
+                {spellExcluded={1277162},text="{1241288}"},
+                {spellExcluded={1277162},text="{1241288}"},
+                {spellRequired={1277162},text="{1241288}"},
+                {spellRequired={1277162},text="{1241288}"},
+                {spellRequired={1267215,1277162},text="{31935}"},
                 "{53600}",
                 {spellRequired={204019},text="{204019}"},
                 {spellExcluded={1267215},spellRequired={204019},text="{204019}"},
@@ -8170,10 +8171,18 @@ ClassCodexSource["icyveins"] = {
           lightsmith={
             mplus={
               {
-                export="CIEAAAAAAAAAAAAAAAAAAAAAAsZsMLjZMzMzMLbjxsMmlZMAAAAAAAAQTzMMjZGGzWbAYgBMD2GAAAAMzstt0yMjFLLYAwYGGDAmZAYmZAjF",
+                export="CIEAAAAAAAAAAAAAAAAAAAAAAsZsMLjZMzMzMLbjxsMmlZMAADAAAAAAaamhZMzwY2aDADMgZw2AAAAgZmltlWmZsYZBDAGzwYAwMDAmZAjF",
                 label="Mythic+",
+                labels={"Dungeon"},
                 recommended=true,
-                tags={"Beginner Friendly","Weekly Key"},
+                tags={"High Key","Weekly Key"},
+              },
+            },
+            raid={
+              {
+                export="CIEAAAAAAAAAAAAAAAAAAAAAAsNDzyYGzMzMz2yYMLzilZMAADAAAAAAaamhZMzwY2aDADMgZw2AAAAgZmltlWmZsYZDDAGzwYAwMDAmZAjF",
+                label="Single-Target",
+                recommended=true,
               },
             },
           },
@@ -8182,22 +8191,9 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CIEAAAAAAAAAAAAAAAAAAAAAAsZsMLjZMzMzMLbjxsMmlZMAAAAAAAAQTzMMjZGGzWbAYgBMD2GAAYmptZmlZAA2ssgBAjZYMAALzAmZGwYB",
                 label="Mythic+",
-                labels={"Delves","Dungeon","Leveling"},
+                labels={"Delves","Leveling"},
                 recommended=true,
-                tags={"Weekly Key","High Key"},
-              },
-              {
-                export="CIEAAAAAAAAAAAAAAAAAAAAAAsZYWGzYmZmZW2GjZZWmlZMAAAAAAAAQTzMMjZGGzWbAYgBMD2GAAYmptZmlZAA2ssgBAjZYMAALzAmZGwYB",
-                label="Mythic+ (High Key)",
-                recommended=true,
-                tags={"High Key"},
-              },
-            },
-            raid={
-              {
-                export="CIEAAAAAAAAAAAAAAAAAAAAAAsZmtZZmZMzMzMWGjxw2MGAAAAAAAAINGmxMzYMbtBgBMwMYbAAgZm2mZWmBAYjNMAGjZYMAALzAmZGwYB",
-                label="Single-Target",
-                recommended=true,
+                tags={"Beginner Friendly","Weekly Key"},
               },
             },
           },
@@ -9286,8 +9282,8 @@ ClassCodexSource["icyveins"] = {
                 },
                 {spellExcluded={1227280},text="Keep {34914} and {589} active at all times."},
                 "Maintain {335467} uptime without capping Insanity.",
-                {spellRequired={228264},text="Use short-cooldown Insanity generators (e.g., {1240401} or {8092})."},
-                {spellExcluded={228264},text="Use short-cooldown Insanity generators (e.g., {8092})."},
+                {spellRequired={228260},text="Use short-cooldown Insanity generators (e.g., {1240401} or {8092})."},
+                {spellExcluded={228260},text="Use short-cooldown Insanity generators (e.g., {8092})."},
                 {
                   heroRequired={"Voidweaver"},
                   text="Use long cooldowns (e.g., {263165}) when they will not cause you to lose short-cooldown use.",
@@ -9325,7 +9321,7 @@ ClassCodexSource["icyveins"] = {
                   text="Keep {34914} and {589} active. Use {1227280} if available when you need to refresh {34914}. Refresh these during the proper pandemic window (see below).",
                 },
                 {heroRequired={"Archon"},text="Cast {120644}."},
-                {spellRequired={228264},text="Cast {228264}."},
+                {spellRequired={228260},text="Cast {228260}."},
                 "Cast {10060}.",
                 "Sync any trinkets you have with your cooldowns (see trinket section).",
                 {heroRequired={"Voidweaver"},text="Cast {32379} if the target has an absorb shield for {451840}."},
@@ -9361,7 +9357,7 @@ ClassCodexSource["icyveins"] = {
                 {spellRequired={373427,392507,34433,373310},text="Cast {32379} if any pet is active or the target is below 35% health."},
                 {spellExcluded={392507},text="Cast {32379} if the target is below 20% health."},
                 {spellRequired={392507},text="Cast {32379} if the target is below 35% health."},
-                {spellRequired={228264},text="Cast {1240401}."},
+                {spellRequired={228260},text="Cast {1240401}."},
                 "Cast {15407}. Interrupt this for any other action as it becomes available.",
                 {
                   spellExcluded={34433},
@@ -9379,8 +9375,8 @@ ClassCodexSource["icyveins"] = {
                   text="Cast {1227280} to put up DoTs on targets once everything is grouped. Consider using both charges if the pack is big enough and you have them available.",
                 },
                 {heroRequired={"Archon"},text="Cast {120644} once all mobs are engaged in combat and within range."},
-                {spellRequired={1296580},text="Cast {1240401} to be able to cast {228264}."},
-                {spellRequired={228264},text="Cast {228264}."},
+                {spellRequired={1296580},text="Cast {1240401} to be able to cast {228260}."},
+                {spellRequired={228260},text="Cast {228260}."},
                 "Use your combat potion {item:241288|Potion of Recklessness} unless you want to save for an upcoming pack or boss.",
                 "Use {10060} and any stat-based racial abilities. Make sure to cast Power Infusion on an ally if using {373466}.",
                 {spellExcluded={1296580},text="Cast {1240401}."},
@@ -9422,17 +9418,17 @@ ClassCodexSource["icyveins"] = {
                   text="Keep {34914} and {589} active. Use {1227280} if available when you need to refresh {34914}. Refresh these during the proper pandemic window (see below).",
                 },
                 {heroRequired={"Archon"},text="Cast {120644}."},
-                {spellRequired={228264},text="Cast {228264}."},
+                {spellRequired={228260},text="Cast {228260}."},
                 "Cast {10060}.",
                 "Sync any trinkets you have with your cooldowns (see trinket section).",
                 {heroRequired={"Voidweaver"},text="Cast {32379} if the target has an absorb shield for {451840}."},
                 {
                   spellExcluded={373202},
-                  text="Maintain {335467} uptime without capping Insanity. Refresh it when it is about to expire, when you are closing to capping Insanity, or while in {228264} to keep the burst window active. Pool Insanity if Voidform will be available in 25 seconds or less.",
+                  text="Maintain {335467} uptime without capping Insanity. Refresh it when it is about to expire, when you are closing to capping Insanity, or while in {228260} to keep the burst window active. Pool Insanity if Voidform will be available in 25 seconds or less.",
                 },
                 {
                   spellRequired={373202},
-                  text="Maintain {335467} uptime without capping Insanity. Refresh it when it is about to expire, when you are closing to capping Insanity, {373202} is active, or while in {228264} to keep the burst window active. Pool Insanity if Voidform will be available in 25 seconds or less.",
+                  text="Maintain {335467} uptime without capping Insanity. Refresh it when it is about to expire, when you are closing to capping Insanity, {373202} is active, or while in {228260} to keep the burst window active. Pool Insanity if Voidform will be available in 25 seconds or less.",
                 },
                 {heroRequired={"Voidweaver"},text="Cast {450405} while available if {335467} is active or {447444} is about to expire."},
                 {spellRequired={1227280},text="Cast {1227280} if you are about to cap on charges or {34914} is not active."},
@@ -9451,7 +9447,7 @@ ClassCodexSource["icyveins"] = {
                 {spellRequired={373310,34433,373427,392507},text="Cast {32379} if any pet is active or the target is below 35% health."},
                 {spellExcluded={392507},text="Cast {32379} if the target is below 20% health."},
                 {spellRequired={392507},text="Cast {32379} if the target is below 35% health."},
-                {spellRequired={228264},text="Cast {1240401}."},
+                {spellRequired={228260},text="Cast {1240401}."},
                 "Cast {15407}. Interrupt this for any other action as it becomes available.",
                 {spellExcluded={34433},text="Cast {32379} for movement if you have nothing else to press."},
               },
@@ -9465,7 +9461,7 @@ ClassCodexSource["icyveins"] = {
                 {spellRequired={1279350},text="Cast {589}."},
                 {heroRequired={"Archon"},text="Cast {120644}."},
                 {spellRequired={1296580},text="Cast {1240401}."},
-                {spellRequired={228264},text="Cast {228264}."},
+                {spellRequired={228260},text="Cast {228260}."},
                 "Use any on-use Trinkets you have equipped.",
                 "Use {item:241288|Potion of Recklessness}.",
                 "Cast {10060} and any stat-based racial abilities. Make sure to cast Power Infusion on an ally if using {373466}.",
@@ -11361,7 +11357,7 @@ ClassCodexSource["icyveins"] = {
               },
               embellishments={240167,273060},
             },
-            pvp={crafts={},embellishments={240167}},
+            pvp={crafts={},embellishments={244603}},
           },
         },
         enchants={
@@ -11376,7 +11372,7 @@ ClassCodexSource["icyveins"] = {
               ["Main Hand"]={{id=244029}},
               Shoulders={{id=244021}},
             },
-            pvp={Chest={{id=244002}},Feet={{id=244008}},Legs={{id=240155}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=244002}},Feet={{id=244008}},Legs={{id=244603}},Shoulders={{id=243962}}},
           },
         },
         gear={
@@ -13638,7 +13634,7 @@ ClassCodexSource["icyveins"] = {
       },
     },
   },
-  meta={contentHash="a8391ca9eaedc6ef",generatedAt="2026-09-17T12:39:54.374Z",schemaVersion=1,source="icyveins"},
+  meta={contentHash="2e7eb7b127732da5",generatedAt="2026-09-23T05:20:17.909Z",schemaVersion=1,source="icyveins"},
   reference={
     heroNames={
       ["aldrachi-reaver"]="Aldrachi Reaver",

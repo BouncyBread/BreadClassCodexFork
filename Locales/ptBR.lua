@@ -147,6 +147,11 @@ L["settings.label.gear_source"] = "Mostrar a fonte do item"
 L["settings.hint.gear_source_no_icons"] = "Aparece nas visões de tabela e lista."
 L["settings.tooltip.gear_source"] =
     "Mostra de onde vem cada item Melhor Equipamento, como o local de queda ou uma fabricação. Aparece sob o nome do item na visão de lista e como coluna na visão de tabela. A visão de ícones mantém a informação na dica do item. Cada painel lembra essa escolha separadamente. Somente com dados do Icy Veins."
+L["settings.label.gear_ticks"] = "Mostrar marcas de trilha de aprimoramento"
+L["settings.hint.gear_ticks"] =
+    "As marcas mostram a trilha de aprimoramento do item equipado em cada compartimento de Melhor Equipamento. Verde significa que corresponde à trilha recomendada. Amarelo significa que está abaixo."
+L["settings.tooltip.gear_ticks"] =
+    "Marca cada linha de Melhor Equipamento com a trilha de aprimoramento do item equipado. Uma marca verde significa que corresponde à trilha recomendada. Uma marca amarela significa que o item de Melhor Equipamento está equipado, mas abaixo da trilha recomendada. Cada painel lembra essa escolha separadamente."
 L["settings.hint.gear_source_no_icons"] = "Aparece nas visões de tabela e lista."
 L["settings.label.minimap_button"] = "Botão do Minimapa"
 L["settings.label.login_message"] = "Mensagem de Login"

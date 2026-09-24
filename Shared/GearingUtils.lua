@@ -1280,4 +1280,143 @@ function ns.IsEnchantApplied(entry, slot)
     return ns.EquippedEnchantIdForSlot(slot) == id
 end
 
+-- Upgrade-track ticks. The list pins each pick to an exact bonus set, so
+-- its item level defines "done"; green means an owned copy reaches that
+-- item level, yellow means the owned copy is below it. Equipped wins over
+-- bag and bank copies.
+
+local TRACK_COLORS = {
+    perfect = { 0.4, 1.0, 0.4 },
+    below = { 1.0, 0.93, 0.0 },
+}
+
+-- Fingers and trinkets tick on either slot of the pair.
+local EQUIP_SLOT_GROUPS = {
+    ["Finger 1"] = { 11, 12 },
+    ["Finger 2"] = { 11, 12 },
+    ["Trinket 1"] = { 13, 14 },
+    ["Trinket 2"] = { 13, 14 },
+}
+
+local BagNumSlots = C_Container and C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
+local BagItemLink = C_Container and C_Container.GetContainerItemLink or _G.GetContainerItemLink
+
+-- Player bags, the character bank tabs, and the account (warband) bank
+-- tabs. Missing container ids just report zero slots.
+local STORED_CONTAINERS = {}
+do
+    local ei = Enum.BagIndex
+    local bagsMax = (ei and ei.ReagentBag) or 5
+    for bag = 0, bagsMax do
+        STORED_CONTAINERS[#STORED_CONTAINERS + 1] = { bag, "bags" }
+    end
+    for bag = (ei and ei.CharacterBankTab_1) or 6, (ei and ei.CharacterBankTab_6) or 11 do
+        STORED_CONTAINERS[#STORED_CONTAINERS + 1] = { bag, "bank" }
+    end
+    for bag = (ei and ei.AccountBankTab_1) or 12, (ei and ei.AccountBankTab_5) or 16 do
+        STORED_CONTAINERS[#STORED_CONTAINERS + 1] = { bag, "bank" }
+    end
+    -- Legacy negative container ids; invalid ones just report zero slots.
+    for _, bag in ipairs({ -3, -2, -1 }) do
+        STORED_CONTAINERS[#STORED_CONTAINERS + 1] = { bag, "bank" }
+    end
+end
+
+-- Best copy across bags and bank together, so a maxed bank copy is not
+-- masked by a low bag copy or the other way around. BoA versions of a
+-- pick ship under a different item id, so links also match by the name
+-- embedded in them; the stored variant's data is usually uncached, so
+-- GetItemInfo on its id alone would come up empty.
+local function FindStoredIlvl(itemId, name)
+    if not BagNumSlots or not BagItemLink then return nil end
+    local bestIlvl
+    for _, c in ipairs(STORED_CONTAINERS) do
+        local okSlots, numSlots = pcall(BagNumSlots, c[1])
+        if okSlots and numSlots and numSlots > 0 then
+            for slot = 1, numSlots do
+                local okLink, link = pcall(BagItemLink, c[1], slot)
+                if okLink and link then
+                    local fields = parseLinkFields(link)
+                    local storedId = fields and tonumber(fields[1])
+                    local matched = storedId == itemId
+                    if not matched and name then matched = link:match("|h%[(.-)%]|h") == name end
+                    if matched then
+                        local ilvl = GetDetailedItemLevelInfo(link)
+                        if ilvl and (not bestIlvl or ilvl > bestIlvl) then bestIlvl = ilvl end
+                    end
+                end
+            end
+        end
+    end
+    return bestIlvl
+end
+
+function ns.GearTickForEntry(slot, itemId, bonusIDs, sourceItemId)
+    -- A pick without bonuses pins no version, so there is nothing to tick.
+    if not itemId or not bonusIDs or #bonusIDs == 0 or not GetDetailedItemLevelInfo then return nil end
+    local invSlots = EQUIP_SLOT_GROUPS[slot]
+    if not invSlots then
+        local inv = SLOT_TO_INV[slot]
+        invSlots = inv and { inv } or nil
+    end
+
+    -- Uncached items resolve to a base-item link without the pick's
+    -- bonuses; bail so a later render compares against the real target.
+    local name = GetItemInfo(itemId)
+    if not name then
+        C_Item.RequestLoadItemDataByID(itemId)
+        return nil
+    end
+
+    local function LinkMatches(link, fields)
+        local storedId = fields and tonumber(fields[1])
+        if storedId == itemId then return true end
+        -- BoA versions of a pick use a different id; the name rides the
+        -- link itself, so no cached item data is needed to spot one.
+        if name and link:match("|h%[(.-)%]|h") == name then return true end
+        return false
+    end
+
+    local equippedLink
+    for _, invSlot in ipairs(invSlots or {}) do
+        local link = GetInventoryItemLink("player", invSlot)
+        local fields = link and parseLinkFields(link)
+        if fields and LinkMatches(link, fields) then
+            equippedLink = link
+            break
+        end
+    end
+
+    local targetIlvl = GetDetailedItemLevelInfo(ns.BuildItemLink(itemId, bonusIDs, sourceItemId))
+    if not targetIlvl then return nil end
+
+    local ownedIlvl
+    if equippedLink then ownedIlvl = GetDetailedItemLevelInfo(equippedLink) end
+    local count = GetItemCount(itemId, true) or 0
+    local storedCache = ClassCodexCharDB and ClassCodexCharDB.tickStoredIlvl
+    if count == 0 and storedCache then
+        -- The last copy is gone; drop the remembered stored item level.
+        storedCache[itemId] = nil
+    end
+    if not ownedIlvl and count > 0 then
+        ownedIlvl = FindStoredIlvl(itemId, name)
+        if ownedIlvl and storedCache then
+            -- Bank links are only readable near a banker; remember what the
+            -- scan saw so stored copies keep their tick away from it.
+            storedCache[itemId] = ownedIlvl
+        end
+        if not ownedIlvl and storedCache then ownedIlvl = storedCache[itemId] end
+    end
+    if not ownedIlvl then
+        if count > 0 then
+            -- Owned somewhere unreadable (bank links away from a banker,
+            -- BoA variants under another id): the copy is not confirmed at
+            -- the listed level, so it shows yellow.
+            return TRACK_COLORS.below
+        end
+        return nil
+    end
+    return ownedIlvl >= targetIlvl and TRACK_COLORS.perfect or TRACK_COLORS.below
+end
+
 BuildBisLookup()

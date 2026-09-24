@@ -143,6 +143,11 @@ L["settings.label.gear_source"] = "显示物品来源"
 L["settings.hint.gear_source_no_icons"] = "显示在表格和列表视图中。"
 L["settings.tooltip.gear_source"] =
     "显示每件最佳装备的来源，例如掉落地点或制造方式。列表视图中显示在物品名称下方，表格视图中作为单独一列。图标视图仍会在物品提示信息中显示。每个面板单独记住此选择。仅限 Icy Veins 数据。"
+L["settings.label.gear_ticks"] = "显示升级轨迹标记"
+L["settings.hint.gear_ticks"] =
+    "在每个最佳装备栏位处显示你已装备物品的升级轨迹。绿色表示与推荐轨迹一致。黄色表示低于推荐轨迹。"
+L["settings.tooltip.gear_ticks"] =
+    "在每个最佳装备行旁标记你已装备物品的升级轨迹。绿色标记表示与推荐轨迹一致。黄色标记表示已装备最佳装备物品但轨迹低于推荐轨迹。每个面板单独记住此选择。"
 L["settings.hint.gear_source_no_icons"] = "显示在表格和列表视图中。"
 L["settings.label.minimap_button"] = "小地图按钮"
 L["settings.label.login_message"] = "登录消息"
