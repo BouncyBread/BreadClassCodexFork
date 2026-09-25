@@ -315,7 +315,7 @@ ClassCodexSource["wowhead"] = {
         talents = {
           ["rider-of-the-apocalypse"] = {
             ["rider-st"] = {
-              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMDDz2MzMTzmZmZMjBAAAAAAAgZGmZAwyMmZ2mZGzMDYzsYYIDMbM0YBAzAAzMjZAmZmxYA", label = "Single Target", recommended = "Best" },
+              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMDDz2MzMTzmZmZMjBAAAAAAAgZGmZAwyMmZ2mZGzMDYzsYYIDMbM0YBAzAAzMjZAmZmxYA", label = "Single Target" },
             },
             ["rider-m-delves"] = {
               { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAYmhZMDDz2MzMTzmxMzMjBAAAAAAAgZGzYAwyMmZ2MzYMDYzsZYIDMbM0YBDYGAGzMjZAmZmxYA", label = "M+/Delves/Cleave" },
@@ -326,10 +326,10 @@ ClassCodexSource["wowhead"] = {
           },
           sanlayn = {
             ["san-st"] = {
-              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMDDz2MzMTjZmxYGDAAAAAAAAzMMGAsMjZmtZmxMzYgBmxiGLbA2mYDAzAwYmZMDmZwMzYA", label = "Single Target/Cleave" },
+              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMDDz2MzMTjZmxYGDAAAAAAAAzDMMGAsMDzsZmxMzYgBmxiGLbA2mYDAzAYmZmZMDmZwMzYA", label = "Single Target/Cleave", recommended = "Best" },
             },
             ["san-aoe"] = {
-              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAYmhZMGDz2MzMTzyMzYMjBAAAAAAAgZGDDAWmxMzmZGzMjBGYGbassAYbiNMgZAYMzMmBzMYMjB", label = "M+/Delves", recommended = "Best" },
+              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAYmhZMGDz2MzMTjZmxMzYAAAAAAAAYegxwAglZwsZmxMzYgBmxmGLLA2mYDDYGAzMzMjZwMDGzYA", label = "M+/Delves", recommended = "Best" },
             },
           },
         },
@@ -5042,5 +5042,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-24", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-09-25", schemaVersion = 1, source = "wowhead" },
 }
