@@ -315,7 +315,7 @@ ClassCodexSource["wowhead"] = {
         talents = {
           ["rider-of-the-apocalypse"] = {
             ["rider-st"] = {
-              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMDDz2MzMTzmZmZMjBAAAAAAAgZGmZAwyMmZ2mZGzMDYzsYYIDMbM0YBAzAAzMjZAmZmxYA", label = "Single Target", recommended = "Best" },
+              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMDDz2MzMTzmZmZMjBAAAAAAAgZGmZAwyMmZ2mZGzMDYzsYYIDMbM0YBAzAAzMjZAmZmxYA", label = "Single Target" },
             },
             ["rider-m-delves"] = {
               { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAYmhZMDDz2MzMTzmxMzMjBAAAAAAAgZGzYAwyMmZ2MzYMDYzsZYIDMbM0YBDYGAGzMjZAmZmxYA", label = "M+/Delves/Cleave" },
@@ -326,10 +326,10 @@ ClassCodexSource["wowhead"] = {
           },
           sanlayn = {
             ["san-st"] = {
-              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMDDz2MzMTjZmxYGDAAAAAAAAzMMGAsMjZmtZmxMzYgBmxiGLbA2mYDAzAwYmZMDmZwMzYA", label = "Single Target/Cleave" },
+              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMDDz2MzMTjZmxYGDAAAAAAAAzDMMGAsMDzsZmxMzYgBmxiGLbA2mYDAzAYmZmZMDmZwMzYA", label = "Single Target/Cleave", recommended = "Best" },
             },
             ["san-aoe"] = {
-              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAYmhZMGDz2MzMTzyMzYMjBAAAAAAAgZGDDAWmxMzmZGzMjBGYGbassAYbiNMgZAYMzMmBzMYMjB", label = "M+/Delves", recommended = "Best" },
+              { export = "CwPAAAAAAAAAAAAAAAAAAAAAAAYmhZMGDz2MzMTjZmxMzYAAAAAAAAYegxwAglZwsZmxMzYgBmxmGLLA2mYDDYGAzMzMjZwMDGzYA", label = "M+/Delves", recommended = "Best" },
             },
           },
         },
@@ -536,7 +536,7 @@ ClassCodexSource["wowhead"] = {
         talents = {
           ["fel-scarred"] = {
             raid = {
-              { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYmZGzMzmxMzMmZmMmZAAAAAAAzyDMmtZYmBzMWmZMDzMGzyALziZMMbaaMzMG2AAAAAAAAYmBDAAAAD", label = "Raid", recommended = "Best" },
+              { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYmZGzMzmxMzMmZmMmZAAAAAAAzyDMmtZYmBzMWmZMDzMGzyALziZMMbaaMzMG2AAAAAAAAYmBDAAAAD", label = "Raid" },
             },
             mplus = {
               { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYmZGzMz2MmZmxYmMmZAAAAAAAzixsNDzMwMWmZmZYmBzyALzmZMMLaaMzMmxGAAAwAAAAYmBDAAAAD", label = "Mythic+", recommended = "Best" },
@@ -547,13 +547,13 @@ ClassCodexSource["wowhead"] = {
           },
           ["aldrachi-reaver"] = {
             raid = {
-              { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYgZmZ2MmZmxMzkxMDAAAAAAYWegxsNDzMz2MzYZmxMWmZYmlZ2mBDjlNmkxMjhFAAAAAAAwMDwAAAAwA", label = "Raid" },
+              { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYgZmZ2MmZmxMzkxMDAAAAAAYWegxsNDzMz2MzYZmxMWmZYmlZ2mBDjlNmkxMjhFAAAAAAAwMDwAAAAwA", label = "Raid", recommended = "Best" },
             },
             mplus = {
-              { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYGMzMz2MmZmxYmMmZAAAAAAAzixsNDzMz2MzYZmxMMzwMLzsNDGGbbMJjZGzYBAAAAAAAMzAMAAAAM", label = "Mythic+" },
+              { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYGMzMz2MmZmxYmMmZAAAAAAAzixsNDzMz2MzYZmxMWmZYsMz2MYYstxkMmZMjFAAAAAAAwMDwAAAAwA", label = "Mythic+" },
             },
             delves = {
-              { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYGMzMz2MmZmxYmMmZAAAAAAAzixsNDzMz2MzYZmxMMzwMLzsNDGGbbMJjZGzYBAAAAAAAMzAMAAAAM", label = "Delves" },
+              { export = "CEkAAAAAAAAAAAAAAAAAAAAAAYGMzMz2MmZmxYmMmZAAAAAAAzixsNDzMz2MzYZmxMWmZYsMz2MYYstxkMmZMjFAAAAAAAwMDwAAAAwA", label = "Delves" },
             },
           },
         },
@@ -2654,10 +2654,10 @@ ClassCodexSource["wowhead"] = {
               { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYM2GGjlZmZbGAAAAAAAAAAAglhRzYGGGwMGmZmZY2GmhZZmAAWMz2MzYMzMAAWMzysMmgAAMGAzAwyAxMzs5BA", label = "Raid - Cleave (Advanced)", recommended = "Best" },
             },
             mplus = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMgxYZmZ2mBAAAAAAAAAAAYZYEmhhBMjhZmZGmthZYWmJAgFmNmxMzMDAgFzsMLjJIAgZMAmBYsMYiZmZzA", label = "Mythic+ (High Keys)", recommended = "Best" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMgxYZmx2MAAAAAAAAAAAALDzEmhhBMjhZmZGmthZYWmJAgFmtxMmZmZAAsYmlZZMBBAMjBwMAjlBiZmZzA", label = "Mythic+ (High Keys)", recommended = "Best" },
             },
             delves = {
-              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMgxYZmZ2mBAAAAAAAAAAAYZYEmhhBMjhZmZGmthZYWmJAgFmNmxMzMDAgFzsMLjJIAgZMAmBYsMYiZmZzA", label = "Delves", recommended = "Recommended" },
+              { export = "C0QAAAAAAAAAAAAAAAAAAAAAAMzYMgxYZmx2MAAAAAAAAAAAALDzEmhhBMjhZmZGmthZYWmJAgFmtxMmZmZAAsYmlZZMBBAMjBwMAjlBiZmZzA", label = "Delves", recommended = "Recommended" },
             },
           },
         },
@@ -3467,15 +3467,15 @@ ClassCodexSource["wowhead"] = {
             all = {
               { itemId = 270175, tier = "S", source = "Ula'tek", contexts = { "raid" } },
               { itemId = 270168, tier = "S", source = "Ula'tek", contexts = { "raid" } },
-              { itemId = 193701, tier = "A", source = "Echo of Doragosa", contexts = { "mplus" } },
               { itemId = 270165, tier = "A", source = "Breath of Ula'tek", contexts = { "raid" } },
               { itemId = 270173, tier = "A", source = "Hex Lord Malacrass", contexts = { "raid" } },
               { itemId = 270164, tier = "A", source = "Mor'zahi", contexts = { "raid" } },
               { itemId = 159617, tier = "B", source = "The Golden Serpent", contexts = { "mplus" } },
               { itemId = 250215, tier = "B", source = "Zaen Bladesorrow", contexts = { "mplus" } },
-              { itemId = 250228, tier = "B", source = "Xathuux the Annihilator", contexts = { "mplus" } },
               { itemId = 273796, tier = "B", source = "Rav'i", contexts = { "mplus" } },
               { itemId = 250225, tier = "B", source = "Taz'Rah", contexts = { "mplus" } },
+              { itemId = 250228, tier = "B", source = "Xathuux the Annihilator", contexts = { "mplus" } },
+              { itemId = 193701, tier = "B", source = "Echo of Doragosa", contexts = { "mplus" } },
               { itemId = 270166, tier = "B", source = "Shrouded Venom", contexts = { "raid" } },
               { itemId = 250259, tier = "B", source = "Ziekket", contexts = { "mplus" } },
               { itemId = 193757, tier = "C", source = "Melidrussa Chillworn", contexts = { "mplus" } },
@@ -5042,5 +5042,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-23", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-09-24", schemaVersion = 1, source = "wowhead" },
 }
