@@ -3613,6 +3613,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 270164, tier = "S", source = "Mor'zahi", contexts = { "raid" } },
               { itemId = 270165, tier = "S", source = "Breath of Ula'tek", contexts = { "raid" } },
               { itemId = 159617, tier = "A", source = "The Golden Serpent", contexts = { "mplus" } },
+              { itemId = 270166, tier = "A", source = "Shrouded Venom", contexts = { "raid" } },
               { itemId = 273796, tier = "A", source = "Rav'i", contexts = { "mplus" } },
               { itemId = 250225, tier = "A", source = "Taz'Rah", contexts = { "mplus" } },
               { itemId = 250214, tier = "A", source = "Lightwarden Ruia", contexts = { "mplus" } },
@@ -3622,7 +3623,6 @@ ClassCodexSource["wowhead"] = {
               { itemId = 158374, tier = "B", source = "Galvazzt", contexts = { "mplus" } },
               { itemId = 193757, tier = "C", source = "Melidrussa Chillworn", contexts = { "mplus" } },
               { itemId = 250245, tier = "C", source = "Atroxus", contexts = { "mplus" } },
-              { itemId = 270166, tier = "C", source = "Shrouded Venom", contexts = { "raid" } },
               { itemId = 250259, tier = "D", source = "Ziekket", contexts = { "mplus" } },
               { itemId = 270168, tier = "D", source = "Ula'tek", contexts = { "raid" } },
               { itemId = 250462, tier = "D", source = "Cragpine", contexts = { "delves" } },
@@ -5042,5 +5042,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-09-30", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-10-01", schemaVersion = 1, source = "wowhead" },
 }
