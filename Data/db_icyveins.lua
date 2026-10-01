@@ -705,7 +705,7 @@ ClassCodexSource["icyveins"] = {
               {bonusIDs={13708,12854},itemId=251234,slot="Neck",source="Voidscar Arena"},
               {catalyst={bonusIDs={12854},itemId=251138},itemId=271472,slot="Shoulders",source="Catalyst from Murder Row"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=239656,slot="Back",source="Crafted by Tailoring"},
-              {catalyst={bonusIDs={12854},itemId=193753},itemId=271477,slot="Chest",source="Catalyst from"},
+              {catalyst={bonusIDs={12854},itemId=193753},itemId=271477,slot="Chest",source="Catalyst from Ruby Life Pools"},
               {bonusIDs={13751,12497,13836,12384,8791},itemId=237834,slot="Wrist",source="Crafted by Blacksmithing"},
               {catalyst={bonusIDs={12854},itemId=159413},itemId=271475,slot="Hands",source="Catalyst from King's Rest"},
               {bonusIDs={12854},itemId=159418,slot="Waist",source="King's Rest"},
@@ -901,16 +901,15 @@ ClassCodexSource["icyveins"] = {
               {
                 export="CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMzYY2mZmZa2MzMjZAAAAAAAAgZGGDAWmxMz2MzYmZAbmFDDMwsxQjFAMDAjZmxMAzMzYMA",
                 label="Raid",
-                recommended=true,
               },
             },
           },
           sanlayn={
             mplus={
               {
-                export="CwPAAAAAAAAAAAAAAAAAAAAAAAYmhZMzMDz2MzMTzmZGjZAAAAAAAAg5BGDDAWmhZ2MzYMjBGYGLassAYbwGGwMAmZmZGzgZGMjxA",
+                export="CwPAAAAAAAAAAAAAAAAAAAAAAAYmhZMGDz2MzMTzyMzYMjBAAAAAAAg5BGDDAWmhZ2MzYMjBGYGbassAYbwGGwMAmZmZGzgZGMmxA",
                 label="Mythic+ Blightfall",
-                labels={"Blightfall"},
+                recommended=true,
               },
               {
                 export="CwPAAAAAAAAAAAAAAAAAAAAAAAYmhZMzMDz2MzMTzmZGjZAAAAAAAAgZGzYAwyMmZ2MzYMjBGYGbassAYbwGGwMAMmZGzgZGMjxA",
@@ -919,11 +918,16 @@ ClassCodexSource["icyveins"] = {
                 recommended=true,
                 tags={"High Key","Weekly Key"},
               },
+              {
+                export="CwPAAAAAAAAAAAAAAAAAAAAAAAYmhZMzMDz2MzMTzmZGjZAAAAAAAAg5BGDDAWmhZ2MzYMjBGYGLassAYbwGGwMAmZmZGzgZGMjxA",
+                label="Blightfall",
+              },
             },
             raid={
               {
-                export="CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMzYY2mZmZa2MzMjZAAAAAAAAgZGGDAWmxMz2MzYmZMwAzYRjlFAbD2AwMAMmZGzgZGMjxA",
+                export="CwPAAAAAAAAAAAAAAAAAAAAAAAwMjZMDDz2MzMTjZmxYGDAAAAAAAAzDMMGAsMDzsZmxMzYgBmxiGLbA2GsBgZAMzMzMmBzMYmZMA",
                 label="Raid",
+                recommended=true,
               },
             },
           },
@@ -8203,6 +8207,7 @@ ClassCodexSource["icyveins"] = {
             all={
               {bonusIDs={4786,13848},itemId=270173,tier="S"},
               {bonusIDs={4786,12854},itemId=270175,tier="S"},
+              {itemId=270168,tier="A"},
               {itemId=270164,tier="A"},
               {bonusIDs={4786,12854},itemId=250259,tier="A"},
               {itemId=270602,tier="B"},
@@ -13634,7 +13639,7 @@ ClassCodexSource["icyveins"] = {
       },
     },
   },
-  meta={contentHash="2e7eb7b127732da5",generatedAt="2026-09-23T05:20:17.909Z",schemaVersion=1,source="icyveins"},
+  meta={contentHash="577101827c9c7d69",generatedAt="2026-09-24T07:48:28.095Z",schemaVersion=1,source="icyveins"},
   reference={
     heroNames={
       ["aldrachi-reaver"]="Aldrachi Reaver",
