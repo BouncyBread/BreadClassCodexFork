@@ -2162,6 +2162,7 @@ local cachedRanksHero = nil
 local cachedRanksCtx = nil
 local cachedRanksVariant = nil
 local cachedBreakpoints = nil
+local cachedMaxTier = nil
 
 --- Resets the item-tooltip rank badges' resolution (hero/variant selection
 --- changed) — the badges re-resolve on the next tooltip.
@@ -3724,6 +3725,7 @@ local function GetCachedRanks()
             cachedRanks[stat] = i
         end
     end
+    cachedMaxTier = #tiers
     -- Breakpoints derive from the same priority the badges ranked (the context
     -- it actually resolved through — a variant's, when one is active).
     if ns.GetStatBreakpoints then
@@ -3827,7 +3829,10 @@ local function OnTooltipItem(tooltip, tooltipData)
                             -- Breakpoint stats ("Haste to 22%", "Haste (until
                             -- 1800 rating)") rank at the qualified tier until
                             -- the player actually reaches the threshold, then
-                            -- fall back to their bare tier (if any).
+                            -- fall back to their bare tier (if any). A stat
+                            -- with no bare tier drops to after the last tier
+                            -- at/above the threshold - its ranked slot has
+                            -- expired.
                             local bp = cachedBreakpoints and cachedBreakpoints[englishStat]
                             if bp then
                                 local current
@@ -3836,7 +3841,15 @@ local function OnTooltipItem(tooltip, tooltipData)
                                 else
                                     current = ns.GetPlayerStatPercent and ns.GetPlayerStatPercent(bp.statKey)
                                 end
-                                if current and current < bp.value then rank = bp.tier end
+                                if current and current < bp.value then
+                                    rank = bp.tier
+                                elseif not rank then
+                                    -- At/above the threshold with no bare tier
+                                    -- in the priority: the stat's ranked slot
+                                    -- expired, so it drops to after the last
+                                    -- tier, like a bare trailing tier would.
+                                    rank = (cachedMaxTier or 0) + 1
+                                end
                             end
                             if rank then
                                 local color = RANK_COLORS[rank]

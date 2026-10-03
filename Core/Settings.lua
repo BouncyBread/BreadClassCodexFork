@@ -379,6 +379,9 @@ function ns.RegisterSettings()
         panels.header(L["settings.header.tab_order"])
         panels.button(L["settings.label.reorder_tabs"], L["settings.value.reorder"], function()
             if ns.SetReorderMode then ns.SetReorderMode(true) end
+            -- HideUIPanel and ToggleCharacter are secure-only; in combat they
+            -- raise the blocked-action popup, so skip the panel handoff.
+            if InCombatLockdown() then return end
             if SettingsPanel and SettingsPanel:IsShown() then HideUIPanel(SettingsPanel) end
             if not (ns.isFloating and ns.isFloating()) and CharacterFrame and not CharacterFrame:IsShown() then
                 ToggleCharacter("PaperDollFrame")
