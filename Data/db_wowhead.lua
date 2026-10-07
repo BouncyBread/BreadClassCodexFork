@@ -3737,7 +3737,7 @@ ClassCodexSource["wowhead"] = {
               { itemId = 268253, slot = "Cloak", source = "The Coiled Altar" },
               { itemId = 271513, slot = "Chest", source = "Tier Set - Nek'zali the Soulcoiler" },
               { itemId = 244576, slot = "Wrist", source = "Crafting/Misc" },
-              { itemId = 271511, slot = "Gloves", source = "Tier Set - Sszorak" },
+              { itemId = 271511, slot = "Gloves", source = "Tier Set - Temple of Sethraliss" },
               { itemId = 268256, slot = "Belt", source = "The Coiled Altar" },
               { itemId = 271509, slot = "Legs", source = "The Coiled Altar" },
               { itemId = 159304, slot = "Boots", source = "King's Rest" },
@@ -3797,10 +3797,10 @@ ClassCodexSource["wowhead"] = {
           },
           trickster = {
             raid = {
-              { export = "CUQAAAAAAAAAAAAAAAAAAAAAAAgx2MAAAAAwsMGLTMbbjxMDDzMzMzw8AbzYGbbzMzMzMjBjZ2GAAAAGMGwY2MMwAziWoFbYGwMDmxA", label = "Raid" },
+              { export = "CUQAAAAAAAAAAAAAAAAAAAAAAAgx2MAAAAAwsMGLTMbLjxMDDzMzMzw8AbzYGbbzMzMzMjBjZ2GAAAAGMGwY2MMwAziWoFbYGwMDmxA", label = "Raid" },
             },
             mplus = {
-              { export = "CUQAAAAAAAAAAAAAAAAAAAAAAAgx2MAAAAAwsMGLTMbLjxMDDzMzMzw8AbzYGbbzMzMzMjBjZ2GAAAAGMGwY2MMwAziWoFbYGwMDmxA", label = "Mythic+" },
+              { export = "CUQAAAAAAAAAAAAAAAAAAAAAAAgx2MAAAAAwsMGLTMbLjxMDDzMzMzw8AbzYGbbzMzMzMjBjZ2GAAAAGMGwYWMMwAziWoFbYGwMDmxA", label = "Mythic+" },
             },
             delves = {
               { export = "CUQAAAAAAAAAAAAAAAAAAAAAAAgx2MAAAAAwsMGLTMbLjxMDDzMzMzw8AbzYGbbzMzMzMjBjZ2GAAAAGMGwY2MMwAziWoFbYGwMDmxA", label = "Delves" },
@@ -5042,5 +5042,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-10-02", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-10-07", schemaVersion = 1, source = "wowhead" },
 }
