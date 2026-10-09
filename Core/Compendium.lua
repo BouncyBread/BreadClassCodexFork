@@ -219,7 +219,13 @@ local function RequestAllGearItems(gearData)
     end
     if gearData.consumables then
         for _, key in ipairs(CONSUMABLE_ORDER) do
-            if gearData.consumables[key] then RequestItemData(gearData.consumables[key].itemId) end
+            local c = gearData.consumables[key]
+            if c then
+                RequestItemData(c.itemId)
+                for _, id in ipairs(c.alts or {}) do
+                    RequestItemData(id)
+                end
+            end
         end
     end
     if gearData.trinkets then
@@ -542,6 +548,15 @@ local function InitFrame()
         ns.Sections.Stats.InitCompendiumStatTargets({ parent = UI.scrollChild })
     UI.statTargetsSection:Hide()
 
+    UI.pvpEmpty = ns.Sections.PvpEmpty.New({
+        parent = UI.scrollChild,
+        onSwitch = function(source)
+            compSource = source
+            SaveCompendiumState()
+            ns:UpdateCompendium()
+        end,
+    })
+
     UI.omniumSection, UI.omniumHeader, UI.omniumContent = ns.Sections.Omnium.InitCompendium({
         parent = UI.scrollChild,
         headerFactory = CreateSectionHeader,
@@ -795,10 +810,13 @@ function ns:UpdateCompendium()
     if UI.statTargetsSection then UI.statTargetsSection:Hide() end
     if UI.omniumSection then UI.omniumSection:Hide() end
     UI.emptyText:Hide()
+    UI.pvpNoGuide = false
+    if UI.pvpEmpty then UI.pvpEmpty:Render({ shown = false }) end
 
     if UI.enhancementsSourceDropdown then UI.enhancementsSourceDropdown:Hide() end
 
     if not selectedClass or not selectedSpec then
+        UI.emptyText:SetText(L["empty.select_class_spec"])
         UI.emptyText:Show()
         ns:LayoutCompendium()
         return
@@ -836,6 +854,19 @@ function ns:UpdateCompendium()
 
     RefreshContextBanner()
 
+    -- PvP on a source with no PvP guide for the spec (the Icy Veins tank
+    -- specs): the PvP tabs show the same empty state as the docked panel.
+    UI.pvpNoGuide = compContent == "pvp"
+            and ns.HasPvpGuide
+            and not ns.HasPvpGuide(compSource, selectedClass, selectedSpec)
+        or false
+    UI.pvpEmptyHeight = UI.pvpEmpty:Render({
+        shown = UI.pvpNoGuide,
+        source = compSource,
+        class = selectedClass,
+        spec = selectedSpec,
+    })
+
     local heroTalent = selectedHero or "All"
     self:RenderAllCompendiumSections(specData, heroTalent)
 
@@ -862,6 +893,14 @@ function ns:UpdateCompendiumRotation(specData, heroTalent)
     for _, c in ipairs(GetRotationContextOptions(specData, heroTalent)) do
         local isPvp = type(c) == "string" and c:lower():find("pvp", 1, true) ~= nil
         if isPvp == rotWantPvp then rotCtxOptions[#rotCtxOptions + 1] = c end
+    end
+    -- Same as the docked panel: a PvP guide with no rotation page shows the
+    -- PvE rotation rather than an empty section.
+    if #rotCtxOptions == 0 then
+        for _, c in ipairs(GetRotationContextOptions(specData, heroTalent)) do
+            local isPvp = type(c) == "string" and c:lower():find("pvp", 1, true) ~= nil
+            if isPvp ~= rotWantPvp then rotCtxOptions[#rotCtxOptions + 1] = c end
+        end
     end
     local rotContext = rotCtxOptions[1] or "General"
     if currentRotContext then
@@ -1077,6 +1116,31 @@ function ns:BuildCompendiumLayout(content, viewportH)
         if UI.craftEmbsSection then UI.craftEmbsSection:Hide() end
     end
 
+    -- No PvP guide on the source: the PvP tabs show the empty state in place
+    -- of their sections (Talents and About stay as they are).
+    local PVP_EMPTY_TABS =
+        { stats = true, rotation = true, gear = true, trinkets = true, enhancements = true, crafting = true }
+    if UI.pvpNoGuide then
+        UI.statSection:Hide()
+        if UI.statTargetsSection then UI.statTargetsSection:Hide() end
+        UI.rotationSection:Hide()
+        UI.bisSection:Hide()
+        UI.trinketSection:Hide()
+        UI.enchantSection:Hide()
+        UI.gemSection:Hide()
+        UI.consumSection:Hide()
+        if UI.enhancementsSourceDropdown then UI.enhancementsSourceDropdown:Hide() end
+        if UI.craftCraftsSection then UI.craftCraftsSection:Hide() end
+        if UI.craftEmbsSection then UI.craftEmbsSection:Hide() end
+    end
+    local function placePvpEmpty(key, y)
+        local sec, _, h = UI.pvpEmpty:Get(key)
+        sec:ClearAllPoints()
+        sec:SetPoint("TOPLEFT", content, "TOPLEFT", INSET_PAD, y)
+        sec:SetPoint("RIGHT", content, "RIGHT", -INSET_PAD, 0)
+        return y - h - 4
+    end
+
     local function placeGroupSection(section, header, body, contentHeight, y, hideHeader)
         if not section or not section:IsShown() then return y end
         section:ClearAllPoints()
@@ -1280,11 +1344,16 @@ function ns:BuildCompendiumLayout(content, viewportH)
         return y - ns.PAGE_TITLE_HEIGHT
     end
 
+    local function placePage(key, y)
+        if UI.pvpNoGuide and PVP_EMPTY_TABS[key] then return placePvpEmpty(key, y) end
+        return placers[key](y)
+    end
+
     local y = 0
     local naturalH = {}
     for _, key in ipairs(GROUP_ORDER) do
         local startY = y
-        y = placers[key](y)
+        y = placePage(key, y)
         naturalH[key] = startY - y
     end
 
@@ -1296,7 +1365,7 @@ function ns:BuildCompendiumLayout(content, viewportH)
             local pageTop = -y
             local pageHeight = math.max(viewportH, total)
             y = placeTitle(key, y)
-            placers[key](y)
+            placePage(key, y)
             anchors[key] = pageTop
             pages[#pages + 1] = { key = key, top = pageTop, height = pageHeight }
             y = -(pageTop + pageHeight)

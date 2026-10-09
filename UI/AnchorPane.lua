@@ -62,6 +62,43 @@ local function CreateSideTab(parent, icon, tooltip, tabKey)
     return btn
 end
 
+-- Scroll pin: a cog option relayouts the page, and the section above it can
+-- grow or shrink. The cog pins its own position when its menu opens; the next
+-- relayouts scroll by the drift so the section header stays where it was,
+-- instead of leaving the view in the middle of another section.
+local PIN_TTL = 30
+local scrollPin
+
+function ns.PinScroll(frame)
+    local top = frame and frame:GetTop()
+    scrollPin = top and { frame = frame, top = top, at = GetTime() } or nil
+end
+
+local function isInside(frame, ancestor)
+    while frame do
+        if frame == ancestor then return true end
+        frame = frame:GetParent()
+    end
+    return false
+end
+
+-- Scroll offset change that puts the pinned frame back at its screen position,
+-- or nil (no pin, expired, hidden, or not in this scroll frame).
+function ns.ScrollPinDelta(scroll)
+    local p = scrollPin
+    if not p then return nil end
+    if GetTime() - p.at > PIN_TTL then
+        scrollPin = nil
+        return nil
+    end
+    if not (p.frame:IsVisible() and isInside(p.frame, scroll)) then return nil end
+    local now = p.frame:GetTop()
+    if not now then return nil end
+    local delta = p.top - now
+    if math.abs(delta) < 0.5 then return nil end
+    return delta
+end
+
 function ns.CreateAnchorPane(opts)
     local parent = opts.parent
     local host = opts.insetFrame or parent
@@ -352,6 +389,9 @@ function ns.CreateAnchorPane(opts)
                 ApplyScrollOffset(target)
                 UpdateTabAppearance()
             end
+            -- A cog option changed the layout: keep its section header in place.
+            local pin = ns.ScrollPinDelta and ns.ScrollPinDelta(scroll)
+            if pin then ApplyScrollOffset(pageTargetOffset + pin) end
             self._suppressSync = false
         end)
     end

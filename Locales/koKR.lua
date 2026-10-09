@@ -58,6 +58,8 @@ L["context.mythic_plus"] = "신화+"
 
 L["consumable.flask"] = "영약"
 L["consumable.combat_potion"] = "전투 물약"
+L["consumable.health_potion"] = "생명력 물약"
+L["consumable.alternative"] = "대안"
 L["consumable.food"] = "음식"
 L["consumable.weapon_buff"] = "무기 강화"
 L["consumable.augment_rune"] = "증강의 룬"
@@ -73,11 +75,11 @@ L["empty.no_spec"] = "전문화를 선택하면 Bread Codex가 표시됩니다."
 L["empty.spec_leveling"] = "%s 레벨링 가이드"
 L["empty.no_builds_details"] = "사용 가능한 빌드가 없습니다. 자세한 내용은 U.GG를 확인하세요."
 L["empty.no_builds_for"] = "%s 빌드가 없습니다. U.GG를 확인하세요."
-L["empty.no_rotation_for_details"] = "%s 로테이션이 없습니다. 자세한 내용은 U.GG를 확인하세요."
+L["empty.no_rotation_for_details"] = "이 콘텐츠에 대한 %s 로테이션을 사용할 수 없습니다."
 L["empty.no_rotation_available"] =
     "딜사이클 준비 중입니다.\n아직 이 전문화의 딜사이클이 없습니다."
-L["empty.no_pvp_guide"] =
-    "PvP 가이드 준비 중입니다.\n아직 이 전문화에 대한 가이드가 없습니다."
+L["empty.no_pvp_guide"] = "%s PvP 가이드를 사용할 수 없습니다."
+L["empty.pvp_switch_source"] = "%s PvP 보기"
 L["empty.no_stat_targets"] =
     "스탯 목표 준비 중입니다.\n이 시즌에는 아직 이 전문화에 대한 데이터가 부족합니다."
 
@@ -151,6 +153,12 @@ L["settings.hint.gear_source_no_icons"] = "표 보기와 목록 보기에 표시
 L["settings.tooltip.gear_source"] =
     "각 최적 장비 아이템의 획득처(획득 위치 또는 제작 등)를 표시합니다. 목록 보기에서는 아이템 이름 아래에, 표 보기에서는 열로 나타납니다. 아이콘 보기에서는 아이템 툴팁에 표시됩니다. 각 패널은 이 선택을 개별적으로 저장합니다. Icy Veins 데이터에만 적용됩니다."
 L["settings.label.gear_ticks"] = "업그레이드 단계 표시"
+L["settings.label.consumable_alts"] = "다른 선택지 표시"
+L["settings.hint.consumable_alts"] =
+    "각 소모품에 대해 가이드가 추천하는 다른 아이템도 첫 번째 선택 아래에 표시합니다."
+L["settings.label.enchant_ticks"] = "등급 체크 표시"
+L["settings.hint.enchant_ticks"] =
+    "적용된 마법부여를 추천 마법부여와 비교합니다. 녹색은 최고 등급, 노란색은 낮은 등급입니다."
 L["settings.hint.gear_ticks"] =
     "각 최적 장비 슬롯에 착용한 아이템의 업그레이드 단계를 표시합니다. 초록색은 권장 단계와 일치한다는 뜻이고, 노란색은 권장 단계에 미친다는 뜻입니다."
 L["settings.tooltip.gear_ticks"] =
@@ -234,17 +242,16 @@ L["settings.tooltip.dock_show_stat_targets"] =
     "패널이 도킹되었을 때 능력치 탭에 능력치 목표 섹션(실시간 능력치 vs U.GG 능력치 목표)을 표시합니다."
 L["settings.tooltip.float_show_stat_targets"] =
     "패널이 떠 있을 때 능력치 탭에 능력치 목표 섹션(실시간 능력치 vs U.GG 능력치 목표)을 표시합니다."
-L["stat_targets.bin"] = "상위 %d%%"
+L["stat_targets.bin.top"] = "상위 플레이어"
+L["stat_targets.bin.average"] = "전체 플레이어"
 L["stat_targets.bin_picker"] =
-    "목표를 가져올 플레이어를 설정합니다. 장비 기준 상위 20%, 50%, 또는 80%. 행에 수치를 표시할지 퍼센트를 표시할지 선택합니다."
+    "목표를 가져올 플레이어를 설정합니다. 상위 플레이어 또는 전체 플레이어. 행에 수치를 표시할지 퍼센트를 표시할지 선택합니다."
+L["stat_targets.bin_desc.top"] =
+    "U.GG에서 이 영웅 특성을 사용하는 상위 플레이어의 평균 수치입니다. 더 어려운 목표입니다."
+L["stat_targets.bin_desc.average"] =
+    "U.GG에서 이 영웅 특성을 사용하는 전체 플레이어의 일반적인 수치입니다. 더 쉬운 목표입니다."
 L["settings.value.stat_targets_values"] = "수치"
 L["settings.value.stat_targets_percent"] = "퍼센트"
-L["stat_targets.bin_desc.top20"] =
-    "상위 20% 플레이어가 사용하는 보조 능력치 수치입니다. 도달하기 가장 어렵습니다."
-L["stat_targets.bin_desc.top50"] =
-    "상위 50% 플레이어가 사용하는 수치입니다. 시즌 중반의 현실적인 목표입니다."
-L["stat_targets.bin_desc.top80"] =
-    "상위 80% 플레이어가 사용하는 수치입니다. 셋 중 가장 달성하기 쉽습니다."
 L["tooltip.stat_priority_footer"] = "능력치 우선순위"
 
 L["settings.label.source_display"] = "출처 표시"
@@ -365,6 +372,22 @@ L["tab.about"] = "정보"
 L["about.header"] = "Bread Codex 정보"
 L["about.version"] = "애드온 버전"
 L["about.data_update"] = "데이터 업데이트"
+L["about.icon_guide"] = "아이콘 안내"
+L["about.icon_guide.tooltips"] = "아이템 툴팁"
+L["about.icon_guide.panels"] = "패널과 Compendium"
+L["about.icon_guide.tier"] = "장신구와 특성 빌드 등급입니다. S가 가장 강합니다."
+L["about.icon_guide.icyveins"] =
+    "Icy Veins가 추천하는 아이템입니다. 아이콘 옆의 M+ 또는 공격대는 가이드 탭입니다."
+L["about.icon_guide.ugg"] =
+    "U.GG에 있는 아이템으로, 사용하는 플레이어 수에 따라 순위가 매겨집니다."
+L["about.icon_guide.spec_class"] =
+    "아이템을 사용하는 전문화입니다. 직업 아이콘은 해당 직업의 모든 전문화가 사용한다는 뜻입니다."
+L["about.icon_guide.stat_rank"] = "전문화 능력치 우선순위에서의 순위입니다."
+L["about.icon_guide.tick_green"] =
+    "아이템을 표시된 레벨로, 또는 마법부여를 최고 등급으로 보유 중입니다."
+L["about.icon_guide.tick_yellow"] =
+    "아이템을 표시된 레벨보다 낮게, 또는 마법부여를 낮은 등급으로 보유 중입니다."
+L["about.icon_guide.cog"] = "보기 방식과 체크 표시 같은 섹션 옵션을 엽니다."
 L["about.more"] = "탐색 및 설정"
 L["about.website_page"] = "Bread Codex 페이지"
 L["about.compendium"] = "Compendium"

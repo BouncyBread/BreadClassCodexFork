@@ -40,6 +40,7 @@ function ns.CreateSettingsAboutCanvas()
     separator:SetColorTexture(0.3, 0.3, 0.3, 0.6)
 
     local placeTiers = ns.BuildSupporterTiers(content)
+    local placeGuide = ns.BuildIconGuide and ns.BuildIconGuide(content)
 
     local function Layout()
         local width = scroll:GetWidth()
@@ -76,6 +77,7 @@ function ns.CreateSettingsAboutCanvas()
         y = y - 10
 
         y = placeTiers(width, y)
+        if placeGuide then y = placeGuide(width, y) end
 
         content:SetHeight(math.abs(y) + 10)
     end

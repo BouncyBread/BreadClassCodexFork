@@ -163,6 +163,7 @@ local function makeCog(inst, ctx)
     end)
     cog:SetScript("OnClick", function(self)
         if not (MenuUtil and MenuUtil.CreateContextMenu) then return end
+        if ns.PinScroll then ns.PinScroll(self) end
         MenuUtil.CreateContextMenu(self, function(_, root)
             local opts = inst.variantOptions
             if opts and #opts > 1 then

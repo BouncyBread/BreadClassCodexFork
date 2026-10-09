@@ -7,9 +7,11 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               augmentRune={259085,243191},
-              flask={241326,241325,241320},
+              flask={241326,241324,241320},
               food={255846,242273,242275,242274},
-              potions={241288,241308,241292,271883,5512},
+              healthPotion={271884},
+              potions={241288,241308,241292},
+              weaponBuff={243734},
             },
           },
         },
@@ -28,13 +30,13 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=244008}},
-              ["Finger 1"]={{id=244016}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=244009}},
+              ["Finger 1"]={{id=244017}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=243981}},
-              Legs={{id=244640}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=326805,spellId=326805}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
           },
         },
@@ -330,7 +332,16 @@ ClassCodexSource["icyveins"] = {
       },
       frost={
         consumables={
-          all={all={augmentRune={259085},flask={241326,241322,241325},food={255846,255845,255847,242275},potions={241288,271883}}},
+          all={
+            all={
+              augmentRune={259085},
+              flask={241326,241322,241324},
+              food={255846,255845,255847,242275},
+              healthPotion={271884},
+              potions={241288},
+              weaponBuff={243734},
+            },
+          },
         },
         crafting={
           all={
@@ -345,16 +356,16 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
-              Legs={{id=244640}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=62158,spellId=62158}},
               ["Off Hand"]={{id=53344,spellId=53344}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
-            pvp={Chest={{id=243946}},Feet={{id=244008}},Head={{id=243950}},Legs={{id=244640}},Shoulders={{id=244021}}},
+            pvp={Chest={{id=243947}},Feet={{id=244009}},Head={{id=243951}},Legs={{id=244641}},Shoulders={{id=244021}}},
           },
         },
         gear={
@@ -652,7 +663,18 @@ ClassCodexSource["icyveins"] = {
         },
       },
       unholy={
-        consumables={all={all={augmentRune={259085},flask={241326,241322},food={255846,255845,255847,242275},potions={241288,271883}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241326,241322},
+              food={255846,255845,255847,242275},
+              healthPotion={271884},
+              potions={241288},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={
           all={
             all={
@@ -666,15 +688,15 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
-              Legs={{id=244640}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=327082,spellId=327082}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
-            pvp={Chest={{id=243946}},Feet={{id=244008}},Head={{id=243950}},Legs={{id=244640}},Shoulders={{id=244021}}},
+            pvp={Chest={{id=243947}},Feet={{id=244009}},Head={{id=243951}},Legs={{id=244641}},Shoulders={{id=244021}}},
           },
         },
         gear={
@@ -964,9 +986,11 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               augmentRune={259085},
-              flask={241322,241325,241326,250215,268265,241319},
+              flask={241322,241324,241326},
               food={275266,242274},
-              potions={241288,241285,271883,5512},
+              healthPotion={271884},
+              potions={241288},
+              weaponBuff={243734},
             },
           },
         },
@@ -987,19 +1011,19 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244031}},
               ["Off Hand"]={{id=244031}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
             pvp={
-              Chest={{id=244002}},
-              Feet={{id=244008}},
-              Head={{id=243950}},
+              Chest={{id=244003}},
+              Feet={{id=244009}},
+              Head={{id=243951}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244029}},
               Shoulders={{id=244021}},
@@ -1410,9 +1434,11 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               augmentRune={259085},
-              flask={241326,241322,241319},
+              flask={241326,241322},
               food={255845,242275},
-              potions={241288,245902,241285,241292,271883,5512},
+              healthPotion={271884},
+              potions={241288,245902,241292},
+              weaponBuff={243734},
             },
           },
         },
@@ -1429,20 +1455,20 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
-              Legs={{id=244640}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=273072}},
               ["Off Hand"]={{id=273072}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
             pvp={
               Chest={{id=243977}},
-              Feet={{id=244008}},
-              Head={{id=243950}},
-              Legs={{id=244640}},
+              Feet={{id=244009}},
+              Head={{id=243951}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=244029}},
               Shoulders={{id=244021}},
             },
@@ -1901,17 +1927,21 @@ ClassCodexSource["icyveins"] = {
         },
       },
       vengeance={
-        consumables={all={all={flask={241325,241326,241320},food={255845,242275},potions={241288,271883}}}},
+        consumables={
+          all={
+            all={flask={241324,241326,241320},food={255845,242275},healthPotion={271884},potions={241288},weaponBuff={243734,237371}},
+          },
+        },
         crafting={all={all={crafts={237840,244573,244576},embellishments={273060,240167}}}},
         enchants={
           all={
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
-              Head={{id=243950}},
-              Legs={{id=244640}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
+              Head={{id=243951}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=243973}},
               ["Off Hand"]={{id=243973}},
               Shoulders={{id=244021}},
@@ -2249,21 +2279,32 @@ ClassCodexSource["icyveins"] = {
     },
     DRUID={
       balance={
-        consumables={all={all={augmentRune={259085},flask={241322,241325},food={255846,255845,242275},potions={241288,241308,271883,5512}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241322,241324},
+              food={255846,255845,242275},
+              healthPotion={271884},
+              potions={241288,241308},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={all={all={crafts={245769,245770},embellishments={273060,240167}},pvp={crafts={},embellishments={240167}}}},
         enchants={
           all={
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
-              Head={{id=243950}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
+              Head={{id=243951}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244031}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -2590,9 +2631,11 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               augmentRune={259085},
-              flask={241322,241325,241319},
+              flask={241322,241324},
               food={255845,242275},
-              potions={241288,271886,241308,241285,241292,271883,5512},
+              healthPotion={271884},
+              potions={241288,271887,241308,241292},
+              weaponBuff={243734},
             },
           },
         },
@@ -2613,15 +2656,15 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
-              Legs={{id=244640}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=273072}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=244640}},["Main Hand"]={{id=244029}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=244641}},["Main Hand"]={{id=244029}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -2980,19 +3023,30 @@ ClassCodexSource["icyveins"] = {
         },
       },
       guardian={
-        consumables={all={all={augmentRune={259085},flask={241325},food={255845,255846,242275},potions={241308,271883,5512}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241324},
+              food={255845,255846,242275},
+              healthPotion={271884},
+              potions={241308},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={all={all={crafts={245771,244576,244569},embellishments={245876,240167}}}},
         enchants={
           all={
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
-              Head={{id=243950}},
-              Legs={{id=244640}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
+              Head={{id=243951}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=243973}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
           },
         },
@@ -3195,7 +3249,18 @@ ClassCodexSource["icyveins"] = {
         },
       },
       restoration={
-        consumables={all={all={augmentRune={259085},flask={241325,241322},food={255845,242272,255846,255847},potions={241288,271883,5512}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241324,241322},
+              food={255845,242272,255846,255847},
+              healthPotion={271884},
+              potions={241288},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={
           all={
             all={crafts={245769,244572,244569},embellishments={240167,245876,273069}},
@@ -3207,20 +3272,20 @@ ClassCodexSource["icyveins"] = {
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=244014}},
-              ["Finger 2"]={{id=244014}},
-              Head={{id=243950}},
+              ["Finger 1"]={{id=244015}},
+              ["Finger 2"]={{id=244015}},
+              Head={{id=243951}},
               Legs={{id=240155}},
               ["Main Hand"]={{id=244029}},
               Shoulders={{id=244021}},
             },
             pvp={
-              Chest={{id=244002}},
-              Feet={{id=244008}},
+              Chest={{id=244003}},
+              Feet={{id=244009}},
               Head={{id=243981}},
               Legs={{id=240155}},
               ["Main Hand"]={{id=244029}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
           },
         },
@@ -3487,7 +3552,7 @@ ClassCodexSource["icyveins"] = {
     },
     EVOKER={
       augmentation={
-        consumables={all={all={augmentRune={259085},flask={241322},food={255845,242275}}}},
+        consumables={all={all={augmentRune={259085},flask={241322},food={255845,242275},weaponBuff={243734}}}},
         crafting={
           all={
             all={
@@ -3510,15 +3575,15 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=244008}},
+              Feet={{id=244009}},
               ["Finger 1"]={{id=243959}},
               ["Finger 2"]={{id=243959}},
               Head={{id=243981}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244031}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -3827,7 +3892,7 @@ ClassCodexSource["icyveins"] = {
         },
       },
       devastation={
-        consumables={all={all={augmentRune={259085},flask={241325,241326},food={255845,242275}}}},
+        consumables={all={all={augmentRune={259085},flask={241324,241326},food={255845,242275},weaponBuff={243734}}}},
         crafting={
           all={
             all={
@@ -3841,15 +3906,15 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=273072}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -4126,7 +4191,18 @@ ClassCodexSource["icyveins"] = {
         },
       },
       preservation={
-        consumables={all={all={augmentRune={259085},flask={241322,241325},food={242747},potions={241288,241301,271883}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241322,241324},
+              food={242747},
+              healthPotion={271884},
+              potions={241288,241300},
+              weaponBuff={243734,243736},
+            },
+          },
+        },
         crafting={all={all={crafts={244584,244577,245769},embellishments={240167,245876}},pvp={crafts={},embellishments={244603}}}},
         enchants={
           all={
@@ -4140,7 +4216,7 @@ ClassCodexSource["icyveins"] = {
               ["Main Hand"]={{id=244029}},
               Shoulders={{id=244021}},
             },
-            pvp={Chest={{id=244002}},Feet={{id=244008}},Legs={{id=240155}},["Main Hand"]={{id=244029}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=244003}},Feet={{id=244009}},Legs={{id=240155}},["Main Hand"]={{id=244029}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -4406,19 +4482,30 @@ ClassCodexSource["icyveins"] = {
     },
     HUNTER={
       ["beast-mastery"]={
-        consumables={all={all={augmentRune={259085},flask={241322},food={255846,255845,242747},potions={241288,241308,271886,271883}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241322},
+              food={255846,255845,242747},
+              healthPotion={271884},
+              potions={241288,241308,271887},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={all={all={crafts={265337,244581,244584,244582},embellishments={273060,240167}}}},
         enchants={
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
-              Legs={{id=244640}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=273072}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
           },
         },
@@ -4784,17 +4871,28 @@ ClassCodexSource["icyveins"] = {
         },
       },
       marksmanship={
-        consumables={all={all={augmentRune={259085},flask={241326},food={255846,255845,242747},potions={241288,241308,271886,271883}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241326},
+              food={255846,255845,242747},
+              healthPotion={271884},
+              potions={241288,241308,271887},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={all={all={crafts={265337,244581,244584,244582},embellishments={273060,240167}}}},
         enchants={
           all={
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
-              Head={{id=243950}},
-              Legs={{id=244640}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
+              Head={{id=243951}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=273072}},
               Shoulders={{id=244021}},
             },
@@ -5276,17 +5374,28 @@ ClassCodexSource["icyveins"] = {
         },
       },
       survival={
-        consumables={all={all={augmentRune={259085},flask={241322},food={255846,255845,242747},potions={241288,241308,271883}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241322},
+              food={255846,255845,242747},
+              healthPotion={271884},
+              potions={241288,241308},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={all={all={crafts={237847,245771,244581,244584,244582},embellishments={273060,240167}}}},
         enchants={
           all={
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
-              Head={{id=243950}},
-              Legs={{id=244640}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
+              Head={{id=243951}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=273072}},
               Shoulders={{id=244021}},
             },
@@ -5662,7 +5771,9 @@ ClassCodexSource["icyveins"] = {
     },
     MAGE={
       arcane={
-        consumables={all={all={augmentRune={259085},flask={241325},food={255845},potions={241308,271883}}}},
+        consumables={
+          all={all={augmentRune={259085},flask={241324},food={255845},healthPotion={271884},potions={241308},weaponBuff={243734}}},
+        },
         crafting={
           all={
             all={
@@ -5676,15 +5787,15 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=244008}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=244009}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=243981}},
               Legs={{id=240155}},
               ["Main Hand"]={{id=244029}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -5950,7 +6061,9 @@ ClassCodexSource["icyveins"] = {
         },
       },
       fire={
-        consumables={all={all={augmentRune={259085},flask={241325},food={255845},potions={241308,271883}}}},
+        consumables={
+          all={all={augmentRune={259085},flask={241324},food={255845},healthPotion={271884},potions={241308},weaponBuff={243734}}},
+        },
         crafting={
           all={
             all={
@@ -5964,15 +6077,15 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=244008}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=244009}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=243981}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244029}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -6312,7 +6425,18 @@ ClassCodexSource["icyveins"] = {
         },
       },
       frost={
-        consumables={all={all={augmentRune={259085},flask={241326},food={255846,255845,242275,255847},potions={241288,271883,5512}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241326},
+              food={255846,255845,242275,255847},
+              healthPotion={271884},
+              potions={241288},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={
           all={all={crafts={245770,239649,245769},embellishments={248130,273060,240167}},pvp={crafts={},embellishments={240167}}},
         },
@@ -6320,15 +6444,15 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
               Legs={{id=240133}},
-              ["Main Hand"]={{id=243970}},
-              Shoulders={{id=243990}},
+              ["Main Hand"]={{id=243971}},
+              Shoulders={{id=243991}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -6636,9 +6760,10 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               augmentRune={259085},
-              flask={241320,241326,241319},
+              flask={241320,241326},
               food={255845,255846,242275,255847,242273,242274},
-              potions={271886,241292,241288,270168},
+              potions={271887,241292,241288},
+              weaponBuff={243734},
             },
           },
         },
@@ -6663,10 +6788,10 @@ ClassCodexSource["icyveins"] = {
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
-              Head={{id=243950}},
-              Legs={{id=244640}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
+              Head={{id=243951}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=244029}},
               Shoulders={{id=244021}},
             },
@@ -7083,9 +7208,11 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               augmentRune={259085},
-              flask={241325,241320},
+              flask={241324,241320},
               food={255845,255846,242275},
-              potions={241294,241301,241308,271883,241305,5512},
+              healthPotion={271884,241304},
+              potions={241294,241300,241308},
+              weaponBuff={243734},
             },
           },
         },
@@ -7095,14 +7222,14 @@ ClassCodexSource["icyveins"] = {
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=244014}},
-              ["Finger 2"]={{id=244014}},
-              Head={{id=243950}},
+              ["Finger 1"]={{id=244015}},
+              ["Finger 2"]={{id=244015}},
+              Head={{id=243951}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244029}},
               Shoulders={{id=244021}},
             },
-            pvp={Chest={{id=244002}},Feet={{id=244008}},Legs={{id=240155}},["Main Hand"]={{id=244029}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=244003}},Feet={{id=244009}},Legs={{id=240155}},["Main Hand"]={{id=244029}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -7348,21 +7475,25 @@ ClassCodexSource["icyveins"] = {
         },
       },
       windwalker={
-        consumables={all={all={augmentRune={259085},flask={241325},food={255846,242275},potions={241288,271883}}}},
+        consumables={
+          all={
+            all={augmentRune={259085},flask={241324},food={255846,242275},healthPotion={271884},potions={241288},weaponBuff={243734}},
+          },
+        },
         crafting={all={all={crafts={},embellishments={240167}},pvp={crafts={},embellishments={240167}}}},
         enchants={
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
-              Legs={{id=244640}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=273072}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=244640}},["Main Hand"]={{id=244029}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=244641}},["Main Hand"]={{id=244029}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -7691,7 +7822,11 @@ ClassCodexSource["icyveins"] = {
     },
     PALADIN={
       holy={
-        consumables={all={all={flask={241322,241325,241326},food={242747},potions={241288,241301,271883}}}},
+        consumables={
+          all={
+            all={flask={241322,241324,241326},food={242747},healthPotion={271884},potions={241288,241300},weaponBuff={243734,243736}},
+          },
+        },
         crafting={
           all={all={crafts={237834,237828,237843,237831},embellishments={240167,245876}},pvp={crafts={},embellishments={244603}}},
         },
@@ -7708,7 +7843,7 @@ ClassCodexSource["icyveins"] = {
               Shoulders={{id=244021}},
             },
             pvp={
-              Chest={{id=244002}},
+              Chest={{id=244003}},
               Feet={{id=243983}},
               Head={{id=243949}},
               Legs={{id=240155}},
@@ -7988,17 +8123,28 @@ ClassCodexSource["icyveins"] = {
         },
       },
       protection={
-        consumables={all={all={augmentRune={259085},flask={241326},food={242274,255846,242273},potions={241308,271883,5512}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241326},
+              food={242274,255846,242273},
+              healthPotion={271884},
+              potions={241308},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={all={all={crafts={237839,237831,237834,237828},embellishments={240167,245876}}}},
         enchants={
           all={
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=244014}},
-              ["Finger 2"]={{id=244014}},
+              ["Finger 1"]={{id=244015}},
+              ["Finger 2"]={{id=244015}},
               Head={{id=243981}},
-              Legs={{id=244640}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=244029}},
               Shoulders={{id=244021}},
             },
@@ -8216,7 +8362,11 @@ ClassCodexSource["icyveins"] = {
         },
       },
       retribution={
-        consumables={all={all={augmentRune={259085},flask={241322},food={242275},potions={241288,241308,271883,5512}}}},
+        consumables={
+          all={
+            all={augmentRune={259085},flask={241322},food={242275},healthPotion={271884},potions={241288,241308},weaponBuff={243734}},
+          },
+        },
         crafting={
           all={
             all={crafts={{bonusIDs={13751,12497,13836},itemId=251513},240892,237846},embellishments={251490,240167,273069,273060}},
@@ -8227,15 +8377,15 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
-              Legs={{id=244640}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=244031}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=244640}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=244641}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -8531,7 +8681,9 @@ ClassCodexSource["icyveins"] = {
     },
     PRIEST={
       discipline={
-        consumables={all={all={augmentRune={259085},flask={241325},potions={241308,241288,241294,271883}}}},
+        consumables={
+          all={all={augmentRune={259085},flask={241324},healthPotion={271884},potions={241308,241288,241294},weaponBuff={243734}}},
+        },
         crafting={
           all={
             all={crafts={{bonusIDs={13751,13836,12497,8793,13771},itemId=245769}},embellishments={273060,240167}},
@@ -8541,22 +8693,22 @@ ClassCodexSource["icyveins"] = {
         enchants={
           all={
             all={
-              Chest={{id=244002}},
+              Chest={{id=244003}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=244014}},
-              ["Finger 2"]={{id=244014}},
-              Head={{id=243950}},
+              ["Finger 1"]={{id=244015}},
+              ["Finger 2"]={{id=244015}},
+              Head={{id=243951}},
               Legs={{id=240155}},
               ["Main Hand"]={{id=243973}},
               Shoulders={{id=244021}},
             },
             pvp={
-              Chest={{id=244002}},
-              Feet={{id=244008}},
+              Chest={{id=244003}},
+              Feet={{id=244009}},
               Head={{id=243981}},
               Legs={{id=240155}},
               ["Main Hand"]={{id=244029}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
           },
         },
@@ -8834,7 +8986,9 @@ ClassCodexSource["icyveins"] = {
               augmentRune={259085},
               flask={241326,241320},
               food={255846,255845,242275,255847,242283,242287},
-              potions={241308,241288,241301,241294,271883,241305,212265},
+              healthPotion={271884,241304},
+              potions={241308,241288,241300,241294,212265},
+              weaponBuff={243734},
             },
           },
         },
@@ -8856,20 +9010,20 @@ ClassCodexSource["icyveins"] = {
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
-              Head={{id=243950}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
+              Head={{id=243951}},
               Legs={{id=240155}},
               ["Main Hand"]={{id=244029}},
               Shoulders={{id=244021}},
             },
             pvp={
-              Chest={{id=244002}},
-              Feet={{id=244008}},
+              Chest={{id=244003}},
+              Feet={{id=244009}},
               Head={{id=243981}},
               Legs={{id=240155}},
               ["Main Hand"]={{id=244029}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
           },
         },
@@ -9145,9 +9299,11 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               augmentRune={259085},
-              flask={241322,241325,241320},
+              flask={241322,241324,241320},
               food={255845,255846,242275,242285,242286},
-              potions={241288,241308,271883,241305},
+              healthPotion={271884,241304},
+              potions={241288,241308},
+              weaponBuff={243734},
             },
           },
         },
@@ -9171,15 +9327,15 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=244008}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=244009}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=243981}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244031}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=240133}},["Main Hand"]={{id=244029}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -9608,7 +9764,14 @@ ClassCodexSource["icyveins"] = {
       assassination={
         consumables={
           all={
-            all={augmentRune={259085},flask={241325,241326,241319},food={255845,242275},potions={241308,241285,271883,241305,5512}},
+            all={
+              augmentRune={259085},
+              flask={241324,241326},
+              food={255845,242275},
+              healthPotion={271884,241304},
+              potions={241308},
+              weaponBuff={243734},
+            },
           },
         },
         crafting={all={all={crafts={237837,244576},embellishments={273060,273069}},pvp={crafts={},embellishments={240167}}}},
@@ -9616,16 +9779,16 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=244008}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=244009}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=243981}},
-              Legs={{id=244640}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=244029}},
               ["Off Hand"]={{id=244029}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=244640}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=244641}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -9937,7 +10100,14 @@ ClassCodexSource["icyveins"] = {
       outlaw={
         consumables={
           all={
-            all={augmentRune={259085},flask={241326,241325,241319},food={255845,242275},potions={241288,241285,271883,241305,5512}},
+            all={
+              augmentRune={259085},
+              flask={241326,241324},
+              food={255845,242275},
+              healthPotion={271884,241304},
+              potions={241288},
+              weaponBuff={243734},
+            },
           },
         },
         crafting={all={all={crafts={237839,244569,244573},embellishments={240167,245873}},pvp={crafts={},embellishments={240167}}}},
@@ -9945,16 +10115,16 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=244008}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=244009}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=243981}},
-              Legs={{id=244640}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=244029}},
               ["Off Hand"]={{id=244029}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=244640}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=244641}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -10214,22 +10384,33 @@ ClassCodexSource["icyveins"] = {
         },
       },
       subtlety={
-        consumables={all={all={augmentRune={259085},flask={241325,241322},food={255846,242275},potions={241308,241292,241288,271883}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241324,241322},
+              food={255846,242275},
+              healthPotion={271884},
+              potions={241308,241292,241288},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={all={all={crafts={237837,244576},embellishments={273060,240167}},pvp={crafts={},embellishments={240167}}}},
         enchants={
           all={
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
-              Head={{id=243950}},
-              Legs={{id=244640}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
+              Head={{id=243951}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=273072}},
               ["Off Hand"]={{id=273072}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=244640}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=244641}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -10502,7 +10683,17 @@ ClassCodexSource["icyveins"] = {
     },
     SHAMAN={
       elemental={
-        consumables={all={all={flask={241322,241326},food={255845,255846,242275,255847},potions={241308,241288,241292,271883,5512}}}},
+        consumables={
+          all={
+            all={
+              flask={241322,241326},
+              food={255845,255846,242275,255847},
+              healthPotion={271884},
+              potions={241308,241288,241292},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={
           all={
             all={
@@ -10517,14 +10708,14 @@ ClassCodexSource["icyveins"] = {
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=243981}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=273072}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
-            pvp={Chest={{id=243977}},Feet={{id=244008}},Legs={{id=240133}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243977}},Feet={{id=244009}},Legs={{id=240133}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -10599,7 +10790,7 @@ ClassCodexSource["icyveins"] = {
               {itemId=277299,slot="Off Hand"},
             },
             raid={
-              {catalyst={bonusIDs={12854},itemId=268230},itemId=271483,slot="Head",source="Catalyst on the item from Twin Fangs"},
+              {catalyst={bonusIDs={12854},itemId=268230},itemId=271483,slot="Head",source="Catalyst on the item from Nek'zali"},
               {bonusIDs={13708,13848,10835},itemId=268265,slot="Neck",source="Ula'tek"},
               {
                 catalyst={bonusIDs={13848},itemId=268231},
@@ -10919,9 +11110,10 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               augmentRune={259085},
-              flask={241325,241322,241319},
+              flask={241324,241322},
               food={255845,242275},
-              potions={271886,241288,241308,241285,241292,271883,5512},
+              healthPotion={271884},
+              potions={271887,241288,241308,241292},
             },
           },
         },
@@ -10942,16 +11134,16 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
-              Legs={{id=244640}},
+              Legs={{id=244641}},
               ["Main Hand"]={{id=273072}},
               ["Off Hand"]={{id=273072}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
-            pvp={Chest={{id=243974}},Feet={{id=244008}},Legs={{id=244640}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243975}},Feet={{id=244009}},Legs={{id=244641}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -11347,7 +11539,16 @@ ClassCodexSource["icyveins"] = {
       },
       restoration={
         consumables={
-          all={all={augmentRune={259085},flask={241326,241320},food={255845,255846,242275},potions={241308,245898,241285,271883}}},
+          all={
+            all={
+              augmentRune={259085},
+              flask={241326,241320},
+              food={255845,255846,242275},
+              healthPotion={271884},
+              potions={241308,245898},
+              weaponBuff={243734},
+            },
+          },
         },
         crafting={
           all={
@@ -11366,16 +11567,16 @@ ClassCodexSource["icyveins"] = {
         enchants={
           all={
             all={
-              Chest={{id=244002}},
+              Chest={{id=244003}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
-              Head={{id=243950}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
+              Head={{id=243951}},
               Legs={{id=240155}},
               ["Main Hand"]={{id=244029}},
               Shoulders={{id=244021}},
             },
-            pvp={Chest={{id=244002}},Feet={{id=244008}},Legs={{id=244603}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=244003}},Feet={{id=244009}},Legs={{id=244604}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -11651,7 +11852,9 @@ ClassCodexSource["icyveins"] = {
     },
     WARLOCK={
       affliction={
-        consumables={all={all={augmentRune={259085},flask={241325},potions={241288,241308,270168,271886,271883}}}},
+        consumables={
+          all={all={augmentRune={259085},flask={241324},healthPotion={271884},potions={241288,241308,271887},weaponBuff={243734}}},
+        },
         crafting={
           all={
             all={crafts={{bonusIDs={13751,12497,13836},itemId=245770}},embellishments={240167,273059,273060}},
@@ -11662,21 +11865,21 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
-              Head={{id=243950}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
+              Head={{id=243951}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244029}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
             pvp={
               Chest={{id=243977}},
-              Feet={{id=244008}},
+              Feet={{id=244009}},
               Head={{id=243981}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244029}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
           },
         },
@@ -11960,7 +12163,7 @@ ClassCodexSource["icyveins"] = {
         },
       },
       demonology={
-        consumables={all={all={augmentRune={259085},flask={241326},potions={241288,241308,271883}}}},
+        consumables={all={all={augmentRune={259085},flask={241326},healthPotion={271884},potions={241288,241308},weaponBuff={243734}}}},
         crafting={
           all={
             all={crafts={{bonusIDs={13751,12497,13836},itemId=245770}},embellishments={240167,273059,273060}},
@@ -11971,21 +12174,21 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
-              Head={{id=243950}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
+              Head={{id=243951}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244029}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
             pvp={
               Chest={{id=243977}},
-              Feet={{id=244008}},
+              Feet={{id=244009}},
               Head={{id=243981}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244029}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
           },
         },
@@ -12241,7 +12444,9 @@ ClassCodexSource["icyveins"] = {
         },
       },
       destruction={
-        consumables={all={all={augmentRune={259085},flask={241326,241322,250215,244031},potions={241288,241308,271883}}}},
+        consumables={
+          all={all={augmentRune={259085},flask={241326,241322},healthPotion={271884},potions={241288,241308},weaponBuff={243734}}},
+        },
         crafting={
           all={
             all={crafts={{bonusIDs={13751,12497,13836},itemId=245770}},embellishments={240167,273059,273060}},
@@ -12252,21 +12457,21 @@ ClassCodexSource["icyveins"] = {
           all={
             all={
               Chest={{id=243977}},
-              Feet={{id=243952}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
-              Head={{id=243950}},
+              Feet={{id=243953}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
+              Head={{id=243951}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244029}},
-              Shoulders={{id=243990}},
+              Shoulders={{id=243991}},
             },
             pvp={
               Chest={{id=243977}},
-              Feet={{id=244008}},
+              Feet={{id=244009}},
               Head={{id=243981}},
               Legs={{id=240133}},
               ["Main Hand"]={{id=244029}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
           },
         },
@@ -12547,20 +12752,31 @@ ClassCodexSource["icyveins"] = {
     },
     WARRIOR={
       arms={
-        consumables={all={all={augmentRune={259085},flask={241325,241326},food={255846,242275},potions={241288,241308,271883}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241324,241326},
+              food={255846,242275},
+              healthPotion={271884},
+              potions={241288,241308},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={all={all={crafts={237834,237828},embellishments={245876,273069}},pvp={crafts={},embellishments={240167}}}},
         enchants={
           all={
             all={
               Chest={{id=243977}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
-              Legs={{id=244642}},
+              Legs={{id=244643}},
               ["Main Hand"]={{id=243973}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
-            pvp={Chest={{id=243946}},Feet={{id=244008}},Head={{id=243981}},Legs={{id=244640}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243947}},Feet={{id=244009}},Head={{id=243981}},Legs={{id=244641}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -12904,21 +13120,32 @@ ClassCodexSource["icyveins"] = {
         },
       },
       fury={
-        consumables={all={all={augmentRune={259085},flask={241322,241325},food={255846,242275},potions={241288,241308,271883}}}},
+        consumables={
+          all={
+            all={
+              augmentRune={259085},
+              flask={241322,241324},
+              food={255846,242275},
+              healthPotion={271884},
+              potions={241288,241308},
+              weaponBuff={243734},
+            },
+          },
+        },
         crafting={all={all={crafts={237847,237834,237828},embellishments={245876,273069}},pvp={crafts={},embellishments={240167}}}},
         enchants={
           all={
             all={
               Chest={{id=243977}},
-              ["Finger 1"]={{id=243956}},
-              ["Finger 2"]={{id=243956}},
+              ["Finger 1"]={{id=243957}},
+              ["Finger 2"]={{id=243957}},
               Head={{id=244007}},
-              Legs={{id=244642}},
+              Legs={{id=244643}},
               ["Main Hand"]={{id=243973}},
               ["Off Hand"]={{id=243973}},
-              Shoulders={{id=243962}},
+              Shoulders={{id=243963}},
             },
-            pvp={Chest={{id=243946}},Feet={{id=244008}},Head={{id=243981}},Legs={{id=244640}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243947}},Feet={{id=244009}},Head={{id=243981}},Legs={{id=244641}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -13290,7 +13517,14 @@ ClassCodexSource["icyveins"] = {
       protection={
         consumables={
           all={
-            all={augmentRune={259085},flask={241326,241325},food={255846,242273,242274,242275},potions={241308,241288,241292,271883}},
+            all={
+              augmentRune={259085},
+              flask={241326,241324},
+              food={255846,242273,242274,242275},
+              healthPotion={271884},
+              potions={241308,241288,241292},
+              weaponBuff={243734},
+            },
           },
         },
         crafting={
@@ -13312,14 +13546,14 @@ ClassCodexSource["icyveins"] = {
             all={
               Chest={{id=243977}},
               Feet={{id=243983}},
-              ["Finger 1"]={{id=244014}},
-              ["Finger 2"]={{id=244014}},
-              Head={{id=243950}},
-              Legs={{id=244642}},
-              ["Main Hand"]={{id=244029}},
+              ["Finger 1"]={{id=244015}},
+              ["Finger 2"]={{id=244015}},
+              Head={{id=243951}},
+              Legs={{id=244643}},
+              ["Main Hand"]={{id=273072}},
               Shoulders={{id=244021}},
             },
-            pvp={Chest={{id=243946}},Feet={{id=244008}},Head={{id=243981}},Legs={{id=244640}},Shoulders={{id=243962}}},
+            pvp={Chest={{id=243947}},Feet={{id=244009}},Head={{id=243981}},Legs={{id=244641}},Shoulders={{id=243963}}},
           },
         },
         gear={
@@ -13563,7 +13797,7 @@ ClassCodexSource["icyveins"] = {
             },
             raid={
               {
-                export="CkEAAAAAAAAAAAAAAAAAAAAAA02AAAzMDzMzMzMzmxsMjxYmGGDLzMzMDGzMAAAAYZAYGDAsYGDbwAzwCNmZBmxMDmNAAzMAgZgxA",
+                export="CkEAAAAAAAAAAAAAAAAAAAAAA02AAAzMDzMzMzMzmxsMMGz0wYYZmZmZwYmBAAAALDAzYAgFzYYDGYGWoxMLMmxMDmNAAzMAgZgxA",
                 label="Raid",
                 recommended=true,
               },
@@ -13637,7 +13871,7 @@ ClassCodexSource["icyveins"] = {
       },
     },
   },
-  meta={contentHash="19ac54f718fb347a",generatedAt="2026-10-02T11:36:30.877Z",schemaVersion=1,source="icyveins"},
+  meta={contentHash="593d8bb3c110e220",generatedAt="2026-10-08T14:26:23.672Z",schemaVersion=1,source="icyveins"},
   reference={
     heroNames={
       ["aldrachi-reaver"]="Aldrachi Reaver",

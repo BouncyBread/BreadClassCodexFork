@@ -19,10 +19,11 @@ local CONTEXT_LABELS = {
     crafting = L["context.crafting"],
 }
 
-local CONSUMABLE_ORDER = { "flask", "combatPotion", "food", "weaponBuff", "augmentRune" }
+local CONSUMABLE_ORDER = { "flask", "combatPotion", "healthPotion", "food", "weaponBuff", "augmentRune" }
 local CONSUMABLE_LABELS = {
     flask = L["consumable.flask"],
     combatPotion = L["consumable.combat_potion"],
+    healthPotion = L["consumable.health_potion"],
     food = L["consumable.food"],
     weaponBuff = L["consumable.weapon_buff"],
     augmentRune = L["consumable.augment_rune"],
@@ -110,7 +111,13 @@ local function RequestAllItems(gearData)
     end
     if gearData.consumables then
         for _, key in ipairs(CONSUMABLE_ORDER) do
-            if gearData.consumables[key] then RequestItemData(gearData.consumables[key].itemId) end
+            local c = gearData.consumables[key]
+            if c then
+                RequestItemData(c.itemId)
+                for _, id in ipairs(c.alts or {}) do
+                    RequestItemData(id)
+                end
+            end
         end
     end
     if gearData.trinkets then
@@ -210,14 +217,23 @@ local function GetSpecGearData(classToken, specKey, trinketSourceOverride, conte
             end
         end
         if c then
+            -- The first pick, plus the guide's other picks for the category
+            -- (shown when the Consumables cog asks for them).
             local function top(l)
-                return l and l[1] and { itemId = l[1] } or nil
+                if not (l and l[1]) then return nil end
+                local alts = {}
+                for i = 2, #l do
+                    alts[#alts + 1] = l[i]
+                end
+                return { itemId = l[1], alts = alts }
             end
             out.consumables = {
                 flask = top(c.flask),
                 combatPotion = top(c.potions),
+                healthPotion = top(c.healthPotion),
                 food = top(c.food),
                 augmentRune = top(c.augmentRune),
+                weaponBuff = top(c.weaponBuff),
             }
         end
 
@@ -235,7 +251,11 @@ local function GetSpecGearData(classToken, specKey, trinketSourceOverride, conte
                 -- u.gg's own enchant item wins; the id itself is only a
                 -- SpellItemEnchantment id (PvE) and renders as "Item N" if
                 -- nothing else resolved.
-                return { enchantId = e.id, itemId = e.itemId or mapped or e.id, spellId = e.spellId, pop = e.pop }
+                -- Show the top rank of the enchant: sources often link the
+                -- lower rank item.
+                local itemId = e.itemId or mapped or e.id
+                if ns.TopEnchantRankItem then itemId = ns.TopEnchantRankItem(itemId, e.id) end
+                return { enchantId = e.id, itemId = itemId, spellId = e.spellId, pop = e.pop }
             end
             for slot, entries in pairs(ench) do
                 if entries[1] then
@@ -1277,10 +1297,56 @@ function ns.ResolveEnchantId(entry)
     return entry.enchantId
 end
 
+-- Enchant rank groups from db_gamedata (enchantRanks: itemId -> { enchantId,
+-- groupId, rank }). Built once on first use; costs nothing before that.
+local rankByItem, groupByEnchant, topItemByGroup, topEnchantByGroup
+
+local function BuildEnchantRanks()
+    if rankByItem then return end
+    rankByItem, groupByEnchant, topItemByGroup, topEnchantByGroup = {}, {}, {}, {}
+    local src = ClassCodexGameData and ClassCodexGameData.enchantRanks
+    if not src then return end
+    local topRank = {}
+    for itemId, r in pairs(src) do
+        local enchantId, group, rank = r[1], r[2], r[3]
+        rankByItem[itemId] = group
+        if enchantId and enchantId > 0 then groupByEnchant[enchantId] = group end
+        if not topRank[group] or rank > topRank[group] then
+            topRank[group] = rank
+            topItemByGroup[group] = itemId
+            topEnchantByGroup[group] = enchantId
+        end
+    end
+end
+
+local function EnchantGroup(itemId, enchantId)
+    BuildEnchantRanks()
+    return (itemId and rankByItem[itemId]) or (enchantId and groupByEnchant[enchantId]) or nil
+end
+
+-- The top rank item of the enchant an item (or enchant id) belongs to.
+function ns.TopEnchantRankItem(itemId, enchantId)
+    local group = EnchantGroup(itemId, enchantId)
+    return group and topItemByGroup[group] or itemId
+end
+
+-- How the slot's applied enchant compares with the recommended one:
+-- "top" (its highest rank, or an exact match when it has no ranks), "lower"
+-- (a lower rank of it), or nil (not applied).
+local function EnchantMatch(entry, slot)
+    if not entry then return nil end
+    local equipped = ns.EquippedEnchantIdForSlot(slot)
+    if not equipped then return nil end
+    local group = EnchantGroup(entry.itemId, entry.enchantId)
+    if group and EnchantGroup(nil, equipped) == group then
+        return topEnchantByGroup[group] == equipped and "top" or "lower"
+    end
+    return ns.ResolveEnchantId(entry) == equipped and "top" or nil
+end
+
+-- Any rank of the recommended enchant counts as applied.
 function ns.IsEnchantApplied(entry, slot)
-    local id = ns.ResolveEnchantId(entry)
-    if not id then return false end
-    return ns.EquippedEnchantIdForSlot(slot) == id
+    return EnchantMatch(entry, slot) ~= nil
 end
 
 -- Upgrade-track ticks. The list pins each pick to an exact bonus set, so
@@ -1292,6 +1358,17 @@ local TRACK_COLORS = {
     perfect = { 0.4, 1.0, 0.4 },
     below = { 1.0, 0.93, 0.0 },
 }
+
+-- Enchant ticks use the same colors: green for the highest rank, yellow for
+-- a lower rank, nil when the enchant is not applied.
+ns.TICK_COLORS = TRACK_COLORS
+
+function ns.EnchantTickColor(entry, slot)
+    local match = EnchantMatch(entry, slot)
+    if match == "top" then return TRACK_COLORS.perfect end
+    if match == "lower" then return TRACK_COLORS.below end
+    return nil
+end
 
 -- Fingers and trinkets tick on either slot of the pair.
 local EQUIP_SLOT_GROUPS = {

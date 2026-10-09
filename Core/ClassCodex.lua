@@ -33,6 +33,7 @@ local RANK_COLORS = {
     { r = 1.00, g = 1.00, b = 1.00 },
     { r = 0.62, g = 0.62, b = 0.62 },
 }
+ns.STAT_RANK_COLORS = RANK_COLORS
 
 local HERO_TALENT_ATLAS = {
 
@@ -2020,14 +2021,12 @@ ns.MakeCollapsible(rotationSection, rotationHeader, rotationContent, {
         ns:LayoutPanel()
     end,
 })
-local pvpEmptySection, pvpEmptyHeader, pvpEmptyContent = ns.Sections.PvpEmpty.InitPanel({
+local pvpEmpty = ns.Sections.PvpEmpty.New({
     parent = contentFrame,
-    header = CreateSectionHeader,
-})
-ns.MakeCollapsible(pvpEmptySection, pvpEmptyHeader, pvpEmptyContent, {
-    stateKey = "pvpEmpty",
-    refresh = function()
-        ns:LayoutPanel()
+    topPad = 30,
+    rowGap = 2,
+    onSwitch = function(source)
+        ns.Context.set("source", source)
     end,
 })
 local lastPvpEmptyHeight = 0
@@ -2266,11 +2265,16 @@ function ns:UpdatePanel()
     end
 
     local pvpNoGuide = false
+    local pvpEmptySource = (ns.ActiveSource and ns.ActiveSource()) or "icyveins"
     if ns.Context.contentType() == "pvp" and ns.HasPvpGuide then
-        local pvpEmptySource = (ns.ActiveSource and ns.ActiveSource()) or "icyveins"
         pvpNoGuide = not ns.HasPvpGuide(pvpEmptySource, classToken, specKey)
     end
-    lastPvpEmptyHeight = ns.Sections.PvpEmpty.RenderPanel({ shown = pvpNoGuide })
+    lastPvpEmptyHeight = pvpEmpty:Render({
+        shown = pvpNoGuide,
+        source = pvpEmptySource,
+        class = classToken,
+        spec = specKey,
+    })
 
     local priorityHero = (currentHeroTalent and ns.HeroSlugFromDisplay and ns.HeroSlugFromDisplay(currentHeroTalent))
         or nil
@@ -2496,10 +2500,15 @@ function ns:LayoutPanel()
         end
     end
 
-    local function placePvpEmpty()
-        if (lastPvpEmptyHeight or 0) <= 0 then return end
-        ns.SetContentHeight(pvpEmptyContent, lastPvpEmptyHeight)
-        y = ns.StackSection(pvpEmptySection, pvpEmptyContent, pvpEmptySection.IsCollapsed(), y)
+    -- No PvP guide for the spec on the active source: the tab shows its own
+    -- PvP empty card in place of its sections. Returns true when placed.
+    local pvpNoGuide = (lastPvpEmptyHeight or 0) > 0
+    local function placePvpEmpty(key)
+        if not pvpNoGuide then return false end
+        local sec, body = pvpEmpty:Get(key)
+        ns.SetContentHeight(body, lastPvpEmptyHeight)
+        y = ns.StackSection(sec, body, false, y)
+        return true
     end
 
     local sectionPlacers = {
@@ -2508,7 +2517,7 @@ function ns:LayoutPanel()
             y = ns.StackSection(omniumSection, omniumContent, omniumSection.IsCollapsed(), y)
         end,
         stats = function()
-            placePvpEmpty()
+            if placePvpEmpty("stats") then return end
             ns.SetContentHeight(statContent, ns.Sections.Stats.GetPanelContentHeight(lastStatRowCount))
             y = ns.StackSection(statSection, statContent, statSection.IsCollapsed(), y)
             if statTargets.section:IsShown() then
@@ -2526,20 +2535,21 @@ function ns:LayoutPanel()
             y = ns.StackSection(talentSection, talentContent, talentSection.IsCollapsed(), y)
         end,
         rotation = function()
-            placePvpEmpty()
+            if placePvpEmpty("rotation") then return end
             local h = lastRotationContentHeight
             ns.SetContentHeight(rotationContent, h)
             y = ns.StackSection(rotationSection, rotationContent, rotationSection.IsCollapsed(), y)
         end,
         bis = function()
+            if placePvpEmpty("bis") then return end
             y = ns.StackSection(gF.section, gF.content, gF.collapsed, y)
         end,
         trinkets = function()
-            placePvpEmpty()
+            if placePvpEmpty("trinkets") then return end
             y = ns.StackSection(tF.section, tF.content, tF.collapsed, y)
         end,
         enchants = function()
-            placePvpEmpty()
+            if placePvpEmpty("enchants") then return end
             placeDropdownAbove(enhF.sourceDropdown)
             y = ns.StackSection(enhF.enchSection, enhF.enchContent, enhF.enchCollapsed, y)
         end,
@@ -2550,7 +2560,7 @@ function ns:LayoutPanel()
             y = ns.StackSection(enhF.consumSection, enhF.consumContent, enhF.consumCollapsed, y)
         end,
         crafting = function()
-            placePvpEmpty()
+            if placePvpEmpty("crafting") then return end
             placeDropdownAbove(cF.ctxDropdown)
             y = ns.StackSection(cF.craftsSection, cF.craftsContent, cF.craftsCollapsed, y)
         end,
@@ -2690,6 +2700,25 @@ function ns:LayoutPanel()
             if k ~= "about" and sec then sec:Hide() end
         end
         pageOrder = { "about" }
+    elseif pvpNoGuide then
+        -- The PvP empty lines replace these sections, so the sections and
+        -- their dropdowns stay hidden on every page.
+        for _, k in ipairs({
+            "stats",
+            "rotation",
+            "bis",
+            "trinkets",
+            "enchants",
+            "gems",
+            "consumables",
+            "crafting",
+            "embellishments",
+        }) do
+            if memberSection[k] then memberSection[k]:Hide() end
+        end
+        statTargets.section:Hide()
+        if enhF.sourceDropdown then enhF.sourceDropdown:Hide() end
+        if cF.ctxDropdown then cF.ctxDropdown:Hide() end
     end
     local contentHeight
 
@@ -2764,6 +2793,9 @@ function ns:LayoutPanel()
         elseif pageTargetOffset > range then
             ApplyScrollOffset(range)
         end
+        -- A cog option changed the layout: keep its section header in place.
+        local pin = ns.ScrollPinDelta and ns.ScrollPinDelta(contentScroll)
+        if pin then ApplyScrollOffset(pageTargetOffset + pin) end
         ns._suppressTabSync = false
     end)
 
@@ -3445,6 +3477,9 @@ local function GetEntryIcon(entry)
     end
 end
 
+ns.ClassIconMarkup = GetClassIcon
+ns.SpecIconMarkup = GetSpecIconFor
+
 local tooltipCache = {}
 local tooltipCacheScopeKey = nil
 local playerClassToken = nil
@@ -3480,7 +3515,7 @@ local function SourceBadge(which, style)
     local s = ""
     if which == "ugg" then
         if showIcon then s = s .. "|TInterface\\AddOns\\BreadClassCodex\\Media\\ugg:12:12:0:0|t" end
-        if showLabel then s = s .. (showIcon and " " or "") .. "|cffff8000WH|r" end
+        if showLabel then s = s .. (showIcon and " " or "") .. "|cffff8000U.GG|r" end
     else
         if showIcon then s = s .. "|TInterface\\AddOns\\BreadClassCodex\\Media\\icyveins:12:12:0:0|t" end
         if showLabel then s = s .. (showIcon and " " or "") .. "|cff00ccffIV|r" end
@@ -3618,7 +3653,7 @@ local function BuildTooltipEntries(itemId)
                 if info.hasWH then
                     local s = ""
                     if showIcon then s = s .. "|TInterface\\AddOns\\BreadClassCodex\\Media\\ugg:12:12:0:0|t" end
-                    if showLabel then s = s .. (showIcon and " " or "") .. "|cffff8000WH|r" end
+                    if showLabel then s = s .. (showIcon and " " or "") .. "|cffff8000U.GG|r" end
                     parts[#parts + 1] = s
                 end
                 if info.hasIV then
@@ -3772,7 +3807,7 @@ local function OnTooltipItem(tooltip, tooltipData)
             if ClassCodexDB.showUggBisTooltip then
                 local s = ""
                 if showIcon then s = s .. "|TInterface\\AddOns\\BreadClassCodex\\Media\\ugg:12:12:0:0|t" end
-                if showLabel then s = s .. (showIcon and " " or "") .. "|cffff8000WH|r" end
+                if showLabel then s = s .. (showIcon and " " or "") .. "|cffff8000U.GG|r" end
                 headerSources[#headerSources + 1] = s
             end
             if ClassCodexDB.showIcyVeinsBisTooltip then
@@ -4002,7 +4037,7 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
         local dbDefaults = {
             showLoginMessage = false,
             showTooltipBadges = true,
-            statTargetBin = "top20",
+            statTargetBin = "top",
             tooltipFooterMode = 2,
             showUggBisTooltip = true,
             showIcyVeinsBisTooltip = true,
@@ -4206,6 +4241,27 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
                 end,
             })
             LDBIcon:Register("ClassCodex", dataObj, ClassCodexDB.minimap)
+            -- Our icon is a full disc with its own gold ring, so it has to sit
+            -- concentric with the minimap tracking border. LibDBIcon centers
+            -- the icon on the button (retail) or offsets it (classic clients),
+            -- but the ring in the border texture is drawn off-center: its hole
+            -- is centered at texel (20, 20) of the 64px texture. Anchor the
+            -- icon and its background there, sized to fill the hole.
+            local button = LDBIcon.GetMinimapButton and LDBIcon:GetMinimapButton("ClassCodex")
+            local border = button and button.border
+            if button and button.icon and border and border:GetWidth() > 0 then
+                local s = border:GetWidth() / 64
+                local size = math.floor(border:GetWidth() * 0.4 + 0.5)
+                local x, y = 20 * s, -20 * s
+                button.icon:SetSize(size, size)
+                button.icon:ClearAllPoints()
+                button.icon:SetPoint("CENTER", border, "TOPLEFT", x, y)
+                if button.background then
+                    button.background:SetSize(size, size)
+                    button.background:ClearAllPoints()
+                    button.background:SetPoint("CENTER", border, "TOPLEFT", x, y)
+                end
+            end
             ns.LDBIcon = LDBIcon
         end
 

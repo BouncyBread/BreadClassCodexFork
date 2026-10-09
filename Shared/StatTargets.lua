@@ -15,31 +15,29 @@ for key, label in pairs(ns.STAT_LABELS) do
 end
 
 ns.STAT_TARGET_BINS = {
-    { key = "top20", pct = 20 },
-    { key = "top50", pct = 50 },
-    { key = "top80", pct = 80 },
+    { key = "top", fallback = "Top Players" },
+    { key = "average", fallback = "All Players" },
 }
 
-local BIN_PCT = {}
+local BINS = {}
 for _, b in ipairs(ns.STAT_TARGET_BINS) do
-    BIN_PCT[b.key] = b.pct
+    BINS[b.key] = b
 end
 
 function ns.GetStatTargetBin()
     local b = ClassCodexDB and ClassCodexDB.statTargetBin
-    if BIN_PCT[b] then return b end
-    return "top20"
+    if BINS[b] then return b end
+    return "top"
 end
 
 function ns.SetStatTargetBin(bin)
-    if not BIN_PCT[bin] or not ClassCodexDB then return end
+    if not BINS[bin] or not ClassCodexDB then return end
     ClassCodexDB.statTargetBin = bin
 end
 
 function ns.StatTargetBinLabel(bin)
-    local pct = BIN_PCT[bin] or BIN_PCT.top20
-    local fmt = (ns.L and ns.L["stat_targets.bin"]) or "Top %d%%"
-    return string.format(fmt, pct)
+    local b = BINS[bin] or BINS.top
+    return (ns.L and ns.L["stat_targets.bin." .. b.key]) or b.fallback
 end
 
 function ns.StatTargetBinTooltip(bin)
@@ -141,17 +139,17 @@ function ns.GetStatTargets(classToken, specKey, context, source, heroSlug)
     if not targets then return nil end
 
     local bin = ns.GetStatTargetBin()
-    local isBinned = targets.top20 ~= nil or targets.top50 ~= nil or targets.top80 ~= nil
+    local isBinned = targets.top ~= nil or targets.average ~= nil
     local chosen, usedBin
     if isBinned then
         if targets[bin] then
             chosen, usedBin = targets[bin], bin
         else
-            chosen = targets.top20 or targets.top50 or targets.top80
-            usedBin = targets.top20 and "top20" or targets.top50 and "top50" or "top80"
+            chosen = targets.top or targets.average
+            usedBin = targets.top and "top" or "average"
         end
     else
-        chosen, usedBin = targets, "top20"
+        chosen, usedBin = targets, "top"
     end
     if not chosen then return nil end
     return { targets = chosen, bin = usedBin, multiBin = isBinned and binsDiffer(targets) or false }

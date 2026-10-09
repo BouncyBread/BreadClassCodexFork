@@ -58,6 +58,8 @@ L["context.mythic_plus"] = "Mitica+"
 
 L["consumable.flask"] = "Fiala"
 L["consumable.combat_potion"] = "Pozione da combattimento"
+L["consumable.health_potion"] = "Pozione di salute"
+L["consumable.alternative"] = "Alternativa"
 L["consumable.food"] = "Cibo"
 L["consumable.weapon_buff"] = "Potenziamento arma"
 L["consumable.augment_rune"] = "Runa di potenziamento"
@@ -73,9 +75,10 @@ L["empty.no_spec"] = "Scegli una specializzazione per vedere il tuo Bread Codex.
 L["empty.spec_leveling"] = "Guida al livellamento %s"
 L["empty.no_builds_details"] = "Nessuna build disponibile. Controlla U.GG per i dettagli."
 L["empty.no_builds_for"] = "Nessuna build per %s. Controlla U.GG."
-L["empty.no_rotation_for_details"] = "Nessuna rotazione per %s. Controlla U.GG per i dettagli."
+L["empty.no_rotation_for_details"] = "Rotazione di %s non disponibile per questo contesto."
 L["empty.no_rotation_available"] = "Rotazione in arrivo.\nNon ne abbiamo ancora una per questa specializzazione."
-L["empty.no_pvp_guide"] = "Guida PvP in arrivo.\nNon ne abbiamo ancora una per questa specializzazione."
+L["empty.no_pvp_guide"] = "Guida PvP di %s non disponibile."
+L["empty.pvp_switch_source"] = "Mostra il PvP di %s"
 L["empty.no_stat_targets"] =
     "Obiettivi delle statistiche in arrivo.\nNon abbiamo ancora abbastanza dati per questa specializzazione in questa stagione."
 
@@ -149,6 +152,12 @@ L["settings.hint.gear_source_no_icons"] = "Appare nelle viste tabella ed elenco.
 L["settings.tooltip.gear_source"] =
     "Mostra da dove proviene ogni oggetto Best in Slot, come il luogo del drop o una creazione. Appare sotto il nome dell'oggetto nella vista elenco e come colonna nella vista tabella. La vista icone la mantiene nella descrizione dell'oggetto. Ogni pannello ricorda questa scelta separatamente. Solo con dati di Icy Veins."
 L["settings.label.gear_ticks"] = "Mostra tacche traccia di potenziamento"
+L["settings.label.consumable_alts"] = "Mostra altre opzioni"
+L["settings.hint.consumable_alts"] =
+    "Mostra anche gli altri oggetti consigliati dalla guida per ogni consumabile, sotto la prima scelta."
+L["settings.label.enchant_ticks"] = "Mostra spunte di grado"
+L["settings.hint.enchant_ticks"] =
+    "Le spunte confrontano l'incantamento applicato con quello consigliato. Verde indica il grado più alto. Giallo indica un grado inferiore."
 L["settings.hint.gear_ticks"] =
     "Le tacche mostrano la traccia di potenziamento dell'oggetto equipaggiato in ogni slot Best in Slot. Verde significa che corrisponde alla traccia consigliata. Giallo significa che è al di sotto."
 L["settings.tooltip.gear_ticks"] =
@@ -225,16 +234,16 @@ L["chat.compendium_data_not_loaded"] = "Dati del compendio non caricati."
 L["settings.label.stat_priority_source_line"] = "Riga di origine della priorità statistiche"
 
 L["section.stat_targets"] = "Obiettivi Statistiche"
-L["stat_targets.bin"] = "Migliori %d%%"
+L["stat_targets.bin.top"] = "Migliori giocatori"
+L["stat_targets.bin.average"] = "Tutti i giocatori"
 L["stat_targets.bin_picker"] =
-    "Scegli da quali giocatori provengono gli obiettivi. Top 20%, 50% o 80% per equipaggiamento. Scegli se le righe mostrano valori o percentuali."
+    "Scegli da quali giocatori provengono gli obiettivi, i migliori giocatori o tutti i giocatori. Scegli se le righe mostrano valori o percentuali."
+L["stat_targets.bin_desc.top"] =
+    "I valori medi dei migliori giocatori su U.GG con questo talento eroico. L'obiettivo più difficile."
+L["stat_targets.bin_desc.average"] =
+    "I valori tipici di tutti i giocatori su U.GG con questo talento eroico. L'obiettivo più facile."
 L["settings.value.stat_targets_values"] = "Valori"
 L["settings.value.stat_targets_percent"] = "Percentuali"
-L["stat_targets.bin_desc.top20"] =
-    "I valori delle statistiche secondarie usati dal 20% dei migliori giocatori. I più difficili da raggiungere."
-L["stat_targets.bin_desc.top50"] =
-    "I valori usati dal 50% dei migliori giocatori. Un obiettivo realistico di metà stagione."
-L["stat_targets.bin_desc.top80"] = "I valori usati dall'80% dei migliori giocatori. Il più raggiungibile dei tre."
 L["settings.label.show_stat_targets"] = "Mostra Obiettivi Statistiche"
 L["settings.tooltip.dock_show_stat_targets"] =
     "Mostra la sezione Obiettivi Statistiche (le tue statistiche in tempo reale rispetto agli obiettivi di statistiche di U.GG) nella scheda Statistiche quando il pannello è ancorato."
@@ -363,6 +372,20 @@ L["tab.about"] = "Informazioni"
 L["about.header"] = "Informazioni su Bread Codex"
 L["about.version"] = "Versione addon"
 L["about.data_update"] = "Dati aggiornati"
+L["about.icon_guide"] = "Guida alle icone"
+L["about.icon_guide.tooltips"] = "Nei tooltip degli oggetti"
+L["about.icon_guide.panels"] = "Nel pannello e nel Compendium"
+L["about.icon_guide.tier"] = "Livello del monile e della build di talenti. S è il più forte."
+L["about.icon_guide.icyveins"] =
+    "Icy Veins consiglia l'oggetto. M+ o Incursione accanto all'icona indica la scheda della guida."
+L["about.icon_guide.ugg"] = "U.GG elenca l'oggetto, ordinato in base a quanti giocatori lo usano."
+L["about.icon_guide.spec_class"] =
+    "La specializzazione che usa l'oggetto. Un'icona di classe indica che ogni specializzazione della classe lo usa."
+L["about.icon_guide.stat_rank"] = "Posizione della statistica nella priorità della tua specializzazione."
+L["about.icon_guide.tick_green"] = "Possiedi l'oggetto al livello indicato, o l'incantamento al grado più alto."
+L["about.icon_guide.tick_yellow"] =
+    "Possiedi l'oggetto sotto il livello indicato, o l'incantamento a un grado inferiore."
+L["about.icon_guide.cog"] = "Apre le opzioni della sezione, come vista e spunte."
 L["about.more"] = "Esplora e personalizza"
 L["about.website_page"] = "Pagina di Bread Codex"
 L["about.compendium"] = "Compendium"

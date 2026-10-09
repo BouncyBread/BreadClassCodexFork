@@ -315,18 +315,24 @@ function ns.LayoutTable(content, rows, items, opts)
         if cap > 0 and sourceWidth > cap then sourceWidth = cap end
     end
 
+    local y = 0
     for i = 1, count do
         local item = items[i]
         local row = rows[i]
 
         row.labelText:SetText(item.label or "")
         local labelLen = #(item.label or "")
-        row.labelText:SetWidth(labelLen <= 2 and 18 or 55)
+        -- item.labelWidth keeps a blank label at full width (continuation rows).
+        row.labelText:SetWidth(item.labelWidth or (labelLen <= 2 and 18 or 55))
         if item.labelColor then
             row.labelText:SetTextColor(item.labelColor[1], item.labelColor[2], item.labelColor[3])
         else
             row.labelText:SetTextColor(0.6, 0.6, 0.6)
         end
+        -- item.dim: a secondary row (other options), drawn at reduced alpha.
+        local alpha = item.dim and 0.6 or 1
+        row.itemText:SetAlpha(alpha)
+        row.icon:SetAlpha(alpha)
         local name = (item.itemId or item.spellId)
                 and ns.FormatItem({
                     itemId = item.itemId,
@@ -379,10 +385,13 @@ function ns.LayoutTable(content, rows, items, opts)
         row.checkmark:SetShown((item.isOwned or item.tickColor) and true or false)
 
         row:ClearAllPoints()
-        row:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -(i - 1) * ns.TABLE_ROW_HEIGHT)
+        -- item.gapBefore: extra space above the row (starts a new group).
+        if i > 1 and item.gapBefore then y = y + item.gapBefore end
+        row:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -y)
         row:SetPoint("RIGHT", content, "RIGHT", 0, 0)
         row:Show()
+        y = y + ns.TABLE_ROW_HEIGHT
     end
 
-    return count * ns.TABLE_ROW_HEIGHT
+    return y
 end

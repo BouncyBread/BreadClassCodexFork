@@ -83,6 +83,7 @@ local function makeCtxCog(inst)
     end)
     cog:SetScript("OnClick", function(self)
         if not (MenuUtil and MenuUtil.CreateContextMenu) then return end
+        if ns.PinScroll then ns.PinScroll(self) end
         local opts = inst.contextOptions
         if not opts or #opts < 2 then return end
         MenuUtil.CreateContextMenu(self, function(_, root)
@@ -397,8 +398,9 @@ local function render(inst, args)
         return total
     elseif args.hasAnyRotation then
         inst.fallback:SetHeight(ns.ROW_HEIGHT)
-        inst.fallbackText:SetJustifyH("LEFT")
-        inst.fallbackText:SetText(L["empty.no_rotation_for_details"]:format(hero or ""))
+        inst.fallbackText:SetJustifyH("CENTER")
+        local srcLabel = ns.SourceLabelText and ns.SourceLabelText("icyveins") or "Icy Veins"
+        inst.fallbackText:SetText(L["empty.no_rotation_for_details"]:format(srcLabel))
         inst.fallback:ClearAllPoints()
         inst.fallback:SetPoint("TOPLEFT", inst.content, "TOPLEFT", 0, 0)
         inst.fallback:SetPoint("RIGHT", inst.content, "RIGHT", 0, 0)

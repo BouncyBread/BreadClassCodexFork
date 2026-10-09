@@ -21,7 +21,7 @@ local LABEL_W = 60
 
 local MAX_ENCHANT_ICONS = 24
 local MAX_GEM_ICONS = 8
-local MAX_CONSUM_ICONS = 8
+local MAX_CONSUM_ICONS = 20
 
 local ENCH_SLOT_ORDER = {
     Head = 1,
@@ -51,10 +51,7 @@ function Enhancements.GetViewMode(section, context)
     return (ClassCodexDB and ClassCodexDB["enhView_" .. section .. "_" .. context]) or "table"
 end
 
-function Enhancements.SetViewMode(section, mode, context)
-    context = viewContext(context)
-    if not ClassCodexDB then ClassCodexDB = {} end
-    ClassCodexDB["enhView_" .. section .. "_" .. context] = mode
+local function refreshView(context)
     if context == "comp" then
         if comp.enchIcons then
             if ns.UpdateCompendiumEnchants then ns:UpdateCompendiumEnchants() end
@@ -65,6 +62,41 @@ function Enhancements.SetViewMode(section, mode, context)
         if ns.UpdateGearingSections then ns:UpdateGearingSections() end
         if ns.LayoutPanel then ns:LayoutPanel() end
     end
+end
+
+-- Consumable alternatives default off; the key only exists once turned on.
+function Enhancements.IsConsumableAltsShown(context)
+    context = viewContext(context)
+    return (ClassCodexDB and ClassCodexDB["consumAlts_" .. context]) == true
+end
+
+function Enhancements.SetConsumableAltsShown(shown, context)
+    context = viewContext(context)
+    if not ClassCodexDB then ClassCodexDB = {} end
+    ClassCodexDB["consumAlts_" .. context] = shown and true or false
+    refreshView(context)
+end
+
+function Enhancements.SetViewMode(section, mode, context)
+    context = viewContext(context)
+    if not ClassCodexDB then ClassCodexDB = {} end
+    ClassCodexDB["enhView_" .. section .. "_" .. context] = mode
+    refreshView(context)
+end
+
+-- Enchant rank ticks default on; the key only exists once turned off. Off
+-- shows the plain owned tick for any rank of the enchant.
+function Enhancements.IsRankTicksShown(context)
+    context = viewContext(context)
+    local shown = ClassCodexDB and ClassCodexDB["enchTicks_" .. context]
+    return shown ~= false
+end
+
+function Enhancements.SetRankTicksShown(shown, context)
+    context = viewContext(context)
+    if not ClassCodexDB then ClassCodexDB = {} end
+    ClassCodexDB["enchTicks_" .. context] = shown and true or false
+    refreshView(context)
 end
 
 local function makeViewCog(header, section, ctx)
@@ -90,6 +122,7 @@ local function makeViewCog(header, section, ctx)
     end)
     cog:SetScript("OnClick", function(self)
         if not (MenuUtil and MenuUtil.CreateContextMenu) then return end
+        if ns.PinScroll then ns.PinScroll(self) end
         MenuUtil.CreateContextMenu(self, function(_, root)
             root:CreateTitle(L["settings.value.view"] or "View")
             root:CreateRadio(L["settings.value.table"] or "Table", function()
@@ -110,6 +143,46 @@ local function makeViewCog(header, section, ctx)
                 Enhancements.SetViewMode(section, "icons", ctx)
                 return MenuResponse.Refresh
             end)
+            if section == "consumables" then
+                root:CreateDivider()
+                local label = L["settings.label.consumable_alts"] or "Show Other Options"
+                local altCheck = root:CreateCheckbox(label, function()
+                    return Enhancements.IsConsumableAltsShown(ctx)
+                end, function()
+                    Enhancements.SetConsumableAltsShown(not Enhancements.IsConsumableAltsShown(ctx), ctx)
+                    return MenuResponse.Refresh
+                end)
+                if altCheck and altCheck.SetTooltip then
+                    altCheck:SetTooltip(function(tip)
+                        ns.Tooltip.MenuTip(
+                            tip,
+                            label,
+                            L["settings.hint.consumable_alts"]
+                                or "Also lists the other items the guide recommends for each consumable, under the first pick."
+                        )
+                    end)
+                end
+            end
+            if section == "enchants" then
+                root:CreateDivider()
+                local label = L["settings.label.enchant_ticks"] or "Show Rank Ticks"
+                local tickCheck = root:CreateCheckbox(label, function()
+                    return Enhancements.IsRankTicksShown(ctx)
+                end, function()
+                    Enhancements.SetRankTicksShown(not Enhancements.IsRankTicksShown(ctx), ctx)
+                    return MenuResponse.Refresh
+                end)
+                if tickCheck and tickCheck.SetTooltip then
+                    tickCheck:SetTooltip(function(tip)
+                        ns.Tooltip.MenuTip(
+                            tip,
+                            label,
+                            L["settings.hint.enchant_ticks"]
+                                or "Ticks compare your applied enchant with the recommended one. Green means it is the highest rank. Yellow means it is a lower rank."
+                        )
+                    end)
+                end
+            end
         end)
     end)
     header:AddHeaderWidget(cog)
@@ -209,6 +282,8 @@ local function layoutGrid(content, icons, items)
         ic.popText = item.popText
 
         ic:ToggleMarker("owned", item.isOwned and true or false)
+        ic:SetMarkerColor("owned", item.tickColor)
+        ic:SetAlpha(item.dim and 0.6 or 1)
 
         if item.count and item.count > 1 then
             ic.countText:SetText(tostring(item.count))
@@ -228,6 +303,7 @@ local function layoutList(content, rows, items)
     local count = math.min(#items, #rows)
     if count == 0 then return 0 end
 
+    local y = 0
     for i = 1, count do
         local item = items[i]
         local row = rows[i]
@@ -236,6 +312,9 @@ local function layoutList(content, rows, items)
         row.labelText:SetWidth(0)
         row.itemText:ClearAllPoints()
         row.itemText:SetPoint("LEFT", row.icon.slot, "RIGHT", 2, 0)
+        local alpha = item.dim and 0.6 or 1
+        row.itemText:SetAlpha(alpha)
+        row.icon:SetAlpha(alpha)
         local name = (item.itemId or item.spellId)
                 and ns.FormatItem({ itemId = item.itemId, spellId = item.spellId, name = item.name })
             or ""
@@ -255,14 +334,17 @@ local function layoutList(content, rows, items)
         row.sourceText = item.sourceText
         row.popText = item.popText
         row.icon:ToggleMarker("owned", item.isOwned and true or false)
+        row.icon:SetMarkerColor("owned", item.tickColor)
 
         row:ClearAllPoints()
-        row:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -(i - 1) * LIST_ROW_H)
+        if i > 1 and item.gapBefore then y = y + item.gapBefore end
+        row:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -y)
         row:SetPoint("RIGHT", content, "RIGHT", 0, 0)
         row:Show()
+        y = y + LIST_ROW_H
     end
 
-    return count * LIST_ROW_H
+    return y
 end
 
 local function renderSection(section, content, icons, rows, tableRows, items, context)
@@ -282,7 +364,8 @@ local function renderSection(section, content, icons, rows, tableRows, items, co
     end
 end
 
-local function buildEnchantItems(activeEnchants)
+local function buildEnchantItems(activeEnchants, context)
+    local rankTicks = Enhancements.IsRankTicksShown(context)
     local items = {}
     if not activeEnchants then return items end
 
@@ -301,10 +384,15 @@ local function buildEnchantItems(activeEnchants)
             -- render as the spell, so the raw enchant id must not leak into
             -- itemId (it would show as "Item 326805").
             local itemId = e.best.itemId or (e.best.spellId and nil) or e.best.enchantId
+            -- Rank ticks (same colors as Gear): green for the highest rank,
+            -- yellow for a lower rank. Off: the plain tick for any rank.
+            local tick = rankTicks and ns.EnchantTickColor and ns.EnchantTickColor(e.best, e.slot) or nil
+            local owned = tick ~= nil or (not rankTicks and ns.IsEnchantApplied and ns.IsEnchantApplied(e.best, e.slot))
             items[#items + 1] = {
                 itemId = itemId,
                 spellId = e.best.spellId,
-                isOwned = ns.IsEnchantApplied and ns.IsEnchantApplied(e.best, e.slot) or false,
+                isOwned = owned and true or false,
+                tickColor = tick,
                 popText = e.best.pop and (e.best.pop .. "%") or nil,
                 label = e.slot,
             }
@@ -338,21 +426,34 @@ local function buildGemItems(activeGems)
     return items
 end
 
-local function buildConsumableItems(activeConsumables)
+local function buildConsumableItems(activeConsumables, context)
     local items = {}
     if not activeConsumables then return items end
+    local showAlts = Enhancements.IsConsumableAltsShown(context)
 
+    local function add(id, label)
+        local count = (GetItemCount and GetItemCount(id)) or 0
+        local item = { itemId = id, isOwned = count > 0, count = count, label = label }
+        items[#items + 1] = item
+        return item
+    end
+
+    local altLabel = L["consumable.alternative"] or "Alternative"
     for _, key in ipairs(ns.CONSUMABLE_ORDER) do
         local c = activeConsumables[key]
         if c then
-            local id = c.itemId
-            local count = (GetItemCount and GetItemCount(id)) or 0
-            items[#items + 1] = {
-                itemId = id,
-                isOwned = count > 0,
-                count = count,
-                label = ns.CONSUMABLE_LABELS[key] or key,
-            }
+            local first = add(c.itemId, ns.CONSUMABLE_LABELS[key] or key)
+            -- Other options: dimmed "Alternative" rows under the first pick, with a
+            -- small gap between categories so each group reads as one block.
+            if showAlts then
+                first.gapBefore = 6
+                for _, id in ipairs(c.alts or {}) do
+                    if #items >= MAX_CONSUM_ICONS then break end
+                    local alt = add(id, altLabel)
+                    alt.labelWidth = 55
+                    alt.dim = true
+                end
+            end
         end
     end
     return items
@@ -476,7 +577,7 @@ function Enhancements.RenderPanel(args)
     panel.pvpFallback:Hide()
     local enchHeight = 0
     if activeEnchants and #activeEnchants > 0 then
-        local items = buildEnchantItems(activeEnchants)
+        local items = buildEnchantItems(activeEnchants, nil)
         enchHeight = renderSection(
             "enchants",
             panel.enchContent,
@@ -524,7 +625,7 @@ function Enhancements.RenderPanel(args)
 
     local consumHeight = 0
     if activeConsumables then
-        local items = buildConsumableItems(activeConsumables)
+        local items = buildConsumableItems(activeConsumables, nil)
         if #items > 0 then
             consumHeight = renderSection(
                 "consumables",
@@ -661,7 +762,7 @@ function Enhancements.RenderCompendiumEnchantsGems(args)
 
     comp.enchHeight = 0
     if args.enchants then
-        local items = buildEnchantItems(args.enchants)
+        local items = buildEnchantItems(args.enchants, "comp")
         if #items > 0 then
             comp.enchHeight = renderSection(
                 "enchants",
@@ -707,7 +808,7 @@ function Enhancements.RenderCompendiumConsumables(args)
         hideAll(comp.consumRows)
         return
     end
-    local items = buildConsumableItems(args.consumables)
+    local items = buildConsumableItems(args.consumables, "comp")
     if comp.consumIvIcon then
         local curSource = args.source or "icyveins"
         comp.consumIvIcon:SetShown(#items > 0 and curSource ~= "icyveins")
