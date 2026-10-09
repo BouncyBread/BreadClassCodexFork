@@ -2483,20 +2483,20 @@ ClassCodexSource["wowhead"] = {
               { itemId = 270167, tier = "A", source = "Nymrissa Wavebinder", contexts = { "raid" } },
               { itemId = 270169, tier = "A", source = "Hex Lord Malacrass", contexts = { "raid" } },
               { itemId = 270164, tier = "A", source = "Mor'zahi", contexts = { "raid" } },
+              { itemId = 270171, tier = "A", source = "Vexhul", contexts = { "raid" } },
+              { itemId = 250248, tier = "B", source = "The Hoardmonger", contexts = { "mplus" } },
               { itemId = 248583, tier = "B", source = "Delves", contexts = { "delves" } },
               { itemId = 251792, tier = "B", source = "Delves", contexts = { "delves" } },
               { itemId = 273796, tier = "B", source = "Rav'i", contexts = { "mplus" } },
-              { itemId = 250248, tier = "B", source = "The Hoardmonger", contexts = { "mplus" } },
+              { itemId = 250255, tier = "B", source = "Lithiel Cinderfury", contexts = { "mplus" } },
               { itemId = 274493, tier = "C", source = "Delves", contexts = { "delves" } },
               { itemId = 250215, tier = "C", source = "Zaen Bladesorrow", contexts = { "mplus" } },
               { itemId = 193757, tier = "C", source = "Melidrussa Chillworn", contexts = { "mplus" } },
-              { itemId = 250255, tier = "C", source = "Lithiel Cinderfury", contexts = { "mplus" } },
               { itemId = 250254, tier = "C", source = "Meittik", contexts = { "mplus" } },
               { itemId = 250214, tier = "C", source = "Lightwarden Ruia", contexts = { "mplus" } },
               { itemId = 264507, tier = "C", source = "Delves", contexts = { "delves" } },
               { itemId = 273649, tier = "D", source = "King Dazar", contexts = { "mplus" } },
               { itemId = 251789, tier = "D", source = "Delves", contexts = { "delves" } },
-              { itemId = 270171, tier = "D", source = "Vexhul", contexts = { "raid" } },
               { itemId = 251788, tier = "D", source = "Delves", contexts = { "delves" } },
               { itemId = 280091, tier = "D", source = "Delves", contexts = { "delves" } },
               { itemId = 274495, tier = "D", source = "Delves", contexts = { "delves" } },
@@ -2886,18 +2886,18 @@ ClassCodexSource["wowhead"] = {
         talents = {
           templar = {
             raid = {
-              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsNzYWmZYGzM2WGDLzithBAYAAAAAAQamZxMmZGjZrNAMgBMYbAAgZm2mZWmBAYzyGzYAMmhxAAsNDwMDyYD", label = "Raid" },
+              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsNzYWmZYGzM2WGDLzithBAYAAAAAAQamZxMmZGjZrNAMgBMYbAAgZm2mZWmBAYzyGzYAMmhxAAsNDwMDyYB", label = "Raid" },
             },
             mplus = {
-              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsZeAzyYGzYmZWWGjZZWmlZMAADAAAAAAaamhZMzwY2aDADMgZw2AAAzMtNzsMDAwmlFMAgZYMAALzAmZGkxC", label = "Mythic+" },
+              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsZYWGzYmZmZWWGjZZWmlZMAADAAAAAAaamhZMzwY2aDADMgZw2AAAzMtNzsMDAwmlFMAgZYMAALzAmZGkxC", label = "Mythic+" },
             },
             delves = {
-              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsZeAzyYGzYmZWWGjZZWmlZMAADAAAAAAaamhZMzwY2aDADMgZw2AAAzMtNzsMDAwmlFMAgZYMAALzAmZGkxC", label = "Delves", recommended = "Best" },
+              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsZYWGzYmZmZWWGjZZWmlZMAADAAAAAAaamhZMzwY2aDADMgZw2AAAzMtNzsMDAwmlFMAgZYMAALzAmZGkxC", label = "Delves", recommended = "Best" },
             },
           },
           lightsmith = {
             raid = {
-              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsNDzyYmHYmZmx2yYMLzithBAYAAAAAAQamZxMmZGjZrNAMgBMYbAAAEgZmttlWmZsYZjZMAGzwYAwMDAmZQGL", label = "Raid", recommended = "Best" },
+              { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsNDzyYmHYmZmx2yYMLzithBAYAAAAAAQamZxMmZYMbtBgBMwMYbAAAEgZmttlWmZsYZjZMAGzwYAwMDAmZQGL", label = "Raid", recommended = "Best" },
             },
             mplus = {
               { export = "CIEAAAAAAAAAAAAAAAAAAAAAAsZsNLjZMjZmZZbMmlZZWmxAAMAAAAAAopZGmxMDjZrNAMwAmBbDAAgAMzstt0yMjFLLYAAzwYAwMDAzMDyYB", label = "Mythic+", recommended = "Best" },
@@ -5042,5 +5042,5 @@ ClassCodexSource["wowhead"] = {
       },
     },
   },
-  meta = { generatedAt = "2026-10-08", schemaVersion = 1, source = "wowhead" },
+  meta = { generatedAt = "2026-10-09", schemaVersion = 1, source = "wowhead" },
 }
