@@ -2,6 +2,8 @@ local _, ns = ...
 -- 12.x removed the item globals; they live only on C_Item now.
 local GetItemCount = (C_Item and C_Item.GetItemCount) or GetItemCount
 local IsEquippedItem = (C_Item and C_Item.IsEquippedItem) or IsEquippedItem
+local GetItemInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
+local GetItemSpell = (C_Item and C_Item.GetItemSpell) or GetItemSpell
 ns.Sections = ns.Sections or {}
 
 local L = ns.L

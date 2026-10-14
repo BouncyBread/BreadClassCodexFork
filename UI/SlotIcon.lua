@@ -1,4 +1,6 @@
 local _, ns = ...
+-- 12.x removed the item globals; they live only on C_Item now.
+local GetItemInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
 
 local DEFAULT_ICON_SIZE = 32
 local DEFAULT_SLOT_RATIO = 1.8125

@@ -1,4 +1,6 @@
 local _, ns = ...
+-- 12.x removed the item globals; they live only on C_Item now.
+local GetItemQualityColor = (C_Item and C_Item.GetItemQualityColor) or GetItemQualityColor
 
 function ns.FormatItemLabel(name, quality)
     if not name or name == "" then return "" end

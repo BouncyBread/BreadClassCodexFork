@@ -1,4 +1,6 @@
 local _, ns = ...
+-- 12.x removed the item globals; they live only on C_Item now.
+local GetItemInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
 
 local DATA = IcyVeinsData
 if not DATA then
