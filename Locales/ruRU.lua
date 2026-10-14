@@ -17,7 +17,6 @@ L["bis.help.ugg"] =
     "U.GG показывает экипировку, которую чаще всего используют игроки в эпохальных+ и рейде в этом сезоне, отсортированную по популярности."
 L["bis.help.ugg_mplus"] = "Данные эпохального+ взяты из высоких ключей."
 L["tab.enhancements"] = "Улучшения"
-L["talent_pane.view_talents"] = "Просмотр талантов"
 L["talent_pane.save_as.tooltip"] = "Сохранить как новую раскладку"
 L["talent_pane.auto_recommend"] = "Выбрать рекомендуемое автоматически"
 L["talent_pane.difficulty"] = "Сложность"
@@ -381,13 +380,6 @@ L["settings.header.talent_pane"] = "Окно талантов"
 L["settings.label.talent_pane_show"] = "Показывать Bread Codex в окне талантов"
 L["settings.tooltip.talent_pane_show"] =
     "Показывает выбор билдов Bread Codex в окне талантов Blizzard. Отключите, чтобы полностью скрыть."
-L["settings.header.unit_menus"] = "Меню юнитов"
-L["settings.label.unit_menu_enabled"] =
-    "Добавить «Просмотр талантов» в меню правой кнопки мыши"
-L["settings.tooltip.unit_menu_enabled"] =
-    "Добавляет «Просмотр талантов» в меню правой кнопки мыши на рамках рейда, группы и юнитов. Отключите, если после правого щелчка появляются ошибки «Аддон пытался вызвать защищённую функцию». Это известная ошибка Blizzard."
-L["chat.blizzard_bug_notice"] =
-    "|cff66ccff[Bread Codex]|r Только что показанная ошибка «%s» является известной ошибкой Blizzard. Bread Codex её не вызывает. Отключите «Добавить Просмотр талантов в меню правой кнопки мыши» в настройках, чтобы остановить её."
 L["settings.header.character_pane_button"] = "Кнопка окна персонажа"
 L["character_pane.click_to_toggle"] = "Нажмите, чтобы открыть/закрыть панель"
 L["settings.label.lock_button_position"] = "Закрепить положение кнопки"
@@ -607,6 +599,8 @@ L["onboarding.dock_body"] =
 L["onboarding.talent_title"] = "Билды талантов"
 L["onboarding.talent_body"] =
     "Bread Codex добавляет выбор билдов в дерево талантов. Выберите билд, и изменённые таланты засветятся.\n\n|cffffd100Нажмите на значок, чтобы показать или скрыть его.|r"
+L["onboarding.talent_open_body"] =
+    "Bread Codex добавляет выбор билдов в дерево талантов.\n\n|cffffd100Откройте таланты, чтобы увидеть его.|r"
 L["onboarding.thanks_title"] = "Всё готово"
 L["onboarding.thanks_body"] =
     "Спасибо, что используете |cffffd100Bread Codex|r.\n\nВопросы, баги или идеи?\nНайдите нас в Discord."

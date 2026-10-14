@@ -16,7 +16,6 @@ L["bis.help.ugg"] =
     "O U.GG mostra o equipamento que a maioria dos jogadores usa em Mítica+ e Raide nesta temporada, ordenado por popularidade."
 L["bis.help.ugg_mplus"] = "Os dados de Mítica+ vêm de chaves altas."
 L["tab.enhancements"] = "Melhorias"
-L["talent_pane.view_talents"] = "Ver Talentos"
 L["talent_pane.save_as.tooltip"] = "Salvar como nova configuração"
 L["talent_pane.auto_recommend"] = "Escolher recomendada automaticamente"
 L["talent_pane.difficulty"] = "Dificuldade"
@@ -359,12 +358,6 @@ L["settings.header.talent_pane"] = "Painel de Talentos"
 L["settings.label.talent_pane_show"] = "Mostrar Bread Codex no painel de talentos"
 L["settings.tooltip.talent_pane_show"] =
     "Mostra o seletor de compilações do Bread Codex no painel de talentos da Blizzard. Desative para ocultá-lo completamente."
-L["settings.header.unit_menus"] = "Menus de Unidade"
-L["settings.label.unit_menu_enabled"] = "Adicionar 'Ver Talentos' ao menu de clique direito"
-L["settings.tooltip.unit_menu_enabled"] =
-    "Adiciona 'Ver Talentos' ao menu de clique direito de quadros de banda, grupo e unidade. Desative se vir erros 'Suplemento tentou chamar função protegida' após o clique. É um bug conhecido da Blizzard."
-L["chat.blizzard_bug_notice"] =
-    "|cff66ccff[Bread Codex]|r O erro '%s' que você acabou de ver é um bug conhecido da Blizzard. O Bread Codex não o causou. Desative 'Adicionar Ver Talentos ao menu de clique direito' nas configurações para pará-lo."
 
 L["footer.today"] = "Hoje"
 L["footer.yesterday"] = "Ontem"
@@ -547,6 +540,8 @@ L["onboarding.dock_body"] =
 L["onboarding.talent_title"] = "Builds de Talentos"
 L["onboarding.talent_body"] =
     "O Bread Codex adiciona um seletor de builds à sua árvore de talentos. Escolha uma build e os talentos alterados brilham.\n\n|cffffd100Clique no ícone para mostrar ou ocultar.|r"
+L["onboarding.talent_open_body"] =
+    "O Bread Codex adiciona um seletor de builds à tua árvore de talentos.\n\n|cffffd100Abre os teus talentos para o veres.|r"
 L["onboarding.thanks_title"] = "Tudo Pronto"
 L["onboarding.thanks_body"] =
     "Obrigado por usar o |cffffd100Bread Codex|r.\n\nDúvidas, bugs ou ideias?\nVenha nos encontrar no Discord."

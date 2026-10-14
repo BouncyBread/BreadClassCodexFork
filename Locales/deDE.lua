@@ -16,7 +16,6 @@ L["bis.help.ugg"] =
     "U.GG zeigt die Ausrüstung, die die meisten Spieler diese Saison in Mythisch+ und im Schlachtzug nutzen, nach Beliebtheit sortiert."
 L["bis.help.ugg_mplus"] = "Mythisch+-Daten stammen aus High-Key-Runs."
 L["tab.enhancements"] = "Verbesserungen"
-L["talent_pane.view_talents"] = "Talente anzeigen"
 L["talent_pane.save_as.tooltip"] = "Als neue Vorlage speichern"
 L["talent_pane.auto_recommend"] = "Empfohlene automatisch wählen"
 L["talent_pane.difficulty"] = "Schwierigkeit"
@@ -346,12 +345,6 @@ L["settings.header.talent_pane"] = "Talentfenster"
 L["settings.label.talent_pane_show"] = "Bread Codex im Talentfenster zeigen"
 L["settings.tooltip.talent_pane_show"] =
     "Zeigt die Class-Codex-Build-Auswahl im Blizzard-Talentfenster an. Deaktivieren, um sie vollständig auszublenden."
-L["settings.header.unit_menus"] = "Einheitenmenüs"
-L["settings.label.unit_menu_enabled"] = "'Talente anzeigen' zum Rechtsklick-Einheitenmenü hinzufügen"
-L["settings.tooltip.unit_menu_enabled"] =
-    "Fügt 'Talente anzeigen' zum Rechtsklick-Menü von Schlachtzug-, Gruppen- und Einheitenfenstern hinzu. Deaktivieren, falls nach einem Rechtsklick Fehler 'AddOn versuchte, eine geschützte Funktion aufzurufen' erscheinen. Dies ist ein bekannter Blizzard-Fehler."
-L["chat.blizzard_bug_notice"] =
-    "|cff66ccff[Bread Codex]|r Der gerade gesehene '%s'-Fehler ist ein bekannter Blizzard-Fehler. Bread Codex hat ihn nicht verursacht. Deaktiviere 'Talente anzeigen im Rechtsklick-Einheitenmenü hinzufügen' in den Einstellungen, um ihn zu stoppen."
 L["settings.header.character_pane_button"] = "Charakterfenster-Schaltfläche"
 L["character_pane.click_to_toggle"] = "Klicken, um das Panel ein-/auszublenden"
 L["settings.label.lock_button_position"] = "Schaltflächenposition sperren"
@@ -550,6 +543,8 @@ L["onboarding.dock_body"] =
 L["onboarding.talent_title"] = "Talent-Builds"
 L["onboarding.talent_body"] =
     "Bread Codex fügt deinem Talentbaum eine Build-Auswahl hinzu. Wähle einen Build und die geänderten Talente leuchten auf.\n\n|cffffd100Klicke auf das Symbol, um es ein- oder auszublenden.|r"
+L["onboarding.talent_open_body"] =
+    "Bread Codex fügt deinem Talentbaum eine Build-Auswahl hinzu.\n\n|cffffd100Öffne deine Talente, um sie zu sehen.|r"
 L["onboarding.thanks_title"] = "Alles bereit"
 L["onboarding.thanks_body"] =
     "Danke, dass du |cffffd100Bread Codex|r nutzt.\n\nFragen, Bugs oder Ideen?\nBesuche uns auf Discord."

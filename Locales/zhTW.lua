@@ -16,7 +16,6 @@ L["bis.help.ugg"] =
     "U.GG 顯示本賽季最多玩家在大秘境和團隊副本中使用的裝備，依熱門程度排序。"
 L["bis.help.ugg_mplus"] = "大秘境資料來自高層鑰石紀錄。"
 L["tab.enhancements"] = "強化"
-L["talent_pane.view_talents"] = "查看天賦"
 L["talent_pane.save_as.tooltip"] = "另存為新配置"
 L["talent_pane.auto_recommend"] = "自動選擇推薦"
 L["talent_pane.difficulty"] = "難度"
@@ -332,12 +331,6 @@ L["settings.header.talent_pane"] = "天賦面板"
 L["settings.label.talent_pane_show"] = "在天賦視窗顯示 Bread Codex"
 L["settings.tooltip.talent_pane_show"] =
     "在暴雪天賦視窗顯示 Bread Codex 組合選擇器。關閉以完全隱藏。"
-L["settings.header.unit_menus"] = "單位選單"
-L["settings.label.unit_menu_enabled"] = "在右鍵單位選單加入「檢視天賦」"
-L["settings.tooltip.unit_menu_enabled"] =
-    "在團隊、隊伍和單位框體的右鍵選單加入「檢視天賦」。若右鍵後出現「插件試圖呼叫受保護函式」錯誤，請關閉。這是已知的暴雪 bug。"
-L["chat.blizzard_bug_notice"] =
-    "|cff66ccff[Bread Codex]|r 你剛才看到的 '%s' 錯誤是已知的暴雪 bug。Bread Codex 並未造成它。請在 Bread Codex 設定中關閉「在右鍵單位選單加入檢視天賦」。"
 L["settings.header.character_pane_button"] = "角色面板按鈕"
 L["character_pane.click_to_toggle"] = "點擊以切換面板"
 L["settings.label.lock_button_position"] = "鎖定按鈕位置"
@@ -527,6 +520,8 @@ L["onboarding.dock_body"] =
 L["onboarding.talent_title"] = "天賦配置"
 L["onboarding.talent_body"] =
     "Bread Codex 會在你的天賦樹加入配置選擇器。選擇一個配置，變動的天賦就會發光。\n\n|cffffd100點擊圖示以顯示或隱藏。|r"
+L["onboarding.talent_open_body"] =
+    "Bread Codex 會在你的天賦樹加入配置選擇器。\n\n|cffffd100打開天賦介面即可查看。|r"
 L["onboarding.thanks_title"] = "一切就緒"
 L["onboarding.thanks_body"] =
     "感謝你使用 |cffffd100Bread Codex|r。\n\n有問題、錯誤或想法嗎？\n來 Discord 找我們。"

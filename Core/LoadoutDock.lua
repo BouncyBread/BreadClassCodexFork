@@ -103,6 +103,11 @@ local function CurrentTalentSignatures()
 end
 
 local function BuildBitsMatch(exportString, sigs)
+    local plan = ns.GetLevelingTarget and ns.GetLevelingTarget(exportString)
+    if plan then
+        local _, complete = ns.LevelingCompare(plan)
+        return complete
+    end
     if not exportString or not ns.ExtractTalentBits then return false end
     local b = ns.ExtractTalentBits(exportString)
     return b ~= nil and sigs[b] == true
@@ -162,6 +167,13 @@ local function BuildApplyContext()
 
     function ctx.matches(exportString)
         if not exportString then return false end
+        -- Below max level a leveling build matches the guide's talents for
+        -- the current level, never a cached signature from an earlier level.
+        local plan = ns.GetLevelingTarget and ns.GetLevelingTarget(exportString)
+        if plan then
+            local _, complete = ns.LevelingCompare(plan)
+            return complete
+        end
         if
             ctx.lastAppliedExport
             and ctx.lastAppliedBits

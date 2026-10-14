@@ -16,7 +16,6 @@ L["bis.help.ugg"] =
     "U.GG 显示本赛季最多玩家在大秘境和团队副本中使用的装备，按流行度排序。"
 L["bis.help.ugg_mplus"] = "大秘境数据来自高层钥石记录。"
 L["tab.enhancements"] = "强化"
-L["talent_pane.view_talents"] = "查看天赋"
 L["talent_pane.save_as.tooltip"] = "另存为新配置"
 L["talent_pane.auto_recommend"] = "自动选择推荐"
 L["talent_pane.difficulty"] = "难度"
@@ -332,12 +331,6 @@ L["settings.header.talent_pane"] = "天赋面板"
 L["settings.label.talent_pane_show"] = "在天赋窗口显示 Bread Codex"
 L["settings.tooltip.talent_pane_show"] =
     "在暴雪天赋窗口显示 Bread Codex 构筑选择器。关闭以完全隐藏。"
-L["settings.header.unit_menus"] = "单位菜单"
-L["settings.label.unit_menu_enabled"] = "在右键单位菜单中添加“查看天赋”"
-L["settings.tooltip.unit_menu_enabled"] =
-    "在团队、小队和单位框体的右键菜单中添加“查看天赋”。若右键后看到“插件尝试调用受保护函数”错误，请关闭。这是已知的暴雪 bug。"
-L["chat.blizzard_bug_notice"] =
-    "|cff66ccff[Bread Codex]|r 你刚才看到的 '%s' 错误是已知的暴雪 bug。Bread Codex 并未引发它。请在 Bread Codex 设置中关闭“在右键单位菜单中添加查看天赋”。"
 L["settings.header.character_pane_button"] = "角色面板按钮"
 L["character_pane.click_to_toggle"] = "点击切换面板"
 L["settings.label.lock_button_position"] = "锁定按钮位置"
@@ -528,6 +521,8 @@ L["onboarding.dock_body"] =
 L["onboarding.talent_title"] = "天赋构筑"
 L["onboarding.talent_body"] =
     "Bread Codex 在你的天赋树中添加了一个构筑选择器。选择一个构筑，变动的天赋就会发光。\n\n|cffffd100点击图标以显示或隐藏。|r"
+L["onboarding.talent_open_body"] =
+    "Bread Codex 在你的天赋树中添加了一个构筑选择器。\n\n|cffffd100打开天赋界面即可查看。|r"
 L["onboarding.thanks_title"] = "一切就绪"
 L["onboarding.thanks_body"] =
     "感谢你使用 |cffffd100Bread Codex|r。\n\n有疑问、bug 或想法？\n来 Discord 找我们吧。"

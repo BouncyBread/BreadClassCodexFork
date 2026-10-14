@@ -160,11 +160,10 @@ local function GetActiveMap()
     if not treeNodes then return nil end
     local map = {}
     for _, nodeID in ipairs(treeNodes) do
-        local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
-        if nodeInfo and nodeInfo.ranksPurchased and nodeInfo.ranksPurchased > 0 then
-            local entryID = nodeInfo.activeEntry and nodeInfo.activeEntry.entryID or nil
+        local ranks, entryID = ns.OwnedNodeState(configID, nodeID)
+        if ranks > 0 then
             map[nodeID] = {
-                ranksPurchased = nodeInfo.ranksPurchased,
+                ranksPurchased = ranks,
                 selectionEntryID = entryID,
             }
         end
@@ -174,6 +173,10 @@ local function GetActiveMap()
 end
 
 local function GetBuildMap(exportString)
+    -- Below max level a leveling build compares against the guide's talents
+    -- for the player's level (green = points to take now).
+    local plan = ns.GetLevelingTarget and ns.GetLevelingTarget(exportString)
+    if plan then return ns.LevelingTargetMap(plan) end
     local cached = buildMapCache[exportString]
     if cached ~= nil then return cached or nil end
     local map = ns.ParseLoadoutNodes and ns.ParseLoadoutNodes(exportString) or nil
@@ -186,12 +189,20 @@ local function GetBuildMap(exportString)
     return (map and next(map)) and map or nil
 end
 
-local function ComputeDiff(buildMap, activeMap)
+-- deficitIsAdd: a missing rank on the right entry is a point to take
+-- (leveling targets), not a change.
+local function ComputeDiff(buildMap, activeMap, deficitIsAdd)
     local adds, removes, changes = {}, {}, {}
     if not buildMap or not activeMap then return adds, removes, changes end
     for nodeID, buildEntry in pairs(buildMap) do
         local activeEntry = activeMap[nodeID]
         if not activeEntry then
+            adds[#adds + 1] = nodeID
+        elseif
+            deficitIsAdd
+            and buildEntry.selectionEntryID == activeEntry.selectionEntryID
+            and activeEntry.ranksPurchased < buildEntry.ranksPurchased
+        then
             adds[#adds + 1] = nodeID
         elseif
             buildEntry.selectionEntryID ~= activeEntry.selectionEntryID
@@ -312,7 +323,8 @@ local function ApplyGlowForBuild(build)
     local buildMap = GetBuildMap(build.exportString)
     local activeMap = GetActiveMap()
     if buildMap and activeMap then
-        local adds, removes, changes = ComputeDiff(buildMap, activeMap)
+        local leveling = ns.GetLevelingTarget and ns.GetLevelingTarget(build.exportString) ~= nil
+        local adds, removes, changes = ComputeDiff(buildMap, activeMap, leveling)
         for _, n in ipairs(adds) do
             ApplyGlowToButton(n, GLOW_COLOR_ADD)
         end

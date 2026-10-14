@@ -1,4 +1,4 @@
-## Interface: 120100
+## Interface: 120105
 ## Title: Bread Codex
 ## Notes: |cff8888ffBread Codex|r - stat priorities, talent builds, rotation guides, and gearing recommendations for your current spec.
 ## Author: jfstn
@@ -42,6 +42,7 @@ Shared\Sources.lua
 Shared\SelfTest.lua
 Shared\ItemLabel.lua
 Shared\ImportExport.lua
+Shared\LevelingTalents.lua
 Shared\TalentEncode.lua
 Shared\ReduceTaint.lua
 Shared\PvPTalents.lua
@@ -80,7 +81,6 @@ Core\GearingSections.lua
 Core\Compendium.lua
 Core\TalentPaneDropdown.lua
 Core\LoadoutDock.lua
-Core\UnitMenuIntegration.lua
 Core\IconGuide.lua
 Core\SettingsAbout.lua
 Core\Settings.lua

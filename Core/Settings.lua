@@ -176,14 +176,6 @@ function ns.RegisterSettings()
             end
         )
 
-        general.header(L["settings.header.unit_menus"])
-        general.check(
-            "unitMenuEnabled",
-            L["settings.label.unit_menu_enabled"],
-            L["settings.tooltip.unit_menu_enabled"],
-            true
-        )
-
         general.header(L["settings.header.character_pane_button"])
         general.check(
             "widgetLocked",

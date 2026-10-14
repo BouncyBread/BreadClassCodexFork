@@ -382,6 +382,74 @@ local function ResetAndPurchaseDeferred(configID, treeID, entryInfo, onComplete)
     step()
 end
 
+-- Leveling builds below max level: buy the guide's points in guide order.
+-- No reset when the config already holds only guide talents for this level;
+-- otherwise reset first, so the result always matches the guide. Steps
+-- already satisfied are skipped; failed steps get one more pass.
+local function PurchaseLevelingDeferred(configID, treeID, plan, entryInfo, onComplete)
+    applyToken = applyToken + 1
+    local myToken = applyToken
+
+    local subset = ns.LevelingCompare(plan, configID)
+    if not subset then
+        local resetOK = select(1, pcall(C_Traits.ResetTree, configID, treeID))
+        if not resetOK then
+            Msg("|cffff0000" .. ns.L["talent_apply.reset_failed"] .. "|r")
+            if onComplete then onComplete() end
+            return
+        end
+    end
+
+    local steps = ns.LevelingSteps(plan, configID)
+    local i, pass, failed = 1, 1, false
+
+    local function stepDone(s)
+        local ranks, entryID = ns.OwnedNodeState(configID, s.nodeID)
+        return ranks >= s.rank and (not s.isChoice or entryID == s.entryID)
+    end
+
+    local function finish()
+        for nodeID, e in pairs(entryInfo) do
+            local ranks, entryID = ns.OwnedNodeState(configID, nodeID)
+            if ranks >= e.ranksPurchased and (not e.isChoiceNode or entryID == e.selectionEntryID) then
+                entryInfo[nodeID] = nil
+            end
+        end
+        if onComplete then onComplete() end
+    end
+
+    local function step()
+        if myToken ~= applyToken then return end
+        local processed = 0
+        while i <= #steps and processed < BATCH_SIZE do
+            local s = steps[i]
+            -- The hero choice is only tried first, before any purchase is
+            -- staged: a retry after purchases would change the hero mid-stage.
+            if not (s.isHero and pass > 1) and not stepDone(s) then
+                local ok, result
+                if s.isChoice then
+                    ok, result = pcall(C_Traits.SetSelection, configID, s.nodeID, s.entryID)
+                else
+                    ok, result = pcall(C_Traits.PurchaseRank, configID, s.nodeID)
+                end
+                if not (ok and result) then failed = true end
+            end
+            i = i + 1
+            processed = processed + 1
+        end
+        if i <= #steps then
+            C_Timer.After(0, step)
+        elseif failed and pass < 2 then
+            pass, i, failed = pass + 1, 1, false
+            C_Timer.After(0, step)
+        else
+            finish()
+        end
+    end
+
+    step()
+end
+
 local CC_NAME = "Bread Codex"
 -- Loadouts created before the rename (and any created by upstream Class Codex)
 -- are still ours to reuse. Without this they read as user loadouts, so the
@@ -580,14 +648,28 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
     end
 end)
 
-local function StageAndCommit(targetConfigID, activeConfigID, entryInfo, treeID, buildLabel, finalName)
+local function StageAndCommit(targetConfigID, activeConfigID, entryInfo, treeID, buildLabel, finalName, plan)
+    if plan then entryInfo = ns.LevelingTargetMap(plan, activeConfigID) or {} end
     local originalNodeCount = 0
     for _ in pairs(entryInfo) do
         originalNodeCount = originalNodeCount + 1
     end
 
     ns._talentApplyInProgress = true
-    ResetAndPurchaseDeferred(activeConfigID, treeID, entryInfo, function()
+    local purchase = ResetAndPurchaseDeferred
+    if plan then
+        purchase = function(configID, tree, info, done)
+            PurchaseLevelingDeferred(configID, tree, plan, info, done)
+        end
+    end
+    purchase(activeConfigID, treeID, entryInfo, function()
+        if plan and next(entryInfo) and not C_Traits.ConfigHasStagedChanges(activeConfigID) then
+            -- Nothing could be bought: say so instead of "already using".
+            ns._talentApplyInProgress = false
+            Msg("|cffff0000" .. ns.L["talent_apply.failed_generic"] .. "|r")
+            ClearPendingApply()
+            return
+        end
         if not C_Traits.ConfigHasStagedChanges(activeConfigID) then
             ns._talentApplyInProgress = false
 
@@ -692,15 +774,26 @@ function ns.ApplyTalentExportString(exportString, buildLabel, isContinuation)
     -- which hard-crashes the client. Only short-circuit when nothing is staged:
     -- after a LoadConfig continuation the target build may be staged but not
     -- committed yet, and those staged changes still need StageAndCommit.
-    if ns.ExtractTalentBits and ns.GetActiveTalentSignature then
+    -- Below max level an Icy Veins leveling build targets the guide's
+    -- talents for the player's level, not the full export.
+    local plan = ns.GetLevelingTarget and ns.GetLevelingTarget(exportString)
+
+    if plan or (ns.ExtractTalentBits and ns.GetActiveTalentSignature) then
         local hasStagedChanges = C_Traits.ConfigHasStagedChanges and C_Traits.ConfigHasStagedChanges(activeConfigID)
         if not hasStagedChanges then
-            -- Always compare against the PLAYER's config: reading through a
-            -- stale inspect override generates against the inspect sentinel
-            -- config, which hard-crashes the client.
-            local activeBits = ns.GetActiveTalentSignature(true)
-            local newBits = ns.ExtractTalentBits(exportString)
-            if activeBits and newBits and activeBits == newBits then
+            local same
+            if plan then
+                local _, complete = ns.LevelingCompare(plan, activeConfigID)
+                same = complete
+            else
+                -- Always compare against the PLAYER's config: reading through a
+                -- stale inspect override generates against the inspect sentinel
+                -- config, which hard-crashes the client.
+                local activeBits = ns.GetActiveTalentSignature(true)
+                local newBits = ns.ExtractTalentBits(exportString)
+                same = activeBits and newBits and activeBits == newBits
+            end
+            if same then
                 local ccConfigID = GetStoredConfigID()
                 if ccConfigID and C_ClassTalents.RenameConfig then
                     RenameCCConfig(ccConfigID, CC_NAME .. ": " .. (buildLabel or "Build"), "already-applied")
@@ -769,7 +862,8 @@ function ns.ApplyTalentExportString(exportString, buildLabel, isContinuation)
         entryInfo,
         treeID,
         buildLabel,
-        CC_NAME .. ": " .. (buildLabel or "Build")
+        CC_NAME .. ": " .. (buildLabel or "Build"),
+        plan
     )
 end
 

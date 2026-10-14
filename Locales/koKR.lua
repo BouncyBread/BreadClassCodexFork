@@ -16,7 +16,6 @@ L["bis.help.ugg"] =
     "U.GG은 이번 시즌 신화+와 레이드에서 가장 많은 플레이어가 사용하는 장비를 보여줍니다. 인기도 순으로 정렬됩니다."
 L["bis.help.ugg_mplus"] = "신화+ 데이터는 높은 단계 쐐기돌 기록을 기반으로 합니다."
 L["tab.enhancements"] = "강화"
-L["talent_pane.view_talents"] = "특성 보기"
 L["talent_pane.save_as.tooltip"] = "새 로드아웃으로 저장"
 L["talent_pane.auto_recommend"] = "추천 자동 선택"
 L["talent_pane.difficulty"] = "난이도"
@@ -346,12 +345,6 @@ L["settings.header.talent_pane"] = "특성 패널"
 L["settings.label.talent_pane_show"] = "특성 창에 Bread Codex 표시"
 L["settings.tooltip.talent_pane_show"] =
     "블리자드 특성 창에 Bread Codex 빌드 선택기를 표시합니다. 끄면 완전히 숨깁니다."
-L["settings.header.unit_menus"] = "유닛 메뉴"
-L["settings.label.unit_menu_enabled"] = "유닛 우클릭 메뉴에 '특성 보기' 추가"
-L["settings.tooltip.unit_menu_enabled"] =
-    "공격대, 파티, 유닛 프레임의 우클릭 메뉴에 '특성 보기'를 추가합니다. 우클릭 후 '보호된 함수 호출' 오류가 발생하면 비활성화하세요. 알려진 블리자드 버그입니다."
-L["chat.blizzard_bug_notice"] =
-    "|cff66ccff[Bread Codex]|r 방금 본 '%s' 오류는 알려진 블리자드 버그입니다. Bread Codex가 유발한 것이 아닙니다. 중지하려면 Bread Codex 설정에서 '유닛 우클릭 메뉴에 특성 보기 추가'를 비활성화하세요."
 L["settings.header.character_pane_button"] = "캐릭터 창 버튼"
 L["character_pane.click_to_toggle"] = "클릭하여 패널 켜기/끄기"
 L["settings.label.lock_button_position"] = "버튼 위치 고정"
@@ -551,6 +544,8 @@ L["onboarding.dock_body"] =
 L["onboarding.talent_title"] = "특성 빌드"
 L["onboarding.talent_body"] =
     "Bread Codex는 특성 창에 빌드 선택기를 추가합니다. 빌드를 고르면 바뀐 특성이 빛납니다.\n\n|cffffd100아이콘을 클릭해 표시하거나 숨기세요.|r"
+L["onboarding.talent_open_body"] =
+    "Bread Codex는 특성 창에 빌드 선택기를 추가합니다.\n\n|cffffd100특성 창을 열어 확인하세요.|r"
 L["onboarding.thanks_title"] = "준비 완료"
 L["onboarding.thanks_body"] =
     "|cffffd100Bread Codex|r를 이용해 주셔서 감사합니다.\n\n궁금한 점이나 버그, 아이디어가 있나요?\nDiscord에서 저희를 찾아주세요."

@@ -16,7 +16,6 @@ L["bis.help.ugg"] =
     "U.GG muestra el equipo que más jugadores usan en Mítica+ y banda esta temporada, ordenado por popularidad."
 L["bis.help.ugg_mplus"] = "Los datos de Mítica+ provienen de llaves altas."
 L["tab.enhancements"] = "Mejoras"
-L["talent_pane.view_talents"] = "Ver talentos"
 L["talent_pane.save_as.tooltip"] = "Guardar como nueva configuración"
 L["talent_pane.auto_recommend"] = "Auto-elegir recomendado"
 L["talent_pane.difficulty"] = "Dificultad"
@@ -348,12 +347,6 @@ L["settings.header.talent_pane"] = "Panel de talentos"
 L["settings.label.talent_pane_show"] = "Mostrar Bread Codex en el panel de talentos"
 L["settings.tooltip.talent_pane_show"] =
     "Muestra el selector de builds de Bread Codex en el panel de talentos de Blizzard. Desactivar para ocultarlo por completo."
-L["settings.header.unit_menus"] = "Menús de unidad"
-L["settings.label.unit_menu_enabled"] = "Añadir 'Ver talentos' al menú clic derecho de unidades"
-L["settings.tooltip.unit_menu_enabled"] =
-    "Añade 'Ver talentos' al menú de clic derecho de marcos de banda, grupo y unidad. Desactivar si ves errores 'AddOn intentó llamar a una función protegida' tras hacer clic derecho. Es un bug conocido de Blizzard."
-L["chat.blizzard_bug_notice"] =
-    "|cff66ccff[Bread Codex]|r El error '%s' que acabas de ver es un bug conocido de Blizzard. Bread Codex no lo causó. Desactiva 'Añadir Ver talentos al menú clic derecho de unidades' en los ajustes para detenerlo."
 L["settings.header.character_pane_button"] = "Botón del panel del personaje"
 L["character_pane.click_to_toggle"] = "Haz clic para mostrar/ocultar el panel"
 L["settings.label.lock_button_position"] = "Bloquear posición del botón"
@@ -553,6 +546,8 @@ L["onboarding.dock_body"] =
 L["onboarding.talent_title"] = "Builds de talentos"
 L["onboarding.talent_body"] =
     "Bread Codex añade un selector de builds a tu árbol de talentos. Elige una build y los talentos cambiados brillan.\n\n|cffffd100Haz clic en el icono para mostrarlo u ocultarlo.|r"
+L["onboarding.talent_open_body"] =
+    "Bread Codex añade un selector de builds a tu árbol de talentos.\n\n|cffffd100Abre tus talentos para verlo.|r"
 L["onboarding.thanks_title"] = "Todo listo"
 L["onboarding.thanks_body"] =
     "Gracias por usar |cffffd100Bread Codex|r.\n\n¿Preguntas, errores o ideas?\nEncuéntranos en Discord."

@@ -13,7 +13,6 @@ L["bis.help.intro"] = "Recommended gear per slot. Use the source dropdown to com
 L["bis.help.ugg"] = "U.GG shows the gear the most players run in Mythic+ and Raid this season, ranked by popularity."
 L["bis.help.ugg_mplus"] = "Mythic+ data is drawn from high-key runs."
 L["tab.enhancements"] = "Enhancements"
-L["talent_pane.view_talents"] = "View Talents"
 L["talent_pane.save_as.tooltip"] = "Save as new loadout"
 L["talent_pane.auto_recommend"] = "Auto-pick recommended"
 L["talent_pane.difficulty"] = "Difficulty"
@@ -406,12 +405,6 @@ L["settings.header.talent_pane"] = "Talent Pane"
 L["settings.label.talent_pane_show"] = "Show Bread Codex on talent frame"
 L["settings.tooltip.talent_pane_show"] =
     "Show the Bread Codex build picker on the Blizzard talent frame. Disable to hide it entirely."
-L["settings.header.unit_menus"] = "Unit Menus"
-L["settings.label.unit_menu_enabled"] = "Add View Talents to right-click unit menus"
-L["settings.tooltip.unit_menu_enabled"] =
-    "Adds 'View Talents' to the right-click menu on raid, party, and unit frames. Disable if you see 'AddOn tried to call protected function' errors after right-clicking. This is a known Blizzard bug."
-L["chat.blizzard_bug_notice"] =
-    "|cff66ccff[Bread Codex]|r The '%s' error you just saw is a known Blizzard bug. Bread Codex didn't cause it. Disable 'Add View Talents to right-click unit menus' in Bread Codex settings to stop it."
 
 L["footer.today"] = "Today"
 L["footer.yesterday"] = "Yesterday"
@@ -518,6 +511,8 @@ L["onboarding.dock_body"] =
 L["onboarding.talent_title"] = "Talent Builds"
 L["onboarding.talent_body"] =
     "Bread Codex adds a build picker to your talent tree. Pick a build and the changed talents glow.\n\n|cffffd100Click the icon to show or hide it.|r"
+L["onboarding.talent_open_body"] =
+    "Bread Codex adds a build picker to your talent tree.\n\n|cffffd100Open your talents to see it.|r"
 L["onboarding.thanks_title"] = "You're All Set"
 L["onboarding.thanks_body"] =
     "Thank you for using |cffffd100Bread Codex|r.\n\nQuestions, bugs, or ideas?\nCome find us on Discord."

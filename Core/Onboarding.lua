@@ -90,23 +90,39 @@ local function CloseCharacterPane()
     if CharacterFrame and CharacterFrame:IsShown() and HideUIPanel then pcall(HideUIPanel, CharacterFrame) end
 end
 
-local function OpenClassTalents()
+-- The tour never opens or closes the talent window itself: PlayerSpellsFrame's
+-- OnShow/OnHide write action bar state, and running them from addon code
+-- taints the bars (blocked MultiBar SetShown in combat). The talents step asks
+-- the player to open the window and follows it through Blizzard's own events.
+local function TalentsShown()
+    local psf = _G.PlayerSpellsFrame
+    if not (psf and psf:IsShown() and psf.IsFrameTabActive) then return false end
     local util = _G.PlayerSpellsUtil
-    if util and util.OpenToClassTalentsTab and pcall(util.OpenToClassTalentsTab) then return end
-    if _G.PlayerSpellsFrame and ShowUIPanel then
-        pcall(ShowUIPanel, _G.PlayerSpellsFrame)
-        local psf = _G.PlayerSpellsFrame
-        if psf.SetFrameTab and util and util.FrameTabs and util.FrameTabs.ClassTalents then
-            pcall(psf.SetFrameTab, psf, util.FrameTabs.ClassTalents)
-        end
-        return
-    end
-    if _G.ToggleTalentFrame then pcall(_G.ToggleTalentFrame) end
+    if not (util and util.FrameTabs and util.FrameTabs.ClassTalents) then return false end
+    local ok, isActive = pcall(psf.IsFrameTabActive, psf, util.FrameTabs.ClassTalents)
+    return ok and isActive and true or false
 end
 
-local function CloseTalents()
-    if _G.PlayerSpellsFrame and _G.PlayerSpellsFrame:IsShown() and HideUIPanel then
-        pcall(HideUIPanel, _G.PlayerSpellsFrame)
+local talentWatchRegistered = false
+local talentWatchOwner = {}
+
+local function RefreshTalentStep()
+    local step = active and steps and steps[index]
+    if not step or step.id ~= "talents" then return end
+    card.body:SetText(step.body())
+    ResolveAndPlace(step)
+    for _, d in ipairs(RESOLVE_DELAYS) do
+        C_Timer.After(d, function()
+            if active and steps[index] == step then ResolveAndPlace(step) end
+        end)
+    end
+end
+
+local function WatchTalentWindow()
+    if talentWatchRegistered or not (_G.EventRegistry and EventRegistry.RegisterCallback) then return end
+    talentWatchRegistered = true
+    for _, event in ipairs({ "PlayerSpellsFrame.OpenFrame", "PlayerSpellsFrame.CloseFrame", "PlayerSpellsFrame.TabSet" }) do
+        EventRegistry:RegisterCallback(event, RefreshTalentStep, talentWatchOwner)
     end
 end
 
@@ -531,11 +547,12 @@ local function BuildSteps()
                 return L["onboarding.talent_title"]
             end,
             body = function()
-                return L["onboarding.talent_body"]
+                if TalentsShown() then return L["onboarding.talent_body"] end
+                return L["onboarding.talent_open_body"]
             end,
             onEnter = function()
                 CloseCharacterPane()
-                OpenClassTalents()
+                WatchTalentWindow()
             end,
             anchor = function()
                 return _G.ClassCodexTalentIcon
@@ -548,9 +565,6 @@ local function BuildSteps()
             end,
             body = function()
                 return L["onboarding.minimap_body"]
-            end,
-            onEnter = function()
-                CloseTalents()
             end,
             anchor = function()
                 if ns.LDBIcon and ns.LDBIcon.GetMinimapButton then
@@ -567,9 +581,6 @@ local function BuildSteps()
             end,
             body = function()
                 return L["onboarding.thanks_body"]
-            end,
-            onEnter = function()
-                CloseTalents()
             end,
             showLinks = true,
         },

@@ -16,7 +16,6 @@ L["bis.help.ugg"] =
     "U.GG mostra l'equipaggiamento che più giocatori usano in Mitica+ e Incursione questa stagione, ordinato per popolarità."
 L["bis.help.ugg_mplus"] = "I dati Mitica+ provengono dalle chiavi alte."
 L["tab.enhancements"] = "Potenziamenti"
-L["talent_pane.view_talents"] = "Vedi talenti"
 L["talent_pane.save_as.tooltip"] = "Salva come nuova configurazione"
 L["talent_pane.auto_recommend"] = "Scelta automatica consigliata"
 L["talent_pane.difficulty"] = "Difficoltà"
@@ -344,12 +343,6 @@ L["settings.header.talent_pane"] = "Pannello Talenti"
 L["settings.label.talent_pane_show"] = "Mostra Bread Codex nella schermata talenti"
 L["settings.tooltip.talent_pane_show"] =
     "Mostra il selettore di build di Bread Codex nella schermata dei talenti di Blizzard. Disattiva per nasconderlo completamente."
-L["settings.header.unit_menus"] = "Menu unità"
-L["settings.label.unit_menu_enabled"] = "Aggiungi 'Vedi talenti' al menu tasto destro delle unità"
-L["settings.tooltip.unit_menu_enabled"] =
-    "Aggiunge 'Vedi talenti' al menu tasto destro dei riquadri di incursione, gruppo e unità. Disattiva se vedi errori 'AddOn ha tentato di chiamare una funzione protetta' dopo il clic destro. È un bug noto di Blizzard."
-L["chat.blizzard_bug_notice"] =
-    "|cff66ccff[Bread Codex]|r L'errore '%s' che hai appena visto è un bug noto di Blizzard. Non è stato causato da Bread Codex. Disattiva 'Aggiungi Vedi talenti al menu tasto destro delle unità' nelle impostazioni per fermarlo."
 L["settings.header.character_pane_button"] = "Pulsante Pannello Personaggio"
 L["character_pane.click_to_toggle"] = "Clicca per mostrare/nascondere il pannello"
 L["settings.label.lock_button_position"] = "Blocca posizione pulsante"
@@ -548,6 +541,8 @@ L["onboarding.dock_body"] =
 L["onboarding.talent_title"] = "Build di talenti"
 L["onboarding.talent_body"] =
     "Bread Codex aggiunge un selettore di build al tuo albero dei talenti. Scegli una build e i talenti modificati si illuminano.\n\n|cffffd100Clicca l'icona per mostrarlo o nasconderlo.|r"
+L["onboarding.talent_open_body"] =
+    "Bread Codex aggiunge un selettore di build al tuo albero dei talenti.\n\n|cffffd100Apri i tuoi talenti per vederlo.|r"
 L["onboarding.thanks_title"] = "Tutto pronto"
 L["onboarding.thanks_body"] =
     "Grazie per aver usato |cffffd100Bread Codex|r.\n\nDomande, bug o idee?\nVieni a trovarci su Discord."
