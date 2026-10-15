@@ -179,7 +179,7 @@ local function GetEquippedEffectSpellIds()
         if slot ~= 4 then
             local link = GetInventoryItemLink("player", slot)
             if link then
-                local _, spellId = GetItemSpell(link)
+                local _, spellId = C_Item.GetItemSpell(link)
                 if spellId then ids[spellId] = true end
             end
         end
@@ -207,9 +207,9 @@ end
 local function IsItemOwned(entry, isEmbellishment)
     local itemId = entry.itemId
     if not itemId or itemId == 0 then return false end
-    local count = GetItemCount(itemId, true, false, true, true) or 0
+    local count = C_Item.GetItemCount(itemId, true, false, true, true) or 0
     if count > 0 then return true end
-    if IsEquippedItem and IsEquippedItem(itemId) then return true end
+    if C_Item.IsEquippedItem(itemId) then return true end
     if isEmbellishment and IsEmbellishmentApplied(entry) then return true end
     return false
 end
@@ -350,7 +350,7 @@ local function OpenCraftMenu(card)
             end
         end)
         root:CreateButton((L and L["item.menu.copy_name"]) or "Copy name", function()
-            local name = select(1, GetItemInfo(itemId)) or tostring(itemId)
+            local name = select(1, C_Item.GetItemInfo(itemId)) or tostring(itemId)
             if ns.ShowCopyPopup then ns.ShowCopyPopup(name, card) end
         end)
     end)
@@ -390,7 +390,7 @@ local function MakeCard(parent)
         if self.embItemId then
             ns.Tooltip.Blank().Muted((L and L["gear.tooltip.embellishment"]) or "Embellishment:")
             local embName = self.embName or ("Item " .. self.embItemId)
-            local _, _, embQuality = GetItemInfo(self.embItemId)
+            local _, _, embQuality = C_Item.GetItemInfo(self.embItemId)
             ns.Tooltip.Intro("  " .. (ns.FormatItemLabel and ns.FormatItemLabel(embName, embQuality) or embName))
         end
         ns.Tooltip.Blank().Body(L["crafting.tooltip.menu_hint"])

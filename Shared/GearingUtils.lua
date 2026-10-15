@@ -77,7 +77,7 @@ local function GetItemQualityWithBonuses(itemRef)
     local bonusIDs = itemRef and itemRef.bonusIDs
     if itemId and bonusIDs and #bonusIDs > 0 then
         local s = "item:" .. itemId .. "::::::::::::" .. #bonusIDs .. ":" .. table.concat(bonusIDs, ":")
-        return select(3, GetItemInfo(s)) or GetItemQuality(itemId)
+        return select(3, C_Item.GetItemInfo(s)) or GetItemQuality(itemId)
     end
     return GetItemQuality(itemId)
 end
@@ -755,7 +755,7 @@ local ICON_SIZE = 16
 local function GetItemIcon(itemId)
     local cached = ns.GetCachedItem(itemId)
     if cached and cached.icon then return cached.icon end
-    local _, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemId)
+    local _, _, _, _, _, _, _, _, _, icon = C_Item.GetItemInfo(itemId)
     return icon
 end
 
@@ -791,8 +791,8 @@ end
 local function IsItemOwned(itemId)
     if not itemId then return false end
     if ClassCodexDB and ClassCodexDB.highlightOwnedGear == false then return false end
-    if IsEquippedItem and IsEquippedItem(itemId) then return true end
-    return (GetItemCount(itemId, true, false, true, true) or 0) > 0
+    if C_Item.IsEquippedItem(itemId) then return true end
+    return (C_Item.GetItemCount(itemId, true, false, true, true) or 0) > 0
 end
 
 local function GetItemLink(itemId)
@@ -841,18 +841,18 @@ function ns.BuildItemLink(itemId, bonusIDs, sourceItemId)
         -- on send). Hand-built links risk "Invalid escape code in chat
         -- message" rejections inside C_ChatInfo.SendChatMessage, which does
         -- no Lua-side validation we could satisfy ourselves.
-        local _, link = GetItemInfo(bare)
+        local _, link = C_Item.GetItemInfo(bare)
         if not link then
             C_Item.RequestLoadItemDataByID(itemId)
-            _, link = GetItemInfo(bare)
+            _, link = C_Item.GetItemInfo(bare)
         end
         if link then return link end
         -- Uncached: hand-build as a fallback (color outside the |H…|h pair,
         -- matching real client links) until the item data arrives.
-        local name, _, quality = GetItemInfo(itemId)
+        local name, _, quality = C_Item.GetItemInfo(itemId)
         if not name then return GetItemLink(itemId) end
         local color = "|cffffffff"
-        local ok, r, g, b = pcall(GetItemQualityColor, quality or 1)
+        local ok, r, g, b = pcall(C_Item.GetItemQualityColor, quality or 1)
         if ok and r then
             color = format(
                 "|cff%02x%02x%02x",
@@ -985,7 +985,7 @@ local function OpenItemContextMenu(row)
     -- Crafted-enchant item names embed a profession-quality atlas in the name
     -- itself (straight from GetItemInfo), and row text adds brackets/colors —
     -- both break Auctionator queries, so always clean whatever we use.
-    local name = CleanItemText(select(1, GetItemInfo(itemId)))
+    local name = CleanItemText(select(1, C_Item.GetItemInfo(itemId)))
         or CleanItemText(row.itemText and row.itemText.GetText and row.itemText:GetText())
         or nil
     MenuUtil.CreateContextMenu(row, function(_, root)
@@ -1294,11 +1294,7 @@ function ns.ResolveEnchantId(entry)
     -- enchantId is only as good as the payload's id convention (a SpellItem
     -- Enchantment id for PvE, an item id for u.gg PvP v2), so it goes last.
     if entry.itemId then
-        local spellId
-        if GetItemSpell then
-            local _, s = GetItemSpell(entry.itemId)
-            spellId = s
-        end
+        local _, spellId = C_Item.GetItemSpell(entry.itemId)
         if spellId and enchantSpellToId and enchantSpellToId[spellId] then return enchantSpellToId[spellId] end
     end
     return entry.enchantId
@@ -1428,7 +1424,7 @@ local function FindStoredIlvl(itemId, name)
                     local matched = storedId == itemId
                     if not matched and name then matched = link:match("|h%[(.-)%]|h") == name end
                     if matched then
-                        local ilvl = GetDetailedItemLevelInfo(link)
+                        local ilvl = C_Item.GetDetailedItemLevelInfo(link)
                         if ilvl and (not bestIlvl or ilvl > bestIlvl) then bestIlvl = ilvl end
                     end
                 end
@@ -1440,7 +1436,7 @@ end
 
 function ns.GearTickForEntry(slot, itemId, bonusIDs, sourceItemId)
     -- A pick without bonuses pins no version, so there is nothing to tick.
-    if not itemId or not bonusIDs or #bonusIDs == 0 or not GetDetailedItemLevelInfo then return nil end
+    if not itemId or not bonusIDs or #bonusIDs == 0 then return nil end
     local invSlots = EQUIP_SLOT_GROUPS[slot]
     if not invSlots then
         local inv = SLOT_TO_INV[slot]
@@ -1449,7 +1445,7 @@ function ns.GearTickForEntry(slot, itemId, bonusIDs, sourceItemId)
 
     -- Uncached items resolve to a base-item link without the pick's
     -- bonuses; bail so a later render compares against the real target.
-    local name = GetItemInfo(itemId)
+    local name = C_Item.GetItemInfo(itemId)
     if not name then
         C_Item.RequestLoadItemDataByID(itemId)
         return nil
@@ -1474,12 +1470,12 @@ function ns.GearTickForEntry(slot, itemId, bonusIDs, sourceItemId)
         end
     end
 
-    local targetIlvl = GetDetailedItemLevelInfo(ns.BuildItemLink(itemId, bonusIDs, sourceItemId))
+    local targetIlvl = C_Item.GetDetailedItemLevelInfo(ns.BuildItemLink(itemId, bonusIDs, sourceItemId))
     if not targetIlvl then return nil end
 
     local ownedIlvl
-    if equippedLink then ownedIlvl = GetDetailedItemLevelInfo(equippedLink) end
-    local count = GetItemCount(itemId, true) or 0
+    if equippedLink then ownedIlvl = C_Item.GetDetailedItemLevelInfo(equippedLink) end
+    local count = C_Item.GetItemCount(itemId, true) or 0
     local storedCache = ClassCodexCharDB and ClassCodexCharDB.tickStoredIlvl
     if count == 0 and storedCache then
         -- The last copy is gone; drop the remembered stored item level.

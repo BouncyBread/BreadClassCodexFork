@@ -276,7 +276,7 @@ local function GetItemDisplayName(itemRef)
     if itemRef.itemId then
         local cached = ns.GetCachedItem(itemRef.itemId)
         if cached and cached.name then return cached.name end
-        local name = GetItemInfo(itemRef.itemId)
+        local name = C_Item.GetItemInfo(itemRef.itemId)
         if name then return name end
     end
     return itemRef.name or ("Item " .. (itemRef.itemId or "?"))
@@ -434,10 +434,10 @@ local function InitFrame()
                     local embName = self.embName
                     if not embName or embName == "" then
                         embName = (C_Item and C_Item.GetItemInfo and C_Item.GetItemInfo(self.embItemId))
-                            or GetItemInfo(self.embItemId)
+                            or C_Item.GetItemInfo(self.embItemId)
                             or ("Item " .. self.embItemId)
                     end
-                    local _, _, embQuality = GetItemInfo(self.embItemId)
+                    local _, _, embQuality = C_Item.GetItemInfo(self.embItemId)
                     ns.Tooltip.Intro(
                         "  " .. (ns.FormatItemLabel and ns.FormatItemLabel(embName, embQuality) or embName)
                     )

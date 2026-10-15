@@ -120,7 +120,7 @@ local function ResolveIconTexture(itemId)
         local i = C_Item.GetItemIconByID(itemId)
         if i then return i end
     end
-    local _, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemId)
+    local _, _, _, _, _, _, _, _, _, icon = C_Item.GetItemInfo(itemId)
     return icon
 end
 

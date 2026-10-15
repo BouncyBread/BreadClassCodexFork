@@ -51,7 +51,7 @@ function ns.FormatRotationStep(stepText)
     stepText = stepText:gsub("<", "&lt;")
     stepText = stepText:gsub(">", "&gt;")
     local body = stepText:gsub("{item:(%d+)|([^}]*)}", function(id, fallback)
-        local name, _, quality = GetItemInfo(tonumber(id))
+        local name, _, quality = C_Item.GetItemInfo(tonumber(id))
         if name then
             local color = (quality and ITEM_QUALITY_COLORS[quality] and ITEM_QUALITY_COLORS[quality].hex)
                 or "|cffffffff"
@@ -63,7 +63,7 @@ function ns.FormatRotationStep(stepText)
         return '<A HREF="item:' .. id .. '">|cffffffffUnknown Item|r</A>'
     end)
     body = body:gsub("{item:(%d+)}", function(id)
-        local name, _, quality = GetItemInfo(tonumber(id))
+        local name, _, quality = C_Item.GetItemInfo(tonumber(id))
         name = name or "Unknown Item"
         local color = (quality and ITEM_QUALITY_COLORS[quality] and ITEM_QUALITY_COLORS[quality].hex) or "|cffffffff"
         return '<A HREF="item:' .. id .. '">' .. color .. name .. "|r</A>"
@@ -85,7 +85,7 @@ function ns.GetStepSpellIcon(stepText)
     local itemPos, _, itemId = stripped:find("{item:(%d+)")
     local spellPos, _, spellId = stripped:find("{(%d+)}")
     if itemId and itemPos and (not spellPos or itemPos < spellPos) then
-        local icon = select(10, GetItemInfo(tonumber(itemId)))
+        local icon = select(10, C_Item.GetItemInfo(tonumber(itemId)))
         if icon then return icon end
     end
     if spellId then

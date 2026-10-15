@@ -435,7 +435,7 @@ local function buildConsumableItems(activeConsumables, context)
     local showAlts = Enhancements.IsConsumableAltsShown(context)
 
     local function add(id, label)
-        local count = (GetItemCount and GetItemCount(id)) or 0
+        local count = C_Item.GetItemCount(id) or 0
         local item = { itemId = id, isOwned = count > 0, count = count, label = label }
         items[#items + 1] = item
         return item
