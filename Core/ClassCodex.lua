@@ -4374,8 +4374,12 @@ SlashCmdList["CLASSCODEX"] = function(msg)
                 ClassCodexCharDB.panelOpen = true
             end
         else
-            ToggleCharacter("PaperDollFrame")
-            ClassCodexCharDB.panelOpen = true
+            -- ToggleCharacter is secure-only; in combat it raises the
+            -- blocked-action popup, so the pane stays closed until combat ends.
+            if not InCombatLockdown() then
+                ToggleCharacter("PaperDollFrame")
+                ClassCodexCharDB.panelOpen = true
+            end
         end
     elseif msg == "compendium" then
         if ns.OpenCompendium then
