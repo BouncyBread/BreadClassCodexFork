@@ -24,8 +24,8 @@ end
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("ITEM_DATA_LOAD_RESULT")
 frame:SetScript("OnEvent", function(_, _, itemId, success)
-    if not success then return end
     pendingItems[itemId] = nil
+    if not success then return end
     local name, _, quality, _, _, _, _, _, _, icon = C_Item.GetItemInfo(itemId)
     if not name then return end
     itemCache[itemId] = { name = name, quality = quality, icon = icon }
