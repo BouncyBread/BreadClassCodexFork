@@ -57,6 +57,7 @@ Shared\GearingUtils.lua
 Shared\StatDR.lua
 Shared\StatTargets.lua
 Shared\DungeonArt.lua
+Shared\RollSource.lua
 UI\Tooltip.lua
 UI\SlotIcon.lua
 UI\CollapsibleSection.lua

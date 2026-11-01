@@ -14,7 +14,9 @@ local REVEAL_DURATION = 0.18
 local REVEAL_SLIDE_DX = 22
 
 local GLOW_INSET = 3
+local GLOW_INSET_STRONG = 7
 local GLOW_ALPHA = 0.45
+local GLOW_ALPHA_STRONG = 1.0
 local GLOW_ATLAS = "bags-glow-orange"
 local GLOW_COLOR_ADD = { 0.20, 1.00, 0.35 }
 local GLOW_COLOR_REMOVE = { 1.00, 0.30, 0.30 }
@@ -127,7 +129,10 @@ end
 local function ClearGlow()
     for i = 1, #touchedGlowButtons do
         local btn = touchedGlowButtons[i]
-        if btn and btn._ccGlow then btn._ccGlow:Hide() end
+        if btn then
+            if btn._ccGlow then btn._ccGlow:Hide() end
+            btn._ccTipNext, btn._ccTipGuide = nil, nil
+        end
         touchedGlowButtons[i] = nil
     end
 end
@@ -172,11 +177,7 @@ local function GetActiveMap()
     return map
 end
 
-local function GetBuildMap(exportString)
-    -- Below max level a leveling build compares against the guide's talents
-    -- for the player's level (green = points to take now).
-    local plan = ns.GetLevelingTarget and ns.GetLevelingTarget(exportString)
-    if plan then return ns.LevelingTargetMap(plan) end
+local function GetFullBuildMap(exportString)
     local cached = buildMapCache[exportString]
     if cached ~= nil then return cached or nil end
     local map = ns.ParseLoadoutNodes and ns.ParseLoadoutNodes(exportString) or nil
@@ -187,6 +188,14 @@ local function GetBuildMap(exportString)
         buildMapCache[exportString] = false
     end
     return (map and next(map)) and map or nil
+end
+
+-- Match checks (applied mark, active build): below max level a leveling build
+-- compares against the guide's talents for the player's level.
+local function GetBuildMap(exportString)
+    local plan = ns.GetLevelingTarget and ns.GetLevelingTarget(exportString)
+    if plan then return ns.LevelingTargetMap(plan) end
+    return GetFullBuildMap(exportString)
 end
 
 -- deficitIsAdd: a missing rank on the right entry is a point to take
@@ -217,7 +226,8 @@ local function ComputeDiff(buildMap, activeMap, deficitIsAdd)
     return adds, removes, changes
 end
 
-local function ApplyGlowToButton(nodeID, color)
+-- strong: the next guide talent, full alpha and a wider ring.
+local function ApplyGlowToButton(nodeID, color, strong)
     local talentsFrame = PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame
     if not talentsFrame or not talentsFrame.GetTalentButtonByNodeID then return end
     local btn = talentsFrame:GetTalentButtonByNodeID(nodeID)
@@ -226,15 +236,45 @@ local function ApplyGlowToButton(nodeID, color)
         local glow = btn:CreateTexture(nil, "OVERLAY", nil, 7)
         glow:SetAtlas(GLOW_ATLAS)
         glow:SetBlendMode("BLEND")
-        local size = math.max(btn:GetWidth() or 0, btn:GetHeight() or 0)
-        if size <= 0 then size = 38 end
-        size = size + GLOW_INSET * 2
-        glow:SetSize(size, size)
         glow:SetPoint("CENTER", btn, "CENTER")
         btn._ccGlow = glow
     end
-    btn._ccGlow:SetVertexColor(color[1], color[2], color[3], GLOW_ALPHA)
+    local size = math.max(btn:GetWidth() or 0, btn:GetHeight() or 0)
+    if size <= 0 then size = 38 end
+    size = size + (strong and GLOW_INSET_STRONG or GLOW_INSET) * 2
+    btn._ccGlow:SetSize(size, size)
+    btn._ccGlow:SetVertexColor(color[1], color[2], color[3], strong and GLOW_ALPHA_STRONG or GLOW_ALPHA)
     btn._ccGlow:Show()
+    touchedGlowButtons[#touchedGlowButtons + 1] = btn
+    return btn
+end
+
+-- Talent buttons are pooled, so the guide lines live on the button only while
+-- it is glowed (ClearGlow drops them); the hook is set once per button.
+local function TalentTooltipHook(btn)
+    if not (btn._ccTipNext or btn._ccTipGuide) or GameTooltip:GetOwner() ~= btn then return end
+    if btn._ccTipNext then
+        GameTooltip:AddLine(btn._ccTipNext, GLOW_COLOR_ADD[1], GLOW_COLOR_ADD[2], GLOW_COLOR_ADD[3])
+    end
+    if btn._ccTipGuide then GameTooltip:AddLine(btn._ccTipGuide, 0.8, 0.8, 0.8) end
+    GameTooltip:Show()
+end
+
+local function SetGuideTooltip(nodeID, levels, nextLevel)
+    local talentsFrame = PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame
+    local btn = talentsFrame and talentsFrame.GetTalentButtonByNodeID and talentsFrame:GetTalentButtonByNodeID(nodeID)
+    if not btn then return end
+    btn._ccTipNext, btn._ccTipGuide = ns.LevelingTalents.TooltipLines(levels, nextLevel, ns.L or {})
+    if not btn._ccTipHooked then
+        btn._ccTipHooked = true
+        -- The talent tooltip fills in SetTooltipInternal, which can run after
+        -- OnEnter (spell data loads late), so hook the method when it exists.
+        if btn.SetTooltipInternal then
+            hooksecurefunc(btn, "SetTooltipInternal", TalentTooltipHook)
+        else
+            btn:HookScript("OnEnter", TalentTooltipHook)
+        end
+    end
     touchedGlowButtons[#touchedGlowButtons + 1] = btn
 end
 
@@ -318,13 +358,36 @@ local function UpdateRevealAnimation()
     end)
 end
 
+-- The guide's next point for a leveling plan: first point in order the
+-- active config does not own (a choice node holding another entry owns 0).
+local function LevelingNext(plan)
+    if not (plan and plan.order) then return nil end
+    local configID = GetActiveConfigID()
+    if not configID then return nil end
+    local function owned(nodeID, entryID)
+        local ranks, activeEntry, isChoice = ns.OwnedNodeState(configID, nodeID)
+        if isChoice and activeEntry ~= entryID then return 0 end
+        return ranks
+    end
+    local _, nodeID, level = ns.LevelingTalents.NextPoint(plan.order, owned)
+    return nodeID, level
+end
+
 local function ApplyGlowForBuild(build)
     if not build then return end
-    local buildMap = GetBuildMap(build.exportString)
+    -- Below max level a leveling build glows the full final build; the guide's
+    -- next point gets the strong glow and every guide talent its levels.
+    local plan = ns.GetLevelingTarget and ns.GetLevelingTarget(build.exportString)
+    local buildMap = plan and GetFullBuildMap(build.exportString) or GetBuildMap(build.exportString)
     local activeMap = GetActiveMap()
     if buildMap and activeMap then
-        local leveling = ns.GetLevelingTarget and ns.GetLevelingTarget(build.exportString) ~= nil
-        local adds, removes, changes = ComputeDiff(buildMap, activeMap, leveling)
+        local nextNode, nextLevel = LevelingNext(plan)
+        local adds, removes, changes = ComputeDiff(buildMap, activeMap, plan ~= nil)
+        if plan and plan.order then
+            for nodeID, levels in pairs(ns.LevelingTalents.Levels(plan.order)) do
+                SetGuideTooltip(nodeID, levels, nodeID == nextNode and nextLevel or nil)
+            end
+        end
         for _, n in ipairs(adds) do
             ApplyGlowToButton(n, GLOW_COLOR_ADD)
         end
@@ -334,6 +397,8 @@ local function ApplyGlowForBuild(build)
         for _, n in ipairs(changes) do
             ApplyGlowToButton(n, GLOW_COLOR_CHANGE)
         end
+        -- Last, so the next talent's strong glow wins over its diff color.
+        if nextNode then ApplyGlowToButton(nextNode, GLOW_COLOR_ADD, true) end
     end
 end
 
@@ -1524,6 +1589,8 @@ local function Setup()
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("TRAIT_CONFIG_UPDATED")
     eventFrame:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
+    -- A staged click (before Apply) moves the next-talent highlight.
+    eventFrame:RegisterEvent("TRAIT_NODE_CHANGED")
     eventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     eventFrame:RegisterEvent("INSPECT_READY")
 

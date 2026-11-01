@@ -22,6 +22,58 @@ function LevelingTalents.Prefix(order, level)
     return points, ranks, entries
 end
 
+local seen = {}
+
+-- Pure: index (into the triples, 1-based point number) of the first guide
+-- point the player does not own yet, or nil when every point is owned.
+-- `owned(nodeID, entryID)` returns the ranks owned of that node with that
+-- entry (0 when a choice node holds another entry).
+function LevelingTalents.NextPoint(order, owned)
+    for k in pairs(seen) do
+        seen[k] = nil
+    end
+    local point = 0
+    for i = 1, #order - 2, 3 do
+        point = point + 1
+        local nodeID, entryID = order[i], order[i + 1]
+        local n = (seen[nodeID] or 0) + 1
+        seen[nodeID] = n
+        if (owned(nodeID, entryID) or 0) < n then return point, nodeID, order[i + 2] end
+    end
+    return nil
+end
+
+-- Guide data never changes in a session, so levels cache per order table.
+local levelsCache = setmetatable({}, { __mode = "k" })
+
+-- Pure: nodeID -> ascending list of the levels at which the guide spends a
+-- point on that node.
+function LevelingTalents.Levels(order)
+    local cached = levelsCache[order]
+    if cached then return cached end
+    local out = {}
+    for i = 1, #order - 2, 3 do
+        local list = out[order[i]]
+        if not list then
+            list = {}
+            out[order[i]] = list
+        end
+        list[#list + 1] = order[i + 2]
+    end
+    levelsCache[order] = out
+    return out
+end
+
+-- Pure: Tooltip line for one talent: "Next talent (level N)" when it is the
+-- next talent (nextLevel set), otherwise "Guide: level a, b". One line only.
+function LevelingTalents.TooltipLines(levels, nextLevel, L)
+    if nextLevel then return string.format(L["talent_pane.next_talent"] or "Next talent (level %d)", nextLevel), nil end
+    local guideLine = levels
+        and #levels > 0
+        and string.format(L["talent_pane.guide_levels"] or "Guide: level %s", table.concat(levels, ", "))
+    return nil, guideLine or nil
+end
+
 -- class .. "\0" .. spec -> { [export] = { order = {...}, plans = { [level] = plan } } }
 local indexBySpec = {}
 
@@ -57,7 +109,14 @@ function ns.GetLevelingTarget(exportString)
     local plan = entry.plans[level]
     if not plan then
         local points, ranks, entries = LevelingTalents.Prefix(entry.order, level)
-        plan = { export = exportString, level = level, points = points, ranks = ranks, entries = entries }
+        plan = {
+            export = exportString,
+            level = level,
+            points = points,
+            ranks = ranks,
+            entries = entries,
+            order = entry.order,
+        }
         entry.plans[level] = plan
     end
     return plan

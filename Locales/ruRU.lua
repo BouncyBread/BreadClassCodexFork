@@ -313,6 +313,8 @@ L["loadout_dock.no_ugg_builds"] = "Нет доступных билдов U.GG."
 L["loadout_dock.pick_a_build"] = "Выберите билд"
 L["talent_pane.placeholder.encounter"] = "Выберите бой"
 L["talent_pane.placeholder.bracket"] = "Выберите формат"
+L["talent_pane.next_talent"] = "Следующий талант (уровень %d)"
+L["talent_pane.guide_levels"] = "Руководство: уровень %s"
 L["gear.tooltip.alternative"] = "Альтернатива:"
 L["gear.tooltip.embellishment"] = "Украшения:"
 L["gear.tooltip.catalyst"] = "Катализировано из:"
@@ -614,6 +616,20 @@ L["tooltip.open_compendium"] = "Нажмите, чтобы открыть Compen
 L["talent_pane.compare_hint"] =
     "Сравните свои таланты и загрузите свежие билды из наших источников."
 L["gear.cog_hint"] = "Нажмите, чтобы сменить билд или вид."
+L["settings.label.gear_group"] = "Группировать по источнику"
+L["settings.hint.gear_group"] =
+    "Показывает каждый предмет под боссом или подземельем, с которого он падает."
+L["settings.hint.gear_source_grouped"] =
+    "Отображается в режимах таблицы и списка, когда «Группировать по источнику» выключено."
+L["gear.group.crafted"] = "Созданные"
+L["gear.group.other"] = "Прочее"
+L["gear.group.item_one"] = "Предметов: %d"
+L["gear.group.items"] = "Предметов: %d"
+L["gear.group.tip_done"] = "У вас %d из %d предметов BiS из этого источника."
+L["gear.group.tip_rule_ticks"] =
+    "Предмет учитывается, когда ваша копия достигает указанного уровня. Копии ниже считаются недостающими."
+L["gear.group.tip_rule_owned"] =
+    "Предмет учитывается, если он у вас есть. Включите отметки пути улучшения, чтобы учитывать только копии указанного уровня."
 L["trinkets.cog_hint"] = "Нажмите, чтобы отфильтровать уровни и контент."
 L["rotation.cog_hint"] = "Нажмите, чтобы сменить ротацию."
 L["hint.switch_view"] = "Нажмите, чтобы сменить вид."

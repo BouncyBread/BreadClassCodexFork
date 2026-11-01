@@ -661,6 +661,9 @@ function ns.GetBisGearData(source, classToken, specKey)
                 local row = { slot = g.slot, item = item }
                 if g.source then row.source = g.source end
                 if g.pop then row.pop = g.pop end
+                row.crafted = g.crafted
+                row.sourceEncounter = g.sourceEncounter
+                row.sourceInstance = g.sourceInstance
                 out[#out + 1] = row
             end
             bisGear[#bisGear + 1] = { label = BIS_GEAR_TAB[ctx] or ctx, slots = ns.SortSlotsCanonical(out) }

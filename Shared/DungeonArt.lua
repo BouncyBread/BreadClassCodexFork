@@ -250,8 +250,9 @@ function ns.GetJournalTarget(sourceText)
     return instanceID, nil
 end
 
--- Current-season journal loot index: itemID -> {instanceID, encounterID},
--- built once over the current tier's raid encounters and the M+ pool
+-- Current-season journal loot index: itemID -> list of {instanceID,
+-- encounterID, isRaid} (an item can drop from several sources), built once
+-- over the current tier's raid encounters and the M+ pool
 -- dungeons (challenge-map names resolved to EJ instances across tiers).
 -- Answers "can the journal actually show this item?" synchronously — for
 -- rows with no parsable source — and pins the exact boss for dungeon-only
@@ -261,13 +262,27 @@ end
 local journalLootByItem
 local journalLootScanTried = false
 
-local function ScanEncounterLoot(instanceID, encounterID)
+local function ScanEncounterLoot(instanceID, encounterID, isRaid)
     EJ_SelectEncounter(encounterID)
     for i = 1, EJ_GetNumLoot() do
         local info = C_EncounterJournal.GetLootInfoByIndex(i)
         local id = info and info.itemID
-        if id and not journalLootByItem[id] then
-            journalLootByItem[id] = { instanceID = instanceID, encounterID = encounterID }
+        if id then
+            local hits = journalLootByItem[id]
+            if not hits then
+                hits = {}
+                journalLootByItem[id] = hits
+            end
+            local dup = false
+            for _, h in ipairs(hits) do
+                if h.encounterID == encounterID then
+                    dup = true
+                    break
+                end
+            end
+            if not dup then
+                hits[#hits + 1] = { instanceID = instanceID, encounterID = encounterID, isRaid = isRaid }
+            end
         end
     end
 end
@@ -292,7 +307,7 @@ local function BuildJournalLootIndex()
     end
     if EJ_SetLootFilter then pcall(EJ_SetLootFilter, 0, 0) end
     local ok, err = pcall(function()
-        local instances = {}
+        local instances, isRaid = {}, {}
 
         -- Current tier's raids.
         EJ_SelectTier((EJ_GetNumTiers and EJ_GetNumTiers()) or 1)
@@ -301,6 +316,7 @@ local function BuildJournalLootIndex()
             local id = EJ_GetInstanceByIndex(i, true)
             if not id then break end
             instances[#instances + 1] = id
+            isRaid[id] = true
             i = i + 1
         end
 
@@ -319,7 +335,7 @@ local function BuildJournalLootIndex()
             while true do
                 local _, _, encounterID = EJ_GetEncounterInfoByIndex(j, inst)
                 if not encounterID then break end
-                ScanEncounterLoot(inst, encounterID)
+                ScanEncounterLoot(inst, encounterID, isRaid[inst] == true)
                 j = j + 1
             end
         end
@@ -340,8 +356,15 @@ end
 function ns.GetJournalLootTarget(itemId)
     if not itemId then return nil end
     if not journalLootByItem then BuildJournalLootIndex() end
-    local e = journalLootByItem and journalLootByItem[itemId]
+    local hits = journalLootByItem and journalLootByItem[itemId]
+    local e = hits and hits[1]
     if e then return e.instanceID, e.encounterID end
+end
+
+function ns.GetJournalLootTargets(itemId)
+    if not itemId then return nil end
+    if not journalLootByItem then BuildJournalLootIndex() end
+    return journalLootByItem and journalLootByItem[itemId]
 end
 
 -- "Ready" means the scan has settled — with or without portraits. An empty

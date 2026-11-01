@@ -99,6 +99,19 @@ function Gear.SetTrackTicksShown(shown, context)
     refreshView(context)
 end
 
+-- Group by Source defaults off; per context like the settings above.
+function Gear.IsGrouped(context)
+    context = viewContext(context)
+    return (ClassCodexDB and ClassCodexDB["gearGroup_" .. context]) == true
+end
+
+function Gear.SetGrouped(grouped, context)
+    context = viewContext(context)
+    if not ClassCodexDB then ClassCodexDB = {} end
+    ClassCodexDB["gearGroup_" .. context] = grouped and true or false
+    refreshView(context)
+end
+
 local function FindTabByLabel(tabs, label)
     if not label then return nil end
     for _, tab in ipairs(tabs) do
@@ -198,6 +211,17 @@ local function makeCog(inst, ctx)
                 return MenuResponse.Refresh
             end)
             root:CreateDivider()
+            local groupCheck = root:CreateCheckbox(L["settings.label.gear_group"], function()
+                return Gear.IsGrouped(ctx)
+            end, function()
+                Gear.SetGrouped(not Gear.IsGrouped(ctx), ctx)
+                return MenuResponse.Refresh
+            end)
+            if groupCheck and groupCheck.SetTooltip then
+                groupCheck:SetTooltip(function(tip)
+                    ns.Tooltip.MenuTip(tip, L["settings.label.gear_group"], L["settings.hint.gear_group"])
+                end)
+            end
             local srcCheck = root:CreateCheckbox(L["settings.label.gear_source"] or "Show Item Source", function()
                 return Gear.IsSourceShown(ctx)
             end, function()
@@ -209,7 +233,7 @@ local function makeCog(inst, ctx)
                     ns.Tooltip.MenuTip(
                         tip,
                         L["settings.label.gear_source"] or "Show Item Source",
-                        L["settings.hint.gear_source_no_icons"] or "Appears in the table and list views."
+                        L["settings.hint.gear_source_grouped"]
                     )
                 end)
             end
@@ -363,12 +387,378 @@ local function buildRows(inst)
     inst.fallback:Hide()
 end
 
+local function buildItem(inst, entry, ctxBonus, ticksOn, viewMode, ejClassID, ejSpecID)
+    local source, bonusIDs = ResolveRow(entry, nil, ctxBonus)
+    local rowBonus, catalystItemId = ResolveStatIds(entry, bonusIDs)
+    local owned = ns.IsItemOwned(entry.item.itemId)
+    if inst.gateOwned then owned = owned and ns.compOwnClass end
+    local tick = resolveTick(inst, ticksOn, entry, rowBonus, catalystItemId)
+    -- The table draws the tick as its checkmark; the slot views mark the icon.
+    if tick and viewMode ~= "table" then owned = true end
+    return {
+        entry = entry,
+        itemId = entry.item.itemId,
+        bonusIDs = rowBonus,
+        catalystItemId = catalystItemId,
+        ejClassID = ejClassID,
+        ejSpecID = ejSpecID,
+        source = source,
+        sourceText = (source ~= "" and source) or nil,
+        popText = entry.pop and (entry.pop .. "%") or nil,
+        isOwned = owned,
+        tickColor = tick,
+        label = entry.slot,
+    }
+end
+
+local function layoutList(content, rows, items, showSource)
+    local count = math.min(#items, #rows)
+    for i = 1, count do
+        local item = items[i]
+        local row = rows[i]
+        local source = item.source
+        row.itemText:SetText(ns.FormatItem(item.entry.item))
+        local hasSource = showSource and source and source ~= ""
+        local yOff = hasSource and 5 or 0
+        row.itemText:ClearAllPoints()
+        row.itemText:SetPoint("LEFT", row.icon.slot, "RIGHT", 2, yOff)
+        row.itemText:SetPoint("RIGHT", row, "RIGHT", -4, yOff)
+        if hasSource then
+            row.sourceLine:SetText(source)
+            row.sourceLine:Show()
+        else
+            row.sourceLine:Hide()
+        end
+        row.itemId = item.itemId
+        row.bonusIDs = item.bonusIDs
+        row.catalystItemId = item.catalystItemId
+        row.ejClassID = item.ejClassID
+        row.ejSpecID = item.ejSpecID
+        row.altItemId = nil
+        row.embItemId = nil
+        row.sourceText = item.sourceText
+        row.popText = item.popText
+        row.icon:SetItem(item.itemId)
+        row.icon:ToggleMarker("owned", item.isOwned and true or false)
+        row.icon:SetMarkerColor("owned", item.tickColor)
+        row:ClearAllPoints()
+        row:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -(i - 1) * CARD_HEIGHT)
+        row:SetPoint("RIGHT", content, "RIGHT", 0, 0)
+        row:Show()
+    end
+    return count * CARD_HEIGHT
+end
+
+-- Group by Source: one collapsible header per boss, dungeon, Crafted and
+-- Other, with that source's rows under it in the current view.
+local GROUP_HEADER_H = 28
+local GROUP_GAP = 2
+-- Every later group header starts right under the line above it. The
+-- first one must start right under the section divider, which sits above
+-- our content's top by the panel's content pad (both panels: 4) plus the
+-- 3 px the section header draws its divider above its own bottom edge.
+local SECTION_DIVIDER_LIFT = 3
+local function groupTopPad()
+    return -((ns.SECTION_CONTENT_PAD or 4) + SECTION_DIVIDER_LIFT)
+end
+local GROUP_ICON = 18
+local GROUP_CHEVRON = "common-dropdown-icon-next"
+local GROUP_ROTATE_S = 0.15
+local GROUP_OPEN_S = 0.18
+local GROUP_CLOSE_S = 0.12
+-- Headers look the same in every view: the icon centered on the table's
+-- item-icon column, the title on its slot-name column.
+local GROUP_ICON_CENTER = 16
+local GROUP_LABEL_X = 35
+local GROUP_CRAFTED_ICON = "Interface\\AddOns\\BreadClassCodex\\Media\\tab-crafting"
+local GROUP_OTHER_ICON = "Interface\\AddOns\\BreadClassCodex\\Media\\tab-gear"
+local CIRCLE_MASK = "Interface\\CHARACTERFRAME\\TempPortraitAlphaMask"
+local GROUP_LABEL = { 0.92, 0.92, 0.92 }
+local GROUP_LABEL_HL = { 1, 0.82, 0 }
+local GROUP_CHEVRON_TINT = 0.6
+
+local function groupOpenState()
+    if not ClassCodexDB then ClassCodexDB = {} end
+    ClassCodexDB.gearGroupOpen = ClassCodexDB.gearGroupOpen or {}
+    return ClassCodexDB.gearGroupOpen
+end
+
+local function acquireGroupFrames(inst, i)
+    inst.groupHeaders = inst.groupHeaders or {}
+    inst.groupBodies = inst.groupBodies or {}
+    local h = inst.groupHeaders[i]
+    if not h then
+        -- Flat like the section headers: the source's ringed portrait or
+        -- dungeon icon (as on the talent cards), label, count, and the
+        -- open/closed arrow on the right; hairline below.
+        h = CreateFrame("Button", nil, inst.content)
+        h:SetHeight(GROUP_HEADER_H)
+        h:RegisterForClicks("LeftButtonUp")
+        h.icon = h:CreateTexture(nil, "ARTWORK")
+        h.icon:SetSize(GROUP_ICON, GROUP_ICON)
+        h.icon:SetPoint("CENTER", h, "LEFT", GROUP_ICON_CENTER, 0)
+        local mask = h:CreateMaskTexture()
+        mask:SetAllPoints(h.icon)
+        mask:SetTexture(CIRCLE_MASK, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        h.icon:AddMaskTexture(mask)
+        h.ring = h:CreateTexture(nil, "OVERLAY")
+        h.ring:SetAtlas("Artifacts-PerkRing-Final")
+        h.ring:SetPoint("CENTER", h.icon, "CENTER")
+        h.ring:SetSize(GROUP_ICON * 1.42, GROUP_ICON * 1.42)
+        h.chevron = h:CreateTexture(nil, "OVERLAY")
+        h.chevron:SetAtlas(GROUP_CHEVRON)
+        h.chevron:SetSize(12, 12)
+        -- Centered under the section's cog (14 px, PAGE_TITLE_HPAD from the
+        -- right edge) and the page's link arrow above it.
+        local cogCenter = (ns.PAGE_TITLE_HPAD or 8) + 7
+        h.chevron:SetPoint("CENTER", h, "RIGHT", -cogCenter, 0)
+        h.chevron:SetVertexColor(GROUP_CHEVRON_TINT, GROUP_CHEVRON_TINT, GROUP_CHEVRON_TINT)
+        local spin = h.chevron:CreateAnimationGroup()
+        h.spinRot = spin:CreateAnimation("Rotation")
+        h.spinRot:SetOrigin("CENTER", 0, 0)
+        h.spinRot:SetDuration(GROUP_ROTATE_S)
+        h.spinRot:SetSmoothing("OUT")
+        spin:SetScript("OnFinished", function()
+            h.chevron:SetRotation(h.angle or 0)
+        end)
+        h.spin = spin
+        h.label = h:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        h.label:SetPoint("LEFT", h, "LEFT", GROUP_LABEL_X, 0)
+        h.label:SetPoint("RIGHT", h.chevron, "LEFT", -6, 0)
+        h.label:SetJustifyH("LEFT")
+        h.label:SetWordWrap(false)
+        h.label:SetTextColor(GROUP_LABEL[1], GROUP_LABEL[2], GROUP_LABEL[3])
+        local line = h:CreateTexture(nil, "ARTWORK")
+        line:SetColorTexture(0.35, 0.35, 0.35, 0.40)
+        line:SetHeight(1)
+        line:SetPoint("BOTTOMLEFT", 1, 0)
+        line:SetPoint("BOTTOMRIGHT", -2, 0)
+        -- Closes off an open drawer above this header.
+        local top = h:CreateTexture(nil, "ARTWORK")
+        top:SetColorTexture(0.35, 0.35, 0.35, 0.40)
+        top:SetHeight(1)
+        top:SetPoint("TOPLEFT", 1, 0)
+        top:SetPoint("TOPRIGHT", -2, 0)
+        top:Hide()
+        h.topLine = top
+        h:SetScript("OnEnter", function(self)
+            self.label:SetTextColor(GROUP_LABEL_HL[1], GROUP_LABEL_HL[2], GROUP_LABEL_HL[3])
+            if self.tipBody then
+                ns.Tooltip
+                    .Open(self, "ANCHOR_RIGHT")
+                    .Title(self.tipTitle)
+                    .Body(self.tipBody)
+                    .Blank()
+                    .Hint(self.tipHint)
+                    .Show()
+            end
+            self.chevron:SetVertexColor(1, 1, 1)
+        end)
+        h:SetScript("OnLeave", function(self)
+            ns.Tooltip.Hide()
+            self.label:SetTextColor(GROUP_LABEL[1], GROUP_LABEL[2], GROUP_LABEL[3])
+            self.chevron:SetVertexColor(GROUP_CHEVRON_TINT, GROUP_CHEVRON_TINT, GROUP_CHEVRON_TINT)
+        end)
+        inst.groupHeaders[i] = h
+    end
+    local b = inst.groupBodies[i]
+    if not b then
+        -- The body parents its rows while grouped and clips them, so a
+        -- drawer opens and closes by growing or shrinking its height. The
+        -- headers below anchor to it and follow.
+        b = CreateFrame("Frame", nil, inst.content)
+        b:SetClipsChildren(true)
+        local drawer = b:CreateAnimationGroup()
+        local step = drawer:CreateAnimation("Animation")
+        step:SetSmoothing("IN_OUT")
+        drawer:SetScript("OnUpdate", function()
+            local p = step:GetSmoothProgress() or 0
+            b:SetHeight(math.max(1, b.fromH + (b.toH - b.fromH) * p))
+        end)
+        drawer:SetScript("OnFinished", function()
+            b:SetHeight(math.max(1, b.toH))
+            local done = b.onDone
+            b.onDone = nil
+            if done then done() end
+        end)
+        b.drawer, b.drawerStep = drawer, step
+        inst.groupBodies[i] = b
+    end
+    return h, b
+end
+
+local function runDrawer(body, fromH, toH, duration, onDone)
+    body.drawer:Stop()
+    body.fromH, body.toH, body.onDone = fromH, toH, onDone
+    body:SetHeight(math.max(1, fromH))
+    body.drawerStep:SetDuration(duration)
+    body.drawer:Play()
+end
+
+local function turnChevron(h, angle, animate)
+    if h.angle == angle then return end
+    h.spin:Stop()
+    if animate and h.angle ~= nil then
+        h.chevron:SetRotation(h.angle)
+        h.spinRot:SetRadians(angle - h.angle)
+        h.angle = angle
+        h.spin:Play()
+    else
+        h.angle = angle
+        h.chevron:SetRotation(angle)
+    end
+end
+
+-- Boss portrait for a raid or world boss, the dungeon's icon for a dungeon,
+-- the Crafting tab icon for Crafted, the Gear tab icon for Other, and a
+-- content-type icon when the journal has no art.
+local function setGroupIcon(h, src)
+    local tex = h.icon
+    tex:SetVertexColor(1, 1, 1)
+    tex:SetTexCoord(0, 1, 0, 1)
+    if src.kind == "encounter" and EJ_GetCreatureInfo and SetPortraitTextureFromCreatureDisplayID then
+        local displayID = select(4, EJ_GetCreatureInfo(1, src.encounterID))
+        if displayID then
+            SetPortraitTextureFromCreatureDisplayID(tex, displayID)
+            return
+        end
+    end
+    if src.kind == "instance" then
+        local name = src.instanceID and EJ_GetInstanceInfo and EJ_GetInstanceInfo(src.instanceID)
+        local icon = name and ns.GetDungeonIconByName and ns.GetDungeonIconByName(name)
+        if icon then
+            tex:SetTexture(icon)
+            return
+        end
+    end
+    if src.kind == "crafted" then
+        tex:SetTexture(GROUP_CRAFTED_ICON)
+        tex:SetVertexColor(1, 0.82, 0)
+        return
+    end
+    local kind = (src.kind == "encounter" and "raid") or (src.kind == "instance" and "mplus") or nil
+    local atlas = ns.GetContentFallbackAtlas and ns.GetContentFallbackAtlas(kind or "mplus")
+    if atlas and kind then
+        tex:SetAtlas(atlas)
+    else
+        tex:SetTexture(GROUP_OTHER_ICON)
+        tex:SetVertexColor(0.6, 0.6, 0.62)
+    end
+end
+
+-- A drawer that is still opening or closing stays shown unless `all`:
+-- hiding it would stop its animation when a render pass runs mid-move.
+local function hideGroups(inst, all)
+    for _, f in ipairs(inst.groupHeaders or {}) do
+        f:Hide()
+    end
+    for _, f in ipairs(inst.groupBodies or {}) do
+        if all or not f.drawer:IsPlaying() then
+            f.drawer:Stop()
+            f.onDone = nil
+            f:Hide()
+        end
+    end
+end
+
+-- done(entry) is nil when ownership does not apply (another class in the
+-- Compendium); the headers then show only the item count.
+local function layoutGroups(inst, entries, content, class, spec, pool, itemsFor, layout, viewCtx, done, ticksOn)
+    local RS = ns.RollSource
+    local groups = RS.Group(entries, content, RS.Lookups(class, spec, content), RS.Label, done)
+    local open = groupOpenState()
+    local y, used = groupTopPad(), 0
+    local prev -- frame the next header hangs under
+    for gi, g in ipairs(groups) do
+        local h, body = acquireGroupFrames(inst, gi)
+        local isOpen = open[g.key]
+        if isOpen == nil then isOpen = gi == 1 end
+        h:ClearAllPoints()
+        if prev then
+            h:SetPoint("TOPLEFT", prev, "BOTTOMLEFT", 0, prev == inst.groupBodies[gi - 1] and -GROUP_GAP or 0)
+        else
+            h:SetPoint("TOPLEFT", inst.content, "TOPLEFT", 0, -y)
+        end
+        h:SetPoint("RIGHT", inst.content, "RIGHT", 0, 0)
+        h.topLine:SetShown(prev ~= nil and prev == inst.groupBodies[gi - 1])
+        -- The chevron points right when closed and down when open; a click
+        -- on the same header turns it instead of snapping.
+        if h.groupKey ~= g.key then h.angle = nil end
+        turnChevron(h, isOpen and -math.pi / 2 or 0, true)
+        h.groupKey = g.key
+        setGroupIcon(h, g.source)
+        local countText = string.format(L[g.count == 1 and "gear.group.item_one" or "gear.group.items"], g.count)
+        local shown = countText
+        h.tipTitle, h.tipBody, h.tipHint = g.label, nil, nil
+        if done then
+            shown = g.done .. "/" .. g.count
+            if g.done >= g.count then shown = "|cff66ff66" .. shown .. "|r" end
+            h.tipBody = string.format(L["gear.group.tip_done"], g.done, g.count)
+            h.tipHint = L[ticksOn and "gear.group.tip_rule_ticks" or "gear.group.tip_rule_owned"]
+        end
+        h.label:SetText((g.label or "") .. "  |cff9a9a9a" .. ns.DOT_SEPARATOR .. "  " .. shown .. "|r")
+        local key = g.key
+        h:SetScript("OnClick", function()
+            if body.onDone then return end
+            if isOpen and body:IsShown() then
+                -- Close: shrink the drawer, then lay the list out again.
+                turnChevron(h, 0, true)
+                runDrawer(body, body:GetHeight(), 1, GROUP_CLOSE_S, function()
+                    groupOpenState()[key] = false
+                    refreshView(viewCtx)
+                end)
+            else
+                groupOpenState()[key] = true
+                inst.groupOpening = key
+                refreshView(viewCtx)
+            end
+        end)
+        h:Show()
+        y = y + GROUP_HEADER_H
+        prev = h
+        if isOpen then
+            local slots = {}
+            for i = 1, #g.entries do
+                local f = pool[used + i]
+                if f then f:SetParent(body) end
+                slots[i] = f
+            end
+            used = used + #g.entries
+            body:ClearAllPoints()
+            body:SetPoint("TOPLEFT", h, "BOTTOMLEFT", 0, -GROUP_GAP)
+            body:SetPoint("RIGHT", inst.content, "RIGHT", 0, 0)
+            local hgt = layout(body, slots, itemsFor(g.entries))
+            body:Show()
+            if inst.groupOpening == key then
+                inst.groupOpening = nil
+                runDrawer(body, 1, hgt, GROUP_OPEN_S)
+            elseif not body.drawer:IsPlaying() then
+                body:SetHeight(math.max(hgt, 1))
+            elseif not body.onDone then
+                -- A render pass during the opening keeps the drawer running.
+                body.toH = hgt
+            end
+            y = y + GROUP_GAP + hgt + GROUP_GAP
+            prev = body
+        elseif not body.onDone then
+            body.drawer:Stop()
+            body:Hide()
+        end
+    end
+    for i = #groups + 1, #(inst.groupBodies or {}) do
+        inst.groupBodies[i].drawer:Stop()
+        inst.groupBodies[i]:Hide()
+    end
+    return y
+end
+
 local function render(inst, args)
     if not inst.rows then return 0 end
     for i = 1, MAX_ROWS do
         inst.rows[i]:Hide()
     end
     hideIcons(inst.icons)
+    hideGroups(inst)
     inst.fallback:Hide()
     inst.lastContentHeight = 0
 
@@ -459,110 +849,66 @@ local function render(inst, args)
     local ctxBonus = (curCT == "raid") and "raid" or "dungeon"
     local count = math.min(#selectedSlots, MAX_ROWS)
     local viewMode = Gear.GetViewMode(args._viewCtx)
-    local showSource = Gear.IsSourceShown(args._viewCtx)
+    local grouped = Gear.IsGrouped(args._viewCtx) and ns.RollSource ~= nil
+    local showSource = Gear.IsSourceShown(args._viewCtx) and not grouped
     local ticksOn = Gear.IsTrackTicksShown(args._viewCtx)
 
-    if viewMode == "icons" then
+    local entries = {}
+    for i = 1, count do
+        entries[i] = selectedSlots[i]
+    end
+    local function itemsFor(list)
         local items = {}
-        for i = 1, count do
-            local entry = selectedSlots[i]
-            local source, bonusIDs = ResolveRow(entry, nil, ctxBonus)
-            local rowBonus, catalystItemId = ResolveStatIds(entry, bonusIDs)
-            local owned = ns.IsItemOwned(entry.item.itemId)
-            if inst.gateOwned then owned = owned and ns.compOwnClass end
-            local tick = resolveTick(inst, ticksOn, entry, rowBonus, catalystItemId)
-            if tick then owned = true end
-            items[#items + 1] = {
-                itemId = entry.item.itemId,
-                bonusIDs = rowBonus,
-                catalystItemId = catalystItemId,
-                ejClassID = ejClassID,
-                ejSpecID = ejSpecID,
-                sourceText = (source ~= "" and source) or nil,
-                popText = entry.pop and (entry.pop .. "%") or nil,
-                isOwned = owned,
-            }
+        for i, entry in ipairs(list) do
+            items[i] = buildItem(inst, entry, ctxBonus, ticksOn, viewMode, ejClassID, ejSpecID)
         end
-        for i = 1, MAX_ROWS do
-            if inst.tableRows and inst.tableRows[i] then inst.tableRows[i]:Hide() end
-        end
-        inst.lastContentHeight = layoutGrid(inst.content, inst.icons, items)
-    elseif viewMode == "table" then
-        local items = {}
-        for i = 1, count do
-            local entry = selectedSlots[i]
-            local source, bonusIDs = ResolveRow(entry, nil, ctxBonus)
-            local rowBonus, catalystItemId = ResolveStatIds(entry, bonusIDs)
-            local owned = ns.IsItemOwned(entry.item.itemId)
-            if inst.gateOwned then owned = owned and ns.compOwnClass end
-            local tick = resolveTick(inst, ticksOn, entry, rowBonus, catalystItemId)
-            items[#items + 1] = {
-                itemId = entry.item.itemId,
-                bonusIDs = rowBonus,
-                catalystItemId = catalystItemId,
-                ejClassID = ejClassID,
-                ejSpecID = ejSpecID,
-                sourceText = (source ~= "" and source) or nil,
-                popText = entry.pop and (entry.pop .. "%") or nil,
-                isOwned = owned,
-                tickColor = tick,
-                label = entry.slot,
-            }
-        end
-        hideIcons(inst.icons)
+        return items
+    end
+    local tableOpts = nil
+    if viewMode == "table" and showSource then
         -- The column is never hidden by panel width — the toggle is an explicit
         -- choice; it scales down instead so the item name keeps room.
-        local tableOpts = nil
-        if showSource then
-            tableOpts = { showSource = true }
-            local w = inst.content:GetWidth() or 0
-            if w > 0 then tableOpts.sourceWidth = math.min(160, math.floor(w * 0.34)) end
+        tableOpts = { showSource = true }
+        local w = inst.content:GetWidth() or 0
+        if w > 0 then tableOpts.sourceWidth = math.min(160, math.floor(w * 0.34)) end
+    end
+    local pool = viewMode == "icons" and inst.icons or (viewMode == "table" and inst.tableRows or inst.rows)
+    local function layout(content, slots, items)
+        if viewMode == "icons" then return layoutGrid(content, slots, items) end
+        if viewMode == "table" then return ns.LayoutTable(content, slots, items, tableOpts) end
+        return layoutList(content, slots, items, showSource)
+    end
+
+    hideIcons(inst.icons)
+    for i = 1, MAX_ROWS do
+        if inst.tableRows and inst.tableRows[i] then inst.tableRows[i]:Hide() end
+    end
+
+    if grouped then
+        local content
+        for _, v in ipairs(variants) do
+            if v.label == curVariant then content = v.context end
         end
-        inst.lastContentHeight = ns.LayoutTable(inst.content, inst.tableRows, items, tableOpts)
-    else
-        for i = 1, MAX_ROWS do
-            if inst.tableRows and inst.tableRows[i] then inst.tableRows[i]:Hide() end
-        end
-        for i = 1, count do
-            local entry = selectedSlots[i]
-            local row = inst.rows[i]
-            local source, bonusIDs = ResolveRow(entry, nil, ctxBonus)
-            local rowBonus, catalystItemId = ResolveStatIds(entry, bonusIDs)
-            local itemLabel = ns.FormatItem(entry.item)
-            row.itemText:SetText(itemLabel)
-            local hasSource = showSource and source and source ~= ""
-            local yOff = hasSource and 5 or 0
-            row.itemText:ClearAllPoints()
-            row.itemText:SetPoint("LEFT", row.icon.slot, "RIGHT", 2, yOff)
-            row.itemText:SetPoint("RIGHT", row, "RIGHT", -4, yOff)
-            if hasSource then
-                row.sourceLine:SetText(source)
-                row.sourceLine:Show()
-            else
-                row.sourceLine:Hide()
+        local done
+        if not (inst.gateOwned and not ns.compOwnClass) then
+            -- With ticks on, done means a copy at the listed item level;
+            -- with them off, owning the item is enough.
+            done = function(entry)
+                if not ticksOn then return ns.IsItemOwned(entry.item.itemId) and true or false end
+                local bonusIDs = select(2, ResolveRow(entry, nil, ctxBonus))
+                local rowBonus, catalystItemId = ResolveStatIds(entry, bonusIDs)
+                local tick = ns.GearTickForEntry(entry.slot, entry.item.itemId, rowBonus, catalystItemId)
+                return tick ~= nil and tick == (ns.TICK_COLORS and ns.TICK_COLORS.perfect)
             end
-            row.itemId = entry.item.itemId
-            row.bonusIDs = rowBonus
-            row.catalystItemId = catalystItemId
-            row.ejClassID = ejClassID
-            row.ejSpecID = ejSpecID
-            row.altItemId = nil
-            row.embItemId = nil
-            row.sourceText = (source ~= "" and source) or nil
-            row.popText = entry.pop and (entry.pop .. "%") or nil
-            row.icon:SetItem(entry.item.itemId)
-            local owned = ns.IsItemOwned(entry.item.itemId)
-            if inst.gateOwned then owned = owned and ns.compOwnClass end
-            local tick = resolveTick(inst, ticksOn, entry, rowBonus, catalystItemId)
-            if tick then owned = true end
-            row.icon:ToggleMarker("owned", owned and true or false)
-            row.icon:SetMarkerColor("owned", tick)
-            row:ClearAllPoints()
-            row:SetPoint("TOPLEFT", 0, -(i - 1) * CARD_HEIGHT)
-            row:SetPoint("RIGHT", 0, 0)
-            row:Show()
         end
-        inst.lastContentHeight = count * CARD_HEIGHT
+        inst.lastContentHeight =
+            layoutGroups(inst, entries, content, class, spec, pool, itemsFor, layout, args._viewCtx, done, ticksOn)
+    else
+        hideGroups(inst, true)
+        for _, f in ipairs(pool) do
+            f:SetParent(inst.content)
+        end
+        inst.lastContentHeight = layout(inst.content, pool, itemsFor(entries))
     end
 
     ns.SetContentHeight(inst.content, inst.lastContentHeight)
