@@ -37,7 +37,7 @@ function ns.RegisterSettings()
             end
 
             function g.button(name, buttonText, onClick, tooltip)
-                local init = CreateSettingsButtonInitializer(name, buttonText, onClick, tooltip, true)
+                local init = CreateSettingsButtonInitializer(name, buttonText, onClick, tooltip, false)
                 layout:AddInitializer(init)
             end
 
