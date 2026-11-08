@@ -1042,26 +1042,22 @@ ClassCodexSource["icyveins"] = {
               steps={
                 "{47568}",
                 {spellExcluded={439843},text="{49020}"},
-                {spellRequired={439843},text="{439843}"},
                 {spellExcluded={377253},text="{196770}"},
-                {spellRequired={1249658},text="{1249658} + {51271} + {279302} + Potion + Trinket + {46585}"},
+                {spellRequired={1249658},text="{1249658} + {51271} + {439843} + Potion + Trinket + {46585}"},
                 {spellExcluded={1249658},text="{51271} + {279302} + Potion + Trinket + {46585}"},
-                {spellRequired={439843},text="{49020}"},
-                "{47568}",
-                {spellExcluded={439843},text="{49020}"},
+                "{49020}",
+                {spellRequired={279302},text="{279302}"},
               },
             },
             ["single-target-opener"]={
               steps={
                 "{47568}",
                 {spellExcluded={439843},text="{49020}"},
-                {spellRequired={439843},text="{439843}"},
                 {spellExcluded={377253},text="{196770}"},
-                {spellRequired={1249658},text="{1249658} + {51271} + {279302} + Potion + Trinket + {46585}"},
+                {spellRequired={1249658},text="{1249658} + {51271} + {439843} + Potion + Trinket + {46585}"},
                 {spellExcluded={1249658},text="{51271} + {279302} + Potion + Trinket + {46585}"},
-                {spellRequired={439843},text="{49020}"},
-                "{47568}",
-                {spellExcluded={439843},text="{49020}"},
+                "{49020}",
+                {spellRequired={279302},text="{279302}"},
               },
             },
           },
@@ -10219,17 +10215,14 @@ ClassCodexSource["icyveins"] = {
             },
             pvp={
               {
-                export="C4PAAAAAAAAAAAAAAAAAAAAAAYzsMwAGwMsFYWAAAAAAAAAzwYmllZMzMmxwoZMzY2sNjxMzMDbjZWGMAAAzwMzMzMgsgZAWYmlZMA",
+                export="C4PAAAAAAAAAAAAAAAAAAAAAAYzsMwAGwMsFYWAAAAAAAAAzwYGLGzMzMDegRzYmxstsNzYMDzYbM2GMDAAYmxMzMzMgsgZAWYmlZmB",
                 label="Black Arrow Arena",
+                recommended=true,
               },
               {
                 export="C4PAAAAAAAAAAAAAAAAAAAAAAYzsMwAGwMsEYWAAAAAAAAAzwYGLGzMzMDMaGDmtFzMzMzMzM2YmlhZGAAwMjZmZmZAZhlZAWYmFzA",
                 label="General",
                 recommended=true,
-              },
-              {
-                export="C4PAAAAAAAAAAAAAAAAAAAAAAYzsMwAGwMsBMLAAAAAAAAgZYMjFjZmZmBPwwMmZMbLbzMGzwM2GjtBzAAAmZMzMzMDgFMDwCzsMzMA",
-                label="Black Arrow Arena (Tar Trap)",
               },
             },
             raid={
@@ -10514,17 +10507,12 @@ ClassCodexSource["icyveins"] = {
             },
             pvp={
               {
-                export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGNWGAzgNAAAAAAAAwMMmZZZGzMjZMMaGzMzsZbGjZmZGz2YmlhZAAAmhZGAmx2CmBYhZWMG",
+                export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGNWGAzgNAAAAAAAAwMMmZZZGzMzMDMaGzMzsZbmhZmZGzyYsMMDAAwMMzAwM2WwMALMzyMG",
                 label="Arena",
-                recommended=true,
               },
               {
                 export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGNWGAzgNAAAAAAAAwMMmxixMzMzAjmxMjZbxMzMzMMjtxYZYmBAAMzYmZGgZstwyMALMziZA",
                 label="General",
-              },
-              {
-                export="C4PAAAAAAAAAAAAAAAAAAAAAAwCMwMGGLDgZwGAAAAAAAAYGGzssMjZmZmBGmxMzMb2mZYmZmxsMGLDzAAAMDzMAMjtFMDwCzsMjB",
-                label="Arena (Concussive Shot)",
               },
             },
             raid={
@@ -27397,7 +27385,7 @@ ClassCodexSource["icyveins"] = {
       },
     },
   },
-  meta={contentHash="5101b8b2d488394e",generatedAt="2026-11-07T11:43:01.426Z",schemaVersion=1,source="icyveins"},
+  meta={contentHash="146955f6e29c1f49",generatedAt="2026-11-07T18:32:50.250Z",schemaVersion=1,source="icyveins"},
   reference={
     heroNames={
       ["aldrachi-reaver"]="Aldrachi Reaver",
