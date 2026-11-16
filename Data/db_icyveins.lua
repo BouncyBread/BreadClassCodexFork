@@ -2772,11 +2772,11 @@ ClassCodexSource["icyveins"] = {
             },
             pvp={
               {
-                export="CgcBAAAAAAAAAAAAAAAAAAAAAAA2mZmZmxYmxwAAAAAAAgxsNegZGAAAAAAAAmxMMPgZmZMzMDzsNzYsptFAAYAmxMzsMzMNLzsMzww4DA",
+                export="CgcBAAAAAAAAAAAAAAAAAAAAAAAYmxMzMmZMMDAAAAAAAjZbMzMAAAAAAAAMjZYMzMzYmZGmZZmBbabBAAGgZMzMLzMTzyMLzMMmxA",
                 label="PvP",
               },
               {
-                export="CgcBG5bbocFKcv+yIq8fPd6ORBA2mZmZmxYmxwAAAAAAAgxsNegZGAAAAAAAAmxMMPgZmZMzMDzsNzYsptFmZmZ2abmZmBYGzMzyMz0sMzyMDDjPA",
+                export="CgcBvaDi4uyGvRjRjFbhHwBCvAAYmxMzMmZMMDAAAAAAAjZbMzMAAAAAAAAMjZYMzMzYmZGmZZmBbabhZmZmt2mZmZAmxMzsMzMNLzsMzwYGD",
                 label="PvP (Otherworldly Focus)",
               },
             },
@@ -27385,7 +27385,7 @@ ClassCodexSource["icyveins"] = {
       },
     },
   },
-  meta={contentHash="146955f6e29c1f49",generatedAt="2026-11-07T18:32:50.250Z",schemaVersion=1,source="icyveins"},
+  meta={contentHash="173f340b0ac3d8a5",generatedAt="2026-11-15T20:32:45.067Z",schemaVersion=1,source="icyveins"},
   reference={
     heroNames={
       ["aldrachi-reaver"]="Aldrachi Reaver",
