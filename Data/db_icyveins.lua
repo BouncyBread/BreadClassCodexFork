@@ -2772,12 +2772,12 @@ ClassCodexSource["icyveins"] = {
             },
             pvp={
               {
-                export="CgcBAAAAAAAAAAAAAAAAAAAAAAAYmxMzMmZMMDAAAAAAAjZbMzMAAAAAAAAMjZYMzMzYmZGmZZmBbabBAAGgZMzMLzMTzyMLzMMmxA",
+                export="CgcBAAAAAAAAAAAAAAAAAAAAAAA2mZmZmxYmxwAAAAAAAgxsNegZGAAAAAAAAmxMMPgZmZMzMDzsNzYsptFAAYAmxMzsMzMNLzsMzww4DA",
                 label="PvP",
               },
               {
                 export="CgcBvaDi4uyGvRjRjFbhHwBCvAAYmxMzMmZMMDAAAAAAAjZbMzMAAAAAAAAMjZYMzMzYmZGmZZmBbabhZmZmt2mZmZAmxMzsMzMNLzsMzwYGD",
-                label="PvP (Otherworldly Focus)",
+                label="PvP (Demon Muzzle)",
               },
             },
             raid={
@@ -27385,7 +27385,7 @@ ClassCodexSource["icyveins"] = {
       },
     },
   },
-  meta={contentHash="173f340b0ac3d8a5",generatedAt="2026-11-15T20:32:45.067Z",schemaVersion=1,source="icyveins"},
+  meta={contentHash="e211fed55b5688d8",generatedAt="2026-11-17T11:03:40.481Z",schemaVersion=1,source="icyveins"},
   reference={
     heroNames={
       ["aldrachi-reaver"]="Aldrachi Reaver",
