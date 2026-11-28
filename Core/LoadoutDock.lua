@@ -454,7 +454,7 @@ local function BuildLoadoutMenu(_, root)
     local activeHero = GetEffectiveHero()
     local function buildIsRecommended(build, isOverview)
         if not build then return false end
-        return isOverview == true or build.recommended == true
+        return isOverview == true or ns.IsRecommendedBuild(build)
     end
     local function buildIncluded(build, isOverview)
         if not build then return false end

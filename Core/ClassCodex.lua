@@ -2974,6 +2974,9 @@ _G.ClassCodex = _G.ClassCodex or {}
 _G.ClassCodex.RegisterDockHost = ns.RegisterDockHost
 _G.ClassCodex.UnregisterDockHost = ns.UnregisterDockHost
 _G.ClassCodex.RefreshDock = ns.RefreshDock
+-- Item text goes only to tooltips the player sees (ns.IsPlayerTooltip), never
+-- to other addons' hidden scan tooltips; stat parsers such as Pawn can check this.
+_G.ClassCodex.TooltipScanSafe = true
 
 local function SectionVisibilityOptions()
     local prefix = isFloating and "float" or "dock"
@@ -3776,6 +3779,9 @@ local function OnTooltipItem(tooltip, tooltipData)
     -- UI); any other method raises "access forbidden object".
     if tooltip:IsForbidden() then return end
     if not ClassCodexDB then return end
+    -- Other addons read item stats from their own hidden tooltips; a badge
+    -- appended to a stat line there stops Pawn from matching that stat.
+    if not ns.IsPlayerTooltip(tooltip) then return end
 
     local itemId = tooltipData and tooltipData.id
 

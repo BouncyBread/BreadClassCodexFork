@@ -704,7 +704,7 @@ local function IcyVeinsBuildEntries()
     for i, b in ipairs(talents) do
         local heroMatch
         if recommendedMode then
-            heroMatch = b.recommended
+            heroMatch = ns.IsRecommendedBuild(b)
         else
             heroMatch = (b.heroTalent or HERO_ALL) == selectedUggHero
         end
@@ -716,7 +716,13 @@ local function IcyVeinsBuildEntries()
             local hatlas = b.heroTalent and ns.HERO_TALENT_ATLAS and ns.HERO_TALENT_ATLAS[b.heroTalent]
             if hatlas then label = "|A:" .. hatlas .. ":14:14|a " .. label end
             if BuildMatchesActive({ exportString = b.exportString }) then label = label .. APPLIED_MARK end
-            list[#list + 1] = { key = tostring(i), build = b, label = label }
+            local entry = { key = tostring(i), build = b, label = label }
+            -- Below max level the leveling build leads, so a fresh pane opens on it.
+            if b.leveling and ns.IsAtMaxLevel and not ns.IsAtMaxLevel() then
+                table.insert(list, 1, entry)
+            else
+                list[#list + 1] = entry
+            end
         end
     end
     return list
@@ -862,6 +868,9 @@ local function HeroOptionsForSelector()
 end
 
 local function ResolvePreviewFromState()
+    -- No hero picked yet (fresh pane, spec change): Icy Veins has no
+    -- active-hero fallback like u.gg, so it starts on Recommended.
+    if selectedSource == "icyveins" and selectedUggHero == nil then selectedUggHero = HERO_ALL end
     local entries = BuildEntries()
     if #entries == 0 then
         selectedBuildKey = nil

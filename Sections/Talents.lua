@@ -52,7 +52,7 @@ local function buildCardList(args)
         if contentOk and diffOk and keyOk then
             local keep
             if recommendedMode then
-                keep = b.recommended
+                keep = ns.IsRecommendedBuild(b)
             else
                 keep = b.leveling or noHero or b.hero == activeHero
             end
@@ -122,9 +122,14 @@ local function buildCardList(args)
         end
     end
 
+    -- Leveling cards lead below max level and trail at max level.
+    local levelingFirst = ns.IsAtMaxLevel and not ns.IsAtMaxLevel()
     table.sort(out, function(a, b)
         local al, bl = a.leveling and 1 or 0, b.leveling and 1 or 0
-        if al ~= bl then return al < bl end
+        if al ~= bl then
+            if levelingFirst then return al > bl end
+            return al < bl
+        end
         return (a._order or 0) < (b._order or 0)
     end)
     return out

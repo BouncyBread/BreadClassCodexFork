@@ -94,6 +94,14 @@ local function SpecIndex(classToken, specKey)
     return index
 end
 
+--- Recommended filters: the guide's own picks, plus its leveling builds while
+--- the player is below max level (the only build that applies then).
+function ns.IsRecommendedBuild(build)
+    if not build then return false end
+    if build.recommended then return true end
+    return (build.leveling and ns.IsAtMaxLevel and not ns.IsAtMaxLevel()) and true or false
+end
+
 --- The guide plan for this export at the player's level, or nil when the
 --- export is not the current spec's Icy Veins leveling build, the player is
 --- at max level, or the talent pane is inspecting someone else.
